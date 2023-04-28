@@ -1,0 +1,321 @@
+* {
+    font-family: 'font1';
+}
+
+h1 {
+    margin-top: 0;
+    color: #343651;
+}
+
+header {
+    padding: 0.5em;
+    text-align: center;
+    height: 100px;
+}
+
+.sidebar {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: white;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.tooltipSliderContainer {
+    position: relative;
+    display: inline-block;
+    /* border-bottom: 1px dotted black; */
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.tooltipSliderContainer2 {
+    position: relative;
+    display: inline-block;
+    /* border-bottom: 1px dotted black; */
+    font-size: 18px;
+    font-weight: bold;
+    font-style: italic;
+}
+  
+.tooltipSliderContainer .tooltiptext {
+    left:10px;
+    visibility: hidden;
+    width: 240px;
+    background-color: black;
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+  
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+  
+.tooltipSliderContainer:hover .tooltiptext {
+    visibility: visible;
+}
+
+.slidecontainer {
+    position: absolute;
+    top: 25px;
+    left: 0px;
+    width: 250px; 
+}
+
+#PER, #ABS, #CABS, #COUABS, #COUPER{
+    font-size:18pt;
+}
+
+.slidecontainer2 {
+    position: absolute;
+    top: 175px;
+    left: 0px;
+    width: 250px;
+}
+
+.slidecontainerx {
+    position: absolute;
+    top: 325px;
+    left: 0px;
+}
+
+.slidecontainer3 {
+    position: absolute;
+    top: 375px;
+    left: 0px;
+    width: 250px;
+}
+
+.slidecontainer4 {
+    position: absolute;
+    top: 375px;
+    left: 0px;
+    width: 250px;
+}
+
+.slidecontainer5 {
+    position: absolute;
+    top: 550px;
+    left: 0px;
+    width: 250px;
+}
+
+  
+
+.slider {
+    margin-top: 20px;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%; 
+    height: 5px; 
+    border-radius: 5px;
+    background: #d3d3d3; 
+    outline: none; 
+    margin-bottom: 30px;
+}
+  
+
+/*.slider:hover {
+    opacity: 1; 
+}*/
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: blue;
+    cursor: pointer 
+}
+
+/*.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px; 
+    background: #04AA6D;
+    cursor: pointer;
+} */
+
+input[type='text']{
+    margin-top:0px;
+    margin-left: 10px;
+    height:35px;
+    width:210px;
+}
+
+
+.buttons{
+    position: absolute;
+    top: 150px;
+    left: 900px;
+}
+
+.tableLegend{
+    position: absolute;
+    top: 120px;
+    left: 1100px;
+}
+
+.linechartviewAttacks {
+    width: 700px;
+    height: 700px;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 150px;
+    left: 260px;
+}
+
+#line-chart-attacks {
+    width: 600px;
+    height: 630px;
+}
+
+.axisyattacks { 
+    font: 20px sans-serif; 
+}
+
+.axisxattacks { 
+    font: 25px sans-serif; 
+}
+
+.textattackssmall { 
+    font: 15px sans-serif; 
+}
+
+.textattacksbig { 
+    font: 25px sans-serif; 
+}
+
+
+.linechartviewAttackers {
+    width: 700px;
+    height: 700px;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 800px;
+    left: 260px;
+}
+
+#line-chart-attackers {
+    width: 600px;
+    height: 630px;
+}
+
+.axisyattackers { 
+    font: 20px sans-serif; 
+}
+
+.axisxattackers { 
+    font: 25px sans-serif; 
+}
+
+.textattackerssmall { 
+    font: 15px sans-serif; 
+}
+
+.textattackersbig { 
+    font: 25px sans-serif; 
+}
+
+.view {
+    width: 500px;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 200px;
+    left: 900px;
+}
+
+table, th, td{
+    border: 1px solid black;
+    border-collapse: collapse;
+    font: 14px sans-serif;
+}
+
+.sortable {
+    user-select: none;
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 6px;
+    font: 25px times;
+}
+
+th:first-of-type {
+    text-align: left;
+}
+
+th {
+    font-weight: normal;
+    text-align: center;
+}
+
+th:last-of-type
+{
+    text-align: center;
+}
+
+/* 
+.help{
+} */
+
+#predictionTable td {
+    line-height: 0;
+}
+
+#predictionTable tbody tr {
+    cursor: pointer;
+}
+
+tbody tr:hover {
+    background-color: pink;
+}
+
+td:first-of-type {
+    text-align: left;
+}
+
+td {
+    text-align: center;
+}
+
+td:last-of-type
+{
+    text-align: center;
+}
+
+.tooltip {
+    position: absolute;
+    pointer-events: none;
+    background-color: white;
+    color: black;
+    border: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.axis { 
+    font: 17px sans-serif; 
+    font-weight: bold;
+}
+
+.axis2 { 
+    font: 20px sans-serif; 
+}
+
+#comparisonGroupedBarGraph{
+    top: 200px;
+    left: 1500px;
+    width: 1300px;
+    height: 600px;
+    position: absolute;
+}

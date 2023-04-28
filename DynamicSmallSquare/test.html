@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>9 Columns with DropDown</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <script src="https://d3js.org/d3.v7.js"></script>
+    <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
+</head>
+
+<body>
+
+    <div id="mySidebar" class="sidebar">
+
+        <div class="slidecontainer"> 
+            <div class="tooltipSliderContainer">Percentage Change
+                <span class="tooltiptext">Use this slider to filter 
+                    countries(in the linecharts and heatmap) that had a 
+                    percentage increase of more than x from base week 'a' 
+                    to any other week 'b'.</span>
+            </div>
+            
+            <input type="range" min="-100" max="100000" value="-100" class="slider" id="myRange" step="1" onchange="threshold()">
+            <input type="text" id="PER" placeholder="-100 <= x <= 100K" onchange="textBox1(this.value)">
+        </div>
+        
+        <div class="slidecontainer2">
+            <div class="tooltipSliderContainer">Absolute Change
+                <span class="tooltiptext">Use this slider to filter countries
+                    (in the linecharts and heatmap) that had an absolute increase 
+                    of more than x from base week 'a' to any other week 'b'.</span>
+            </div>
+            <input type="range" min="-3600000" max="3600000" value="-36000000" class="slider" id="myRange2" step="1" onchange="threshold2()">
+            <input type="text" id="ABS" placeholder="-3.6M <= x <= 3.6M" onchange="textBox2(this.value)">
+        </div>
+
+        <div class="slidecontainerx">
+            <div class="tooltipSliderContainer2">------Anomaly Sliders below------</div>
+        </div>
+
+        <!-- <div class="slidecontainer3">
+            <div class="tooltipSliderContainer">Continent Absolute
+                <span class="tooltiptext">Use this slider to separate anomalies
+                    (colored purple as opposed to shades of blue) for continent absolute 
+                    numbers in any given week.</span>
+            </div>
+            <input type="range" min="0" max="6700000" value="2000000" class="slider" id="myRange3" step="1" onchange="threshold3()">
+            <input type="text" id="CABS" placeholder="0 <= x <= 6.7M" onchange="textBox3(this.value)">
+        </div>         -->
+
+        <div class="slidecontainer4">
+            <div class="tooltipSliderContainer">Country/Continent Absolute
+                <span class="tooltiptext">Use this slider to separate anomalies
+                    (colored purple as opposed to shades of blue) for country/continent absolute 
+                    numbers in any given week.</span>
+            </div>
+            <input type="range" min="0" max="4200000" value="100000" class="slider" id="myRange4" step="1" onchange="threshold4()">
+            <input type="text" id="COUABS" placeholder="0 <= x <= 4.2M" onchange="textBox4(this.value)">
+        </div> 
+
+        <div class="slidecontainer5">
+            <div class="tooltipSliderContainer">Country/Continent Percentage
+                <span class="tooltiptext">Use this slider to separate anomalies
+                    (colored purple as opposed to shades of green) for country/continent 
+                    percentage numbers in any given week.</span>
+            </div>
+            <input type="range" min="-100" max="100000" value="5000" class="slider" id="myRange5" step="1" onchange="threshold5()">
+            <input type="text" id="COUPER" placeholder="-100 <= x <= 1M" onchange="textBox5(this.value)">
+        </div> 
+    </div>
+
+    <div id="main">
+        <header>
+            <h1>Continents and Country Attacks and Attackers for 9 successive weeks</h1>
+        </header>
+        
+        <div class = "buttons">
+            <select name="dataset" id="dataset-select" onchange="dataSelect(this.value);">
+                <option value="0">Base -- W1</option>
+                <option value="1">Base -- W2</option>
+                <option value="2">Base -- W3</option>
+                <option value="3">Base -- W4</option>
+                <option value="4">Base -- W5</option>
+                <option value="5">Base -- W6</option>
+                <option value="6">Base -- W7</option>
+                <option value="7">Base -- W8</option>
+                <option value="8">Base -- W9</option>
+            </select>
+            <select name="dataset2" id="dataset-select-2" onchange="dataSelect2(this.value);">
+                <option value="0">Sort By -- W1</option>
+                <option value="1">Sort By -- W2</option>
+                <option value="2">Sort By -- W3</option>
+                <option value="3">Sort By -- W4</option>
+                <option value="4">Sort By -- W5</option>
+                <option value="5">Sort By -- W6</option>
+                <option value="6">Sort By -- W7</option>
+                <option value="7">Sort By -- W8</option>
+                <option value="8">Sort By -- W9</option>
+            </select>
+        </div>
+
+
+        
+        <div class="linechartviewAttacks">
+            <svg id="line-chart-attacks">
+                <g id="x-axis-attacks"></g>
+                <g id="y-axis-attacks"></g>
+                <g id="lines-attacks"></g>
+                <g id="overlay-attacks"><line></line></g>
+            </svg>
+        </div>
+
+        <div class="linechartviewAttackers">
+            <svg id="line-chart-attackers">
+                <g id="x-axis-attackers"></g>
+                <g id="y-axis-attackers"></g>
+                <g id="lines-attackers"></g>
+                <g id="overlay-attackers"><line></line></g>
+            </svg>
+        </div>
+
+        
+        <div class = "tableLegend">
+            <svg id = "legend" width="1000" height="75">
+                <text x = "125" y = "15" style="font-size:20px; ">Absolute Attack Numbers for Countries, Max absolute number for Continents</text>
+                <text x = "125" y = "40" style="font-size:20px; ">Given base week, Percentage Change Attack Numbers for Countries, Max percentage number for Continents</text>
+                <text x = "125" y = "65" style="font-size:20px; ">Percentage or Absolute Numbers which are outliers</text>     
+            </svg>
+        </div>
+
+
+        <div class="view">
+            <table id="predictionTable">
+                <thead id="predictionTableHead">
+                    <tr id="columnHeaders">
+                        <th class="sortable" id="c0" width="50%">Continent</th>
+                        <th class="sortable" id="c1">W1 <input type="checkbox" id="box1" value="1" onchange="dataSelect3();"/></th>
+                        <th class="sortable" id="c2">W2 <input type="checkbox" id="box2" value="2" onchange="dataSelect3();"/></th>
+                        <th class="sortable" id="c3">W3 <input type="checkbox" id="box3" value="3" onchange="dataSelect3();"/></th>
+                        <th class="sortable" id="c4">W4 <input type="checkbox" id="box4" value="4" onchange="dataSelect3();"/></th>
+                        <th class="sortable" id="c5">W5 <input type="checkbox" id="box5" value="5" onchange="dataSelect3();"/></th>
+                        <th class="sortable" id="c6">W6 <input type="checkbox" id="box6" value="6" onchange="dataSelect3();"/></th>
+                        <th class="sortable" id="c7">W7 <input type="checkbox" id="box7" value="7" onchange="dataSelect3();"/></th>
+                        <th class="sortable" id="c8">W8 <input type="checkbox" id="box8" value="8" onchange="dataSelect3();"/></th>
+                        <th class="sortable" id="c9">W9 <input type="checkbox" id="box9" value="9" onchange="dataSelect3();"/></th>
+                    </tr>
+                </thead>
+                <tbody id="predictionTableBody">
+
+                </tbody>
+            </table>
+        </div>
+
+
+        <div id="comparisonGroupedBarGraph"></div>
+    </div>
+    
+    <script src="js/script.js"></script>
+    <script src="js/linechartAttacks.js"></script>
+    <script src="js/linechartAttackers.js"></script>
+    <script src="js/table.js"></script>
+    <script src="js/startingVariables.js"></script>
+    <script src="js/tableLogic.js"></script>
+    <script src="js/rectangles.js"></script>
+    <script src="js/bargraph.js"></script>
+
+
+</body>
+</html>
