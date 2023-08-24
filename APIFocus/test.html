@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Interactive Dashboard for SSH Traffic Analysis</title>
+
+    <!-- For d3 -->
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <script src="https://d3js.org/d3.v7.js"></script>
+    <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
+
+    <!-- moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
+    <!-- For datepicker -->
+    <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/dubrox/Multiple-Dates-Picker-for-jQuery-UI@master/jquery-ui.multidatespicker.js"></script>
+
+    
+
+
+</head>
+
+<body>
+
+    <div id="myDataScreen">
+
+        <div id="mySidebar" class="sidebar">
+            <div class="slidecontainery"> 
+                <div class="tooltipSliderContainer">
+                    <button class="openbtn" onclick="openNav()">☰ Open Sidebar
+                        <span class="tooltiptext">Click on the menu to open the sidebar, 
+                            and push this content to the right. You can change starting values here.</span>
+                    </button>  
+                </div>
+            </div>
+
+            <div class="slidecontainer"> 
+                <div class="tooltipSliderContainer">Percentage Change
+                    <span class="tooltiptext">Use this slider to filter 
+                        countries(in the linecharts and heatmap) that had a 
+                        percentage increase of more than x from base week 'a' 
+                        to any other week 'b'.</span>
+                </div>
+                <input type="range" class="slider" id="myRange" step="1" onchange="threshold()">
+                <input type="text" id="PER" onchange="textBox1(this.value)">
+            </div>
+            
+            <div class="slidecontainer2">
+                <div class="tooltipSliderContainer">Absolute Change
+                    <span class="tooltiptext">Use this slider to filter countries
+                        (in the linecharts and heatmap) that had an absolute increase 
+                        of more than x from base week 'a' to any other week 'b'.</span>
+                </div>
+                <input type="range" class="slider" id="myRange2" step="1" onchange="threshold2()">
+                <input type="text" id="ABS" onchange="textBox2(this.value)">
+            </div>
+    
+            <div class="slidecontainerx">
+                <div class="tooltipSliderContainer2">---Anomaly Sliders below---</div>
+            </div>
+    
+            
+            <div class="slidecontainer3">
+                <div class="tooltipSliderContainer">Country/Continent Percentage
+                    <span class="tooltiptext">Use this slider to separate anomalies
+                        (colored purple as opposed to shades of green) for country/continent 
+                        percentage numbers in any given week.</span>
+                </div>
+                <input type="range" class="slider" id="myRange3" step="1" onchange="threshold3()">
+                <input type="text" id="COUPER" onchange="textBox3(this.value)">
+            </div> 
+
+
+    
+            <div class="slidecontainer4">
+                <div class="tooltipSliderContainer">Country/Continent Absolute
+                    <span class="tooltiptext">Use this slider to separate anomalies
+                        (colored purple as opposed to shades of blue) for country/continent absolute 
+                        numbers in any given week.</span>
+                </div>
+                <input type="range" class="slider" id="myRange4" step="1" onchange="threshold4()">
+                <input type="text" id="COUABS" onchange="textBox4(this.value)">
+            </div> 
+        </div>      
+
+        <div id="main">
+            <header>
+                <h1>Continents and Country Attacks and Attackers</h1>
+            </header>
+
+            <div class = "buttons">
+                <select name="dataset" id="dataset-select" onchange="dataSelect(this.value);">
+                   <!-- ///////// Always uncommented <option selected="selected" disabled="true">--Please Select Base Week--</option> -->
+                </select>
+                <select name="dataset2" id="dataset-select-2" onchange="dataSelect2(this.value);">
+                    <!-- //////// Always uncommented <option selected="selected" disabled="true">--Please Select Sort Week--</option> -->
+                </select>
+            </div>
+
+            <div class="textualChange">
+                <svg id="textsForTP"></svg>
+            </div>
+
+            <div class="linechartviewAttacks">
+                <svg id="line-chart-attacks">
+                    <g id="x-axis-attacks"></g>
+                    <g id="y-axis-attacks"></g>
+                    <g id="lines-attacks"></g>
+                    <g id="overlay-attacks"><line></line></g>
+                </svg>
+            </div>
+    
+            <div class="linechartviewAttackers">
+                <svg id="line-chart-attackers">
+                    <g id="x-axis-attackers"></g>
+                    <g id="y-axis-attackers"></g>
+                    <g id="lines-attackers"></g>
+                    <g id="overlay-attackers"><line></line></g>
+                </svg>
+            </div>
+    
+            
+            <div class = "tableLegend">
+                <svg id = "legend" width="1300" height="75">
+                    <text x = "145" y = "15" style="font-size:20px; ">Absolute Attack Numbers for Countries, Max absolute number for Continents</text>
+                    <text x = "145" y = "40" style="font-size:20px; ">Given base week, Percentage Change Attack Numbers for Countries, Max percentage number for Continents</text>
+                    <text x = "145" y = "65" style="font-size:20px; ">Percentage or Absolute Numbers which are outliers</text>     
+                </svg>
+            </div>
+
+            <div class="view">
+                <table id="predictionTable">
+                    <thead id="predictionTableHead">
+                        <tr id="columnHeaders">
+                            <th class="sortable" id="c0" width="70px">Continent</th>
+                        </tr>
+                    </thead>
+                    <tbody id="predictionTableBody">
+    
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="comparisonGroupedBarGraph"></div>
+
+            <div id="parallelCoordinatesGraph"></div>
+
+            <div id="donutGraph"></div>
+
+
+        </div>
+
+    </div>
+
+
+    
+    <div id="myInitialScreen" class="initialScreen">
+
+        <div class="initCont1">
+            <select name="data" id="data" onchange="specifyTimePeriod();">
+                <option selected="selected" disabled="true">--- Please Select A Cluster ---</option>
+                <option value="utah" class="dropdown-container">utah</option>
+                <option value="clem">clem</option>
+                <option value="wisc">wisc</option>
+            </select>
+        </div>
+
+        <div class="initCont2">
+            <select name="timePeriod" id="timePeriod" onchange="specifyTimePeriod();">
+                <option selected="selected" disabled="true">--- Please Select A Time Period ---</option>
+                <option value="month">month</option>
+                <option value="week">week</option>
+                <option value="day">day</option>
+            </select>
+        </div>
+
+        <div class="initCont3">
+            <input type="text" id="datePick" placeholder="Please Click Me To Select Multiple Days"/>
+        </div>
+
+        <div class="initCont4">
+            <select name="weekPick" id="weekPick" multiple>
+                <option selected="selected" disabled="true">Please Select Multiple Weeks</option>
+            </select>
+        </div>
+
+
+        <div class="initCont5">
+            <select name="monthPick" id="monthPick" multiple>
+                <option selected="selected" disabled="true">Please Select Multiple Months</option>
+            </select>
+        </div>
+
+        <div class="initCont6">
+            <button id="launchPad" onclick="finalCheck()">
+                Launch Tool
+            </button>
+        </div>
+
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+    </div>
+
+
+    <script src="js/initialVariables.js"></script>
+    <script src="js/vizscreen.js"></script>
+    <script src="js/dynamicSliderValues.js"></script>
+    <script src="js/table.js"></script>
+    <script src="js/variablesForTable.js"></script>
+    <script src="js/tableLogic.js"></script>
+    <script src="js/rectangles.js"></script>
+    <script src="js/linechartAttacks.js"></script>
+    <script src="js/linechartAttackers.js"></script>
+    <script src="js/bargraph.js"></script>
+    <script src="js/parallelcoordinates.js"></script>
+    <script src="js/donut.js"></script>
+
+   
+</body>
+</html> 
