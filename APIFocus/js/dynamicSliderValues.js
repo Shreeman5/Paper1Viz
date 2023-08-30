@@ -129,7 +129,7 @@ class DynamicSlider{
         arr.sort(function(a, b){return a-b;})
         // console.log(arr)
         // console.log(arr.length)
-        console.log(arr.length - arr.length * 0.95)
+        //console.log(arr.length - arr.length * 0.95)
         let firstIndexNumber = arr[0]
         let anomalyThreshold = arr[Math.floor(arr.length * 0.95)]
         //console.log(anomalyThreshold)
@@ -156,7 +156,7 @@ class DynamicSlider{
         arr.sort(function(a, b){return a-b;})
         //console.log(arr)
         // console.log(arr)
-        console.log(arr.length - Math.floor(arr.length * 0.95))
+        //console.log(arr.length - Math.floor(arr.length * 0.95))
         let firstIndexNumber = arr[0]
         let anomalyThreshold = arr[Math.floor(arr.length * 0.95)]
         //console.log(anomalyThreshold)

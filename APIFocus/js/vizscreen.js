@@ -35,12 +35,25 @@ class VizScreen{
 
     changeDatestoTPs(){
         const svg = d3.select("#textsForTP")
-        svg.append('text').attr("x", 50).attr("y", 30).text("TP = Time Period").style("font-size", "25px")
-        let j = 60
+        svg.append('text').attr("x", 50).attr("y", 30).text("TP = Time Period[Please consult this for all charts]").style("font-size", "25px")
+        let k = 60
         for (let i = 0;  i < this.selectedTimes.length; i++){
+            let j
+            if (i % 3 === 0){
+                j = 50
+            }
+            else if (i % 3 === 1){
+                j = 300
+            }
+            else if (i % 3 === 2){
+                j = 550
+            }
             let text = this.selectedTimes[i] + ' --> TP' + (i+1)
-            svg.append('text').attr("x", 50).attr("y", j).text(text).style("font-size", "25px")
-            j = j + 30
+            svg.append('text').attr("x", j).attr("y", k).text(text)
+                .style("font-size", "25px")
+            if (i % 3 === 2){
+                k = k + 30
+            }
         }
     }
 
@@ -197,8 +210,8 @@ class VizScreen{
         //console.log(this.selectedTimes) 
         let i = 1
         for (let time of this.selectedTimes){
-            $("#predictionTable>thead>tr").append("<th class=sortable id=c"+i+">TP"+i+"<input type=checkbox id=box"+i+" value="+time+" onchange=dataSelect3();></th>")
-            let requiredBox = 'box'+i
+            $("#predictionTable>thead>tr").append("<th class=sortable id=c"+i+">TP"+i+"<input type=checkbox id=TP"+i+" value="+time+" onchange=dataSelect3();></th>")
+            let requiredBox = 'TP'+i
             document.getElementById(requiredBox).style.maxWidth = "70px"
             i++
         }

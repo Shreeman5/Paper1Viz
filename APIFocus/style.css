@@ -264,7 +264,7 @@ input[type='text']{
 .buttons{
     position: absolute;
     top: 150px;
-    left: 900px;
+    left: 1300px;
 }
 
 #dataset-select, #dataset-select-2{
@@ -275,30 +275,30 @@ input[type='text']{
 .tableLegend{
     position: absolute;
     top: 120px;
-    left: 1300px;
+    left: 1600px;
 }
 
 #textsForTP{
     left: 300px;
     top: 0px;
-    width: 600px;
-    height: 500px;
+    width: 1000px;
+    height: 550px;
     position: absolute;
 }
 
 .linechartviewAttacks {
-    width: 700px;
-    height: 700px;
+    width: 1000px;
+    height: 1000px;
     flex-direction: column;
     align-items: center;
     position: absolute;
-    top: 500px;
+    top: 600px;
     left: 260px;
 }
 
 #line-chart-attacks {
-    width: 600px;
-    height: 630px;
+    width: 1000px;
+    height: 1000px;
 }
 
 .axisyattacks { 
@@ -310,27 +310,27 @@ input[type='text']{
 }
 
 .textattackssmall { 
-    font: 15px sans-serif; 
+    font: 25px sans-serif; 
 }
 
 .textattacksbig { 
-    font: 25px sans-serif; 
+    font: 35px sans-serif; 
 }
 
 
 .linechartviewAttackers {
-    width: 700px;
-    height: 700px;
+    width: 1000px;
+    height: 1000px;
     flex-direction: column;
     align-items: center;
     position: absolute;
-    top: 1150px;
+    top: 1650px;
     left: 260px;
 }
 
 #line-chart-attackers {
-    width: 600px;
-    height: 630px;
+    width: 1000px;
+    height: 1000px;
 }
 
 .axisyattackers { 
@@ -342,11 +342,11 @@ input[type='text']{
 }
 
 .textattackerssmall { 
-    font: 15px sans-serif; 
+    font: 25px sans-serif; 
 }
 
 .textattackersbig { 
-    font: 25px sans-serif; 
+    font: 35px sans-serif; 
 }
 
 .view {
@@ -355,7 +355,7 @@ input[type='text']{
     align-items: center;
     position: absolute;
     top: 200px;
-    left: 900px;
+    left: 1300px;
 }
 
 table, th, td{

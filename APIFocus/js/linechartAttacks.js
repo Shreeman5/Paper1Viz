@@ -85,8 +85,8 @@ class LineChartAttacks{
 
 
         let pad_left = 100
-        let pad_right = 50
-        let pad_bottom = 40
+        let pad_right = 10
+        let pad_bottom = 130
         let attacksByPlaceMappedByLocation = new Map([])
         let csvTypeData = []
 
@@ -123,7 +123,7 @@ class LineChartAttacks{
         
         let upperlimit = 0.1 + this.selectedTimes.length
         //console.log(limit)
-        let xScale = d3.scaleLinear().domain([1, upperlimit]).range([pad_left, 600 - pad_right]);
+        let xScale = d3.scaleLinear().domain([1, upperlimit]).range([pad_left, 1000 - pad_right]);
         let xAxis = d3.axisBottom(xScale).ticks(this.selectedTimes.length)
         .tickFormat(x => {
             if (x % 1 === 0){
@@ -134,9 +134,14 @@ class LineChartAttacks{
             }
         })
         lineChart.select("#x-axis-attacks").attr("class", "axisxattacks")
-        .attr("transform", "translate(0," + (600 - pad_bottom) + ")").call(xAxis)
+        .attr("transform", "translate(0," + (1000 - pad_bottom) + ")").call(xAxis)
+        .selectAll("text").style("text-anchor", "end")
+        .style("font-size", "25px")
+        .attr("dx", this.selectedTimes.length > 16 ? "-.8em" : "0em")
+        .attr("dy", this.selectedTimes.length > 16 ? ".15em" :".55em")
+        .attr("transform", this.selectedTimes.length > 16 ? "rotate(-90)" :"rotate(0)")
 
-        let yScale = d3.scaleLinear().domain([0, d3.max(cases)]).range([600 - pad_bottom, 40]);
+        let yScale = d3.scaleLinear().domain([0, d3.max(cases)]).range([1000 - pad_bottom, 40]);
         let yAxis = d3.axisLeft().scale(yScale).ticks(8)//
         lineChart.select("#y-axis-attacks").attr("class", "axisyattacks").attr("transform", "translate(" + pad_left + ",0)").call(yAxis)
         .selectAll("text")
@@ -152,9 +157,9 @@ class LineChartAttacks{
             }
         })
 
-        lineChart.append('text').text('Time Periods').attr('x', 250).attr('y', 610).attr("class", "axisxattacks").attr("id", "t1")
-        lineChart.append('text').text('Attacks').attr('x', -350).attr('y', 30).attr('transform', 'rotate(-90)').attr("class", "axisxattacks").attr("id", "t2")
-        lineChart.append('text').text('Attacks Over The Time Periods').attr('x', 180).attr('y', 20).attr("class", "axisxattacks").attr("id", "t3")
+        lineChart.append('text').text('Time Periods').attr('x', 430).attr('y', 970).attr("class", "axisxattacks").attr("id", "t1")
+        lineChart.append('text').text('Attacks').attr('x', -550).attr('y', 30).attr('transform', 'rotate(-90)').attr("class", "axisxattacks").attr("id", "t2")
+        lineChart.append('text').text('Attacks Over The Time Periods').attr('x', 380).attr('y', 20).attr("class", "axisxattacks").attr("id", "t3")
 
         let lineColorScale 
         if (filteredCountriesOnly.length <= 20){
@@ -172,9 +177,9 @@ class LineChartAttacks{
                                          (values)) 
 
         lineChart.on('mousemove', (event) => {
-          if (event.offsetX > pad_left && event.offsetX < 600 - pad_right) {
+          if (event.offsetX > pad_left && event.offsetX < 1000 - pad_right) {
             // Set the line position
-            lineChart.select('#overlay-attacks').select('line').attr('stroke', 'black').attr('x1', event.offsetX).attr('x2', event.offsetX).attr('y1', 600 - pad_bottom).attr('y2', 20);
+            lineChart.select('#overlay-attacks').select('line').attr('stroke', 'black').attr('x1', event.offsetX).attr('x2', event.offsetX).attr('y1', 1000 - pad_bottom).attr('y2', 20);
             const yearHovered = Math.floor(xScale.invert(event.offsetX))
             //console.log('X:', yearHovered)
     
@@ -193,13 +198,20 @@ class LineChartAttacks{
               .text(d=>`${d.country}, ${this.convert(d.cases)}`)
               .attr('x', function(){
                 if (filteredCountriesOnly.length > 20){
-                    return event.offsetX < 400 ? event.offsetX : event.offsetX - 200
+                    return event.offsetX < 560 ? event.offsetX : event.offsetX - 460
                 }
                 else{
-                    return event.offsetX < 300 ? event.offsetX : event.offsetX - 300
+                    return event.offsetX < 500 ? event.offsetX : event.offsetX - 500
                 }
               }) 
-              .attr('y', (d, i) => 20*i + 30)
+              .attr('y', (d, i) => {
+                if (filteredCountriesOnly.length > 20){
+                    return 20*i + 30
+                }
+                else{
+                    return 30*i + 30
+                }
+               })
               .attr('alignment-baseline', 'hanging')
               .attr('fill', (d) => lineColorScale(d.country))
               .attr("class", filteredCountriesOnly.length <= 20 ? "textattacksbig" : "textattackssmall")

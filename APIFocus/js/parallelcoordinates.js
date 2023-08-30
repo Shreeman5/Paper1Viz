@@ -6,18 +6,34 @@ class ParallelCoordinate{
 
     dataForThirdViz(neededData){
         // set the dimensions and margins of the graph
+        //console.log(neededData)
+        let idSelector = function() { return this.id; }
+        let checkedBoxes = $(":checkbox:checked").map(idSelector).get()
+
+        let widthNumber = 0
+        let assignedWidth = ''
+
+        if (checkedBoxes.length <= 22){
+            widthNumber = 2100
+            assignedWidth = widthNumber + 'px'
+        }
+        else{
+            widthNumber = 2100 + (50 * (checkedBoxes.length - 22))
+            assignedWidth = widthNumber + 'px'
+        }
+
         let margin = {top: 100, right: 30, bottom: 100, left: 50},
-        width = 2000 - margin.left - margin.right,
+        width = widthNumber - margin.left - margin.right,
         height = 1000 - margin.top - margin.bottom;
 
         let starterValue = document.getElementById('mySidebar').offsetWidth + 
             document.getElementsByClassName('linechartviewAttacks')[0].offsetWidth +
-            document.getElementById('predictionTable').offsetWidth
+            document.getElementById('predictionTable').offsetWidth + 50
         let parallelCoordinateStarter = starterValue + "px"
 
         document.getElementById("parallelCoordinatesGraph").style.left = parallelCoordinateStarter
-        document.getElementById("parallelCoordinatesGraph").style.top = "900px"
-        document.getElementById("parallelCoordinatesGraph").style.width = "2000px"
+        document.getElementById("parallelCoordinatesGraph").style.top = "1050px"
+        document.getElementById("parallelCoordinatesGraph").style.width = assignedWidth
         document.getElementById("parallelCoordinatesGraph").style.height = "1000px"
 
         // append the svg object to the body of the page
@@ -65,7 +81,7 @@ class ParallelCoordinate{
             desiredData.push(collection)
         }
 
-        console.log(desiredData)
+        //console.log(desiredData)
 
         for (const property in neededData) {
             for (const things in desiredData){
@@ -84,7 +100,7 @@ class ParallelCoordinate{
         //console.log(data)
         //let lineColorScale = d3.scaleOrdinal(d3.schemeTableau10).domain(usernameCollection)
         let dimensions = Object.keys(data[0]).filter(function(d) { return d != "username" })
-        console.log(dimensions)
+        //console.log(dimensions)
         const y = {}
         for (let i in dimensions) {
             let name = dimensions[i]
@@ -123,7 +139,7 @@ class ParallelCoordinate{
             .style("stroke", "grey")
             //.style("opacity", 0.5)
             .on('mouseover', function(d, i){
-                d3.select(this).attr('stroke-width', 10).style("stroke", "red")//.style('opacity', 1)
+                d3.select(this).attr('stroke-width', 5).style("stroke", "red")//.style('opacity', 1)
             })
             .on('mouseout', function(d, i){
                 d3.select(this).attr('stroke-width', 2).style("stroke", "grey")//.style('opacity', 0.5)
@@ -134,7 +150,35 @@ class ParallelCoordinate{
         const stuff = document.getElementById('x')
         stuff.addEventListener("mouseover", (event) => {
             let value = event.toElement.__data__
-            let tiptext = ''
+
+            // let givenNumbers = []
+            // for (const property in value) {
+            //     if (property !== 'username'){
+            //         let desiredNumber = value[property]
+            //         if (desiredNumber >= 1000000){
+            //             givenNumbers.push((desiredNumber/1000000).toFixed(1) + 'M')
+            //         }
+            //         else if (desiredNumber >= 1000){
+            //             givenNumbers.push((desiredNumber/1000).toFixed(1) + 'K')
+            //         }
+            //         else{
+            //             givenNumbers.push(desiredNumber + '')
+            //         }
+            //     }
+            // }
+            // console.log(givenNumbers)
+
+            // for (let z = 0; z < givenNumbers.length; z++){
+            //     let givenLine = document.getElementById('ID'+(z+1))
+            //     let position = givenLine.getBoundingClientRect();
+            //     var x = position.left;
+            //     var y = position.top
+            //     svg.append('text').attr("id", "userNameNumbers").attr("transform", `translate(${x}, ${y})`)
+            //                     .text(givenNumbers[z]).style("font-size", "55px").style("fill", "red")
+            // }
+            
+
+            let tiptext = null
 
             if (value !== null){
                 tiptext = value['username']
@@ -147,16 +191,26 @@ class ParallelCoordinate{
             .html(tiptext)
             .style("left", (event.pageX) + "px")
             .style("top", (event.pageY) + "px")
+            .style("font", "55px times")
         })
         stuff.addEventListener("mouseout", (event) => {
             tip.style("opacity", 0)
+            //document.getElementById("userNameNumbers").remove()
         })
 
+        //console.log(dates)
+
+        let idSelector = function() { return this.id; }
+        let checkedBoxes = $(":checkbox:checked").map(idSelector).get()
+        //console.log(checkedBoxes)
+        let weekData = []
+        for(let i = 0; i < checkedBoxes.length;i++){
+            weekData.push(checkedBoxes[i])
+        }
+
         this.hardcodedKeys = {}
-        let i = 1
         for (let j = 0; j < dates.length; j++){
-            this.hardcodedKeys[dates[j]] = 'TP' + i
-            i++
+            this.hardcodedKeys[dates[j]] = weekData[j]
         }
 
         this.lineIDs = {}
@@ -215,21 +269,21 @@ class ParallelCoordinate{
         let values = document.getElementById('ID1')
         let firstLineString = window.getComputedStyle(values).transform
         let firstLineCoord = Number(firstLineString.substring(19, 22))
-        console.log(firstLineCoord)
-        svg.append('text').attr("transform", "translate("+(firstLineCoord-70)+",450)rotate(270)").text("Username frequency").style("font-size", "25px")
+        //console.log(firstLineCoord)
+        svg.append('text').attr("transform", "translate("+(firstLineCoord-60)+",500)rotate(270)").text("Username frequency").style("font-size", "25px")
         
 
         let totalDatesLength = dates.length
         let valuesN = document.getElementById('ID'+totalDatesLength)
-        console.log(valuesN)
+        //console.log(valuesN)
         let lastLineString = window.getComputedStyle(valuesN).transform
         let lastLineCoord = Number(lastLineString.substring(19, 23))
-        console.log(lastLineCoord)
+        //console.log(lastLineCoord)
         let xaxistextAtMiddlePoint = (firstLineCoord + lastLineCoord)/2 - 60
-        console.log(xaxistextAtMiddlePoint)
+        //console.log(xaxistextAtMiddlePoint)
         svg.append('text').attr("transform", "translate("+xaxistextAtMiddlePoint+",850)").text("Time Periods").style("font-size", "25px")
 
-        svg.append('text').attr("transform", "translate("+(xaxistextAtMiddlePoint-220)+",-20)").text("Username Frequency Over Time Periods").style("font-size", "35px")
+        svg.append('text').attr("transform", "translate("+(xaxistextAtMiddlePoint-260)+",-20)").text(Table.countryCode+"[Username Frequency Over Time Periods]").style("font-size", "35px")
     }
 
     fetchData2(){

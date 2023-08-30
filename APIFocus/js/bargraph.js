@@ -5,10 +5,40 @@ class BarGraph {
     }
 
     dataForSecondViz(neededData, selected){
+        let idSelector = function() { return this.id; }
+        let checkedBoxes = $(":checkbox:checked").map(idSelector).get()
+
+        let widthNumber = 0
+        let assignedWidth = ''
+
+        if (checkedBoxes.length <= 16){
+            widthNumber = 2100
+            assignedWidth = widthNumber + 'px'
+        }
+        else{
+            widthNumber = 140 * (checkedBoxes.length - 1)
+            assignedWidth = widthNumber + 'px'
+        }
+        
+        // console.log(widthNumber)
+        // console.log(assignedWidth)
+        // if (checkedBoxes.length >= 35){     
+        //     assignedWidth = "6300px"
+        //     widthNumber = 6300
+        // }
+        // else if (checkedBoxes.length >= 18 && checkedBoxes.length < 35){
+        //     assignedWidth = "4200px"
+        //     widthNumber = 4200
+        // }
+        // else if (checkedBoxes.length < 18){
+        //     assignedWidth = "2100px"
+        //     widthNumber = 2100
+        // }
         //console.log(neededData)
-        let margin = {top: 10, right: 30, bottom: 20, left: 50},
-        width = 2000 - margin.left - margin.right,
-        height = 600 - margin.top - margin.bottom;
+
+        let margin = {top: 150, right: 30, bottom: 20, left: 50},
+        width = widthNumber - margin.left - margin.right,
+        height = 800 - margin.top - margin.bottom;
 
         
         
@@ -17,10 +47,13 @@ class BarGraph {
             document.getElementById('predictionTable').offsetWidth + 50
         let barGraphStarter = starterValue + "px"
 
+        
+        
+
         document.getElementById("comparisonGroupedBarGraph").style.left = barGraphStarter
         document.getElementById("comparisonGroupedBarGraph").style.top = "200px"
-        document.getElementById("comparisonGroupedBarGraph").style.width = "2000px"
-        document.getElementById("comparisonGroupedBarGraph").style.height = "600px"
+        document.getElementById("comparisonGroupedBarGraph").style.width = assignedWidth
+        document.getElementById("comparisonGroupedBarGraph").style.height = "800px"
 
         let svg = d3.select("#comparisonGroupedBarGraph")
         .append("svg")
@@ -31,7 +64,6 @@ class BarGraph {
                 "translate(" + margin.left + "," + margin.top + ")");
 
         let arr = []
-        let weekData = []
         const entries = Object.entries(neededData)  
         //console.log(entries)
         for(let i = 0; i < entries.length;i++){
@@ -45,13 +77,19 @@ class BarGraph {
             //         }
             //     }
             // }
-            let text = 'TP' + (i+1) + '_TP' + (i+2) 
-            weekData.push(text)
             arr.push(entries[i][1])
         }
 
+        
+        //console.log(checkedBoxes)
+        let weekData = []
+        for(let i = 0; i < checkedBoxes.length - 1;i++){
+            let text = checkedBoxes[i] + ' -- ' + checkedBoxes[i+1]
+            weekData.push(text)
+        }
+
         // console.log(arr)
-        console.log(weekData)
+        //console.log(weekData)
 
         let arr_vals = []
         let barChartInput = []
@@ -86,7 +124,7 @@ class BarGraph {
         //console.log('Input:', barChartInput)
         //console.log('input1: ', pieChartInput)
 
-        let rectPositions = this.makeBarChart(barChartInput, arr_vals, svg, width, height, margin)
+        let rectPositions = this.makeBarChart(barChartInput, arr_vals, svg, width, height, margin, widthNumber)
         this.appendText(svg)
         this.makePieChart(pieChartInput, svg, rectPositions)
     }
@@ -125,34 +163,39 @@ class BarGraph {
             .attr("stroke", "black")
             .style("stroke-width", "0.5px")
             .style("opacity", 0.7)
-
-            g.selectAll('arc')
-            .data(data_ready)
-            .join('text')
-            .text(function(d){ return d.data[1]})
-            .attr("transform", function(d) { 
-                let c = arcGenerator.centroid(d)
-                return "translate(" + c[0]*2.6 +"," + c[1]*2.6 + ")"
-                //return `translate(${arcGenerator.centroid(d)})`
+            .on('mouseover', function(e, d){
+                if (document.getElementById('placeHolder') !== null){
+                    document.getElementById('placeHolder').remove()
+                }
+                if (document.getElementById('placeHolder2') !== null){
+                    document.getElementById('placeHolder2').remove()
+                }
+                svg.append('text').attr("id", "piechartTexts").attr("transform", "translate(1660,-65)")
+                                .text("Attackers: " + d.data[1]).style("font-size", "45px").style("fill", color(d.data[0]))
             })
-            .style("text-anchor", "middle")
-            .style("font-size", 14)
+            .on('mouseout', function(e, d){
+                document.getElementById("piechartTexts").remove()
+            })
         }
     }
 
     appendText(svg){
-        svg.append('rect').attr("x", 50).attr("y", 0).attr("width", 50).attr("height", 10).attr("fill", 'grey')
-        svg.append('text').attr("x", 110).attr("y", 10).text("Old Time Period Attacks[Attackers Unique to Old Time Period]").style("font-size", "20px")
-        svg.append('rect').attr("x", 50).attr("y", 25).attr("width", 50).attr("height", 10).attr("fill", '#377eb8')
-        svg.append('text').attr("x", 110).attr("y", 35).text("Old to New Time Period Attacks[Attackers Common in Both Time Periods]").style("font-size", "20px")
-        svg.append('rect').attr("x", 50).attr("y", 50).attr("width", 50).attr("height", 10).attr("fill", 'green')
-        svg.append('text').attr("x", 110).attr("y", 60).text("New Time Period Attacks[Attackers Unique to New Time Period]").style("font-size", "20px")
-        svg.append('text').attr("x", 900).attr("y", 15).text(Table.country+"[Attacks and Attackers distribution]").style("font-size", "30px")
-        svg.append('text').attr("x", 720).attr("y", 45).text("First two bars for each category shows the total attacks that happened in the old time period.").style("font-size", "25px")
-        svg.append('text').attr("x", 720).attr("y", 75).text("Last two bars for each category shows the total attacks that happened in the new time period.").style("font-size", "25px")
+        svg.append('rect').attr("x", 50).attr("y", -120).attr("width", 50).attr("height", 10).attr("fill", 'grey')
+        svg.append('text').attr("x", 110).attr("y", -110).text("Old Time Period Attacks[Attackers Unique to Old Time Period]").style("font-size", "20px")
+        svg.append('rect').attr("x", 50).attr("y", -95).attr("width", 50).attr("height", 10).attr("fill", '#377eb8')
+        svg.append('text').attr("x", 110).attr("y", -85).text("Old to New Time Period Attacks[Attackers Common in Both Time Periods]").style("font-size", "20px")
+        svg.append('rect').attr("x", 50).attr("y", -70).attr("width", 50).attr("height", 10).attr("fill", 'green')
+        svg.append('text').attr("x", 110).attr("y", -60).text("New Time Period Attacks[Attackers Unique to New Time Period]").style("font-size", "20px")
+        svg.append('text').attr("x", 900).attr("y", -100).text(Table.countryCode+"[Attacks and Attackers distribution]").style("font-size", "30px")
+        svg.append('text').attr("x", 720).attr("y", -70).text("First two bars for each category shows the total attacks that happened in the old time period.").style("font-size", "25px")
+        svg.append('text').attr("x", 720).attr("y", -40).text("Last two bars for each category shows the total attacks that happened in the new time period.").style("font-size", "25px")
+        svg.append('rect').attr("x", 1655).attr("y", -120).attr("width", 295).attr("height", 80).attr("fill", "white").attr("stroke", "black")
+        svg.append('text').attr("id", "placeHolder").attr("x", 1660).attr("y", -100).text("Hover over pie chart and bar").style("font-size", "25px").style("fill", "black")
+        svg.append('text').attr("id", "placeHolder2").attr("x", 1660).attr("y", -70).text("graph to get exact numbers.").style("font-size", "25px").style("fill", "black")
+        
     }
 
-    makeBarChart(input, arr_vals, svg, width, height, margin){
+    makeBarChart(input, arr_vals, svg, width, height, margin, widthNumber){
         let subgroups = ['old_week_attacks_unique', 'old_week_attacks_common',
         'new_week_attacks_common', 'new_week_attacks_unique']
 
@@ -195,7 +238,7 @@ class BarGraph {
         .attr("transform", "rotate(-50)")
 
         svg.append('text').text('Attacks').attr('x', -350).attr('y', 0).attr('transform', 'rotate(-90)').attr("class", "axisxattacks")
-        svg.append('text').text('Old Time Period -- New Time Period').attr('x', 800).attr('y', 590).attr("class", "axisxattacks")
+        svg.append('text').text('Old Time Period -- New Time Period').attr('x', (widthNumber/2) - 200).attr('y', 650).attr("class", "axisxattacks")
 
 
         let xSubgroup = d3.scaleBand()
@@ -240,7 +283,31 @@ class BarGraph {
                 //console.log('B:', height - y(0))
                 return height - y(0)
             })
-            .attr("fill", d => color(d.key));
+            .attr("fill", d => color(d.key))
+            .on('mouseover', function(e, d){
+                //console.log(d)
+                if (document.getElementById('placeHolder') !== null){
+                    document.getElementById('placeHolder').remove()
+                }
+                if (document.getElementById('placeHolder2') !== null){
+                    document.getElementById('placeHolder2').remove()
+                }
+                let displayNumber = ''
+                if (d.value >= 1000000){
+                    displayNumber = (d.value/1000000).toFixed(2) + 'M'
+                }
+                else if (d.value >= 1000){
+                    displayNumber = (d.value/1000).toFixed(1) + 'K'
+                }
+                else{
+                    displayNumber = d.value + ''
+                }
+                svg.append('text').attr("id", "barchartTexts").attr("transform", "translate(1660,-65)")
+                                .text("Attacks: " + displayNumber).style("font-size", "43px").style("fill", color(d.key))
+            })
+            .on('mouseout', function(e, d){
+                document.getElementById("barchartTexts").remove()
+            })
 
             svg.selectAll("rect")
             .transition()

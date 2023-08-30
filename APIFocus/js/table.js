@@ -23,19 +23,19 @@ class Table{
 
     drawLegend(){
         let legend = d3.select('#legend')
-        legend.append("rect").attr("x", "40").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(0.1))
-        legend.append("rect").attr("x", "60").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(0.3))
-        legend.append("rect").attr("x", "80").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(0.5))
-        legend.append("rect").attr("x", "100").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(0.8))
-        legend.append("rect").attr("x", "120").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(1.0))
+        legend.append("rect").attr("x", "10").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(0.1))
+        legend.append("rect").attr("x", "30").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(0.3))
+        legend.append("rect").attr("x", "50").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(0.5))
+        legend.append("rect").attr("x", "70").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(0.8))
+        legend.append("rect").attr("x", "90").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(1.0))
 
-        legend.append("rect").attr("x", "40").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(0.1))
-        legend.append("rect").attr("x", "60").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(0.3))
-        legend.append("rect").attr("x", "80").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(0.5))
-        legend.append("rect").attr("x", "100").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(0.8))
-        legend.append("rect").attr("x", "120").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(1.0))
+        legend.append("rect").attr("x", "10").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(0.1))
+        legend.append("rect").attr("x", "30").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(0.3))
+        legend.append("rect").attr("x", "50").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(0.5))
+        legend.append("rect").attr("x", "70").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(0.8))
+        legend.append("rect").attr("x", "90").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(1.0))
     
-        legend.append("rect").attr("x", "120").attr("y", "50").attr("width", "20").attr("height", "20").style("fill", "purple")
+        legend.append("rect").attr("x", "90").attr("y", "50").attr("width", "20").attr("height", "20").style("fill", "purple")
 
     }
 
@@ -50,14 +50,14 @@ class Table{
 
         if (this.neededData.length === 6){
             for (let i = 1; i < this.selectedTimes.length+1; i++){
-                let givenString = 'box' + i
+                let givenString = 'TP' + i
                 document.getElementById(givenString).disabled = true
                 document.getElementById(givenString).checked = false
             }
         }
         else{
             for (let i = 1; i < this.selectedTimes.length+1; i++){
-                let givenString = 'box' + i
+                let givenString = 'TP' + i
                 document.getElementById(givenString).disabled = false
             }
         }

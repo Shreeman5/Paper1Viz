@@ -5,11 +5,31 @@ class Donut{
     }
 
     dataForFourthViz(neededData){
-        console.log(neededData)
+        //console.log(neededData)
+        let idSelector = function() { return this.id; }
+        let checkedBoxes = $(":checkbox:checked").map(idSelector).get()
 
-        let margin = {top: 100, right: 30, bottom: 20, left: 50},
-        width = 1300 - margin.left - margin.right,
-        height = 1300 - margin.top - margin.bottom;
+        let widthNumber = 0
+        let heightNumber = 0
+        let assignedWidth = ''
+        let assignedHeight = ''
+
+        if (checkedBoxes.length <= 24){
+            widthNumber = 1300
+            heightNumber = 1300
+            assignedWidth = widthNumber + 'px'
+            assignedHeight = heightNumber + 'px'
+        }
+        else{
+            widthNumber = 1300 + (60 * (checkedBoxes.length - 24))
+            heightNumber = 1300 + (60 * (checkedBoxes.length - 24))
+            assignedWidth = widthNumber + 'px'
+            assignedHeight = heightNumber + 'px'
+        }
+
+        let margin = {top: 150, right: 30, bottom: 20, left: 50},
+        width = widthNumber - margin.left - margin.right,
+        height = heightNumber - margin.top - margin.bottom;
 
         let starterValue = document.getElementById('mySidebar').offsetWidth + 
             document.getElementsByClassName('linechartviewAttacks')[0].offsetWidth +
@@ -17,9 +37,9 @@ class Donut{
         let donutStarter = starterValue + "px"
         
         document.getElementById("donutGraph").style.left = donutStarter
-        document.getElementById("donutGraph").style.top = "2300px"
-        document.getElementById("donutGraph").style.width = "1300px"
-        document.getElementById("donutGraph").style.height = "1300px"
+        document.getElementById("donutGraph").style.top = "2100px"
+        document.getElementById("donutGraph").style.width = assignedWidth
+        document.getElementById("donutGraph").style.height = assignedHeight
 
         let svg = d3.select("#donutGraph")
         .append("svg")
@@ -28,47 +48,66 @@ class Donut{
         .append("g")
             .attr("transform",
                 "translate(" + margin.left + "," + margin.top + ")");
+        
+
+        svg.append('text').attr("x", "350").attr("y", "-110").text(Table.countryCode + '[ASN Type Frequency Over Time Periods]').style("font-size", "35px")
+
+        svg.append("rect").attr("x", "0").attr("y", "-100").attr("width", "20").attr("height", "20").style("fill", "navy")
+        svg.append('text').attr("x", "25").attr("y", "-80").text("hosting").style("fill", "navy").style("font-size", "25px")
+        
+        svg.append("rect").attr("x", "280").attr("y", "-100").attr("width", "20").attr("height", "20").style("fill", "green")
+        svg.append('text').attr("x", "305").attr("y", "-80").text("isp").style("fill", "green").style("font-size", "25px")
+
+        svg.append("rect").attr("x", "560").attr("y", "-100").attr("width", "20").attr("height", "20").style("fill", "maroon")
+        svg.append('text').attr("x", "585").attr("y", "-80").text("education").style("fill", "maroon").style("font-size", "25px")
+
+        svg.append("rect").attr("x", "840").attr("y", "-100").attr("width", "20").attr("height", "20").style("fill", "purple")
+        svg.append('text').attr("x", "865").attr("y", "-80").text("business").style("fill", "purple").style("font-size", "25px")
+
+        svg.append("rect").attr("x", "1120").attr("y", "-100").attr("width", "20").attr("height", "20").style("fill", "black")
+        svg.append('text').attr("x", "1145").attr("y", "-80").text("NONE").style("fill", "black").style("font-size", "25px")
+
+        svg.append('text').attr("x", "0").attr("y", "-40").text("The innermost donut is the leftmost and the outermost donut is the rightmost checked").style("fill", "black").style("font-size", "35px")
+        svg.append('text').attr("x", "0").attr("y", "-5").text("box in the table.").style("fill", "black").style("font-size", "35px")
         //console.log(BarGraph.rectPositions)
-        this.makeDonutChart(neededData, svg)
+        this.makeDonutChart(neededData, svg, widthNumber, heightNumber)
     }
 
-    makeDonutChart(data, svg){
-        let radius = 100;
-        let number = 100
+    makeDonutChart(data, svg, widthNumber, heightNumber){
+        let innerRadiusValue = 125
+        let outerRadiusValue = 140
+
+        //console.log(data)
 
         for (const key in data){
-
+            console.log(innerRadiusValue)
+            console.log(outerRadiusValue)
             let desiredData = {}
-            let asn_types = []
+            let totalCount = 0
             for (const values of data[key]){
                 desiredData[values['asn_type']] = values['count']
-                asn_types.push(values['asn_type'])
+                totalCount += values['count']
             }
 
-            console.log(asn_types)
-
+            //console.log(desiredData)
+            let centerWidth = (widthNumber/2) - 50
+            let centerHeight = (heightNumber/2) - 50
             const g = svg.append("g")
-                        .attr("transform", `translate(${number}, ${150})`)
+                        .attr("transform", `translate(${centerWidth}, ${centerHeight})`)
 
-            let color = d3.scaleOrdinal(d3.schemeTableau10).domain(asn_types)
+            let color = d3.scaleOrdinal(["hosting", "isp", "education", "business", "NONE"], ["navy", "green", "maroon", "purple", "black"])
 
             let pie = d3.pie()
                 .sort(null) // Do not sort group by size
                 .value(function(d) {return d[1] })
             let data_ready = pie(Object.entries(desiredData))
-            console.log(data_ready)
 
 
             // The arc generator
             let arc = d3.arc()
-                .innerRadius(radius * 0.5)         // This is the size of the donut hole
-                .outerRadius(radius * 0.8)
+                .innerRadius(innerRadiusValue)         // This is the size of the donut hole
+                .outerRadius(outerRadiusValue)
             
-            // Another arc that won't be drawn. Just for labels positioning
-            // let outerArc = d3.arc()
-            //     .innerRadius(radius * 0.9)
-            //     .outerRadius(radius * 0.9)
-            let tip = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 10)
             g.selectAll('allSlices')
                 .data(data_ready)
                 .join('path')
@@ -80,54 +119,41 @@ class Donut{
                 .style("stroke-width", "2px")
                 .style("opacity", 0.7)
                 .on('mouseover', function(e, d){
-                    tip.style("opacity", 5)
-                    .html(d.data[0] + ':' + d.data[1])
-                    .style("left", (e.pageX) + "px")
-                    .style("top", (e.pageY) + "px")  
+                    let specificCountinString = ''
+                    let totalCountinString = ''
+                    if (totalCount >= 1000000){
+                        specificCountinString = (d.data[1]/1000).toFixed(1) + 'M'
+                        totalCountinString = (totalCount/1000000).toFixed(1) + 'M'
+                    }
+                    else if (totalCount >= 1000){
+                        specificCountinString = (d.data[1]/1000).toFixed(1) + 'K'
+                        totalCountinString = (totalCount/1000).toFixed(1) + 'K'
+                    }
+                    else{
+                        specificCountinString = d.data[1] + ''
+                        totalCountinString = totalCount + ''
+                    }
+                    let percentageString = ((d.data[1]/totalCount) * 100).toFixed(2) + '%'
+                    svg.append('text').attr("id", "tempTextSpecificAttack").attr("transform", `translate(${centerWidth - 110}, ${centerHeight - 30})`)
+                                .text(d.data[0] + ": " + specificCountinString).style("font-size", "25px").style("fill", color(d.data[0]))
+                    svg.append('text').attr("id", "tempTextTotalAttacks").attr("transform", `translate(${centerWidth - 110}, ${centerHeight})`)
+                                .text("Total Attacks: " + totalCountinString).style("font-size", "25px")
+                    svg.append('text').attr("id", "tempTextPercentage").attr("transform", `translate(${centerWidth - 115}, ${centerHeight + 30})`)
+                                .text(d.data[0] + " share = " + percentageString).style("font-size", "25px").style("fill", color(d.data[0]))
+                    svg.append('text').attr("id", "tempTextTimePeriod").attr("transform", `translate(${centerWidth - 60}, ${centerHeight + 60})`)
+                                .text(key).style("font-size", "25px")
+                    
                 })
-                .on('mouseout', function(d, i){
-                    tip.style("opacity", 0)
+                .on('mouseout', function(e, d){
+                    document.getElementById("tempTextTotalAttacks").remove()
+                    document.getElementById("tempTextSpecificAttack").remove()
+                    document.getElementById("tempTextPercentage").remove()
+                    document.getElementById("tempTextTimePeriod").remove()
                 })
-            
-            
-            svg.append('text').attr("x", number-50).attr("y", 10).text(key).style("font-size", "20px")
 
-            // g.selectAll('allPolylines')
-            //     .data(data_ready)
-            //     .join('polyline')
-            //       .attr("stroke", "black")
-            //       .style("fill", "none")
-            //       .attr("stroke-width", 1)
-            //       .attr('points', function(d) {
-            //         let posA = arc.centroid(d)// line insertion in the slice
-            //         let val = outerArc.centroid(d) // line break: we use the other arc generator that has been built only for that
-            //         let posB = val.map(function(x) {return x * 1.1})
-            //         // let val2 = outerArc.centroid(d)
-            //         // let posC = val2.map(function(x) {return x * 1.7}); // Label position = almost the same as posB
-            //         // var midangle = d.startAngle + (d.endAngle - d.startAngle)  // we need the angle to see if the X position will be at the extreme right or extreme left
-            //         // posC[0] = radius * 0.95 * (midangle < Math.PI ? 1 : -1); // multiply by 1 or -1 to put it on the right or on the left
-            //         return [posA, posB]
-            //       })
 
-            // g.selectAll('allLabels')
-            //     .data(data_ready)
-            //     .join('text')
-            //     .text( function(d) { console.log(d.data[0]) ; return d.data[0] + ':' + d.data[1] } )
-            //     .attr('transform', function(d) {
-            //         let val = outerArc.centroid(d);
-            //         let pos = val.map(function(x) {return x * 1.8})
-            //         var midangle = d.startAngle + (d.endAngle - d.startAngle)
-            //         pos[0] = radius * 0.99 * (midangle < Math.PI ? 1 : -1);
-            //         return 'translate(' + pos + ')';
-            //     })
-            //     .style('text-anchor', function(d) {
-            //         var midangle = d.startAngle + (d.endAngle - d.startAngle)
-            //         return (midangle < Math.PI ? 'start' : 'end')
-            //     })
-
-            number += 170
-
-            //console.log(desiredData)
+            innerRadiusValue = outerRadiusValue + 5
+            outerRadiusValue = innerRadiusValue + 15
         }
     }
 
