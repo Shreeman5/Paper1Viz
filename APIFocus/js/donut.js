@@ -55,8 +55,8 @@ class Donut{
         svg.append("rect").attr("x", "0").attr("y", "-100").attr("width", "20").attr("height", "20").style("fill", "navy")
         svg.append('text').attr("x", "25").attr("y", "-80").text("hosting").style("fill", "navy").style("font-size", "25px")
         
-        svg.append("rect").attr("x", "280").attr("y", "-100").attr("width", "20").attr("height", "20").style("fill", "green")
-        svg.append('text').attr("x", "305").attr("y", "-80").text("isp").style("fill", "green").style("font-size", "25px")
+        svg.append("rect").attr("x", "280").attr("y", "-100").attr("width", "20").attr("height", "20").style("fill", "grey")
+        svg.append('text').attr("x", "305").attr("y", "-80").text("isp").style("fill", "grey").style("font-size", "25px")
 
         svg.append("rect").attr("x", "560").attr("y", "-100").attr("width", "20").attr("height", "20").style("fill", "maroon")
         svg.append('text').attr("x", "585").attr("y", "-80").text("education").style("fill", "maroon").style("font-size", "25px")
@@ -95,7 +95,7 @@ class Donut{
             const g = svg.append("g")
                         .attr("transform", `translate(${centerWidth}, ${centerHeight})`)
 
-            let color = d3.scaleOrdinal(["hosting", "isp", "education", "business", "NONE"], ["navy", "green", "maroon", "purple", "black"])
+            let color = d3.scaleOrdinal(["hosting", "isp", "education", "business", "NONE"], ["navy", "grey", "maroon", "purple", "black"])
 
             let pie = d3.pie()
                 .sort(null) // Do not sort group by size
@@ -119,20 +119,29 @@ class Donut{
                 .style("stroke-width", "2px")
                 .style("opacity", 0.7)
                 .on('mouseover', function(e, d){
-                    let specificCountinString = ''
                     let totalCountinString = ''
                     if (totalCount >= 1000000){
-                        specificCountinString = (d.data[1]/1000).toFixed(1) + 'M'
                         totalCountinString = (totalCount/1000000).toFixed(1) + 'M'
                     }
                     else if (totalCount >= 1000){
-                        specificCountinString = (d.data[1]/1000).toFixed(1) + 'K'
                         totalCountinString = (totalCount/1000).toFixed(1) + 'K'
                     }
                     else{
-                        specificCountinString = d.data[1] + ''
                         totalCountinString = totalCount + ''
                     }
+
+                    
+                    let specificCountinString = ''
+                    if (d.data[1] >= 1000000){
+                        specificCountinString = (d.data[1]/1000000).toFixed(1) + 'M'
+                    }
+                    else if (d.data[1] >= 1000){
+                        specificCountinString = (d.data[1]/1000).toFixed(1) + 'K'
+                    }
+                    else{
+                        specificCountinString = d.data[1] + ''
+                    }
+
                     let percentageString = ((d.data[1]/totalCount) * 100).toFixed(2) + '%'
                     svg.append('text').attr("id", "tempTextSpecificAttack").attr("transform", `translate(${centerWidth - 110}, ${centerHeight - 30})`)
                                 .text(d.data[0] + ": " + specificCountinString).style("font-size", "25px").style("fill", color(d.data[0]))
@@ -142,6 +151,9 @@ class Donut{
                                 .text(d.data[0] + " share = " + percentageString).style("font-size", "25px").style("fill", color(d.data[0]))
                     svg.append('text').attr("id", "tempTextTimePeriod").attr("transform", `translate(${centerWidth - 60}, ${centerHeight + 60})`)
                                 .text(key).style("font-size", "25px")
+
+                    d3.select(this).attr("stroke", "lime").style("stroke-width", "7px")
+                    
                     
                 })
                 .on('mouseout', function(e, d){
@@ -149,6 +161,8 @@ class Donut{
                     document.getElementById("tempTextSpecificAttack").remove()
                     document.getElementById("tempTextPercentage").remove()
                     document.getElementById("tempTextTimePeriod").remove()
+
+                    d3.select(this).attr("stroke", "white").style("stroke-width", "2px")
                 })
 
 
