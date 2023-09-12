@@ -1,10 +1,13 @@
 class BarGraph {
 
 
-    constructor(){
+    constructor(givenCountries){
+        this.givenCountries = givenCountries
+        //console.log(givenCountries)
     }
 
     dataForSecondViz(neededData, selected){
+        console.log(neededData)
         let idSelector = function() { return this.id; }
         let checkedBoxes = $(":checkbox:checked").map(idSelector).get()
 
@@ -192,7 +195,6 @@ class BarGraph {
         svg.append('rect').attr("x", 1655).attr("y", -120).attr("width", 295).attr("height", 80).attr("fill", "white").attr("stroke", "black")
         svg.append('text').attr("id", "placeHolder").attr("x", 1660).attr("y", -100).text("Hover over pie chart and bar").style("font-size", "25px").style("fill", "black")
         svg.append('text').attr("id", "placeHolder2").attr("x", 1660).attr("y", -70).text("graph to get exact numbers.").style("font-size", "25px").style("fill", "black")
-        
     }
 
     makeBarChart(input, arr_vals, svg, width, height, margin, widthNumber){
@@ -251,7 +253,9 @@ class BarGraph {
             .domain(subgroups)
             .range(['grey','#377eb8','#377eb8', 'green'])
 
-        this.rectangles = svg.append("g")
+        this.rectangles = svg.append("svg:a")
+        .attr("xlink:href", function(){return "127.0.0.1/test.html"})
+            .append("g")
             .selectAll("g")
             // Enter in data = loop group per group
             .data(input)
@@ -324,6 +328,10 @@ class BarGraph {
             })
             .delay(function(d,i){return(i*100)})
 
+            // svg.selectAll("rect")
+            // .append("svg:a")
+            // .attr("xlink:href", function(){return "https://www.google.com"})
+
 
         // let that = this
         // let tip = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 10)
@@ -358,9 +366,12 @@ class BarGraph {
         // console.log('Weeks:', selected)
         // console.log(this.countryCode)
 
+        console.log(selected)
+        console.log(this.givenCountries)
+
         let that = this
         if (selectedWeeksLength >= 2 && Table.countryCode != null){
-            getData(selected).then(function(loadedData){
+            getData(selected, this.givenCountries).then(function(loadedData){
                 that.dataForSecondViz(loadedData, selected)
             })
         }
@@ -371,23 +382,15 @@ class BarGraph {
 
 }
 
-async function getData(selected){
+async function getData(selected, countries){
+
     let givenValue = document.getElementById("data").value
     let givenValue2 = document.getElementById("timePeriod").value
 
-    let api_address = 'http://128.110.217.130/comparison?cluster='+givenValue+'&cc='+Table.countryCode+'&period='+givenValue2+'&range='+selected.join(',')
+    let api_address = 'http://128.110.217.128/comparison?cluster='+givenValue+'&cc='+Table.countryCode+'&period='+givenValue2+'&range='+selected.join(',')
     //console.log(api_address)
     const data = await fetch(api_address)
     const jsonData = await data.json()
-    //console.log('Translator:', jsonData)
-
-    // let api_address_2 = 'http://128.110.217.130/top/usernames?cluster='+givenValue+'&cc='+Table.countryCode+'&period='+givenValue2+'&range='+selected.join(',')
-    // console.log(api_address_2)
-    // const data_2 = await fetch(api_address_2)
-    // const jsonData_2 = await data_2.json()
-    // console.log(jsonData_2)
-    
-    //console.log('op:', jsonData)
     return jsonData
 
 }

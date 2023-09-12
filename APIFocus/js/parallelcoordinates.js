@@ -1,12 +1,17 @@
 class ParallelCoordinate{
 
-    constructor(){
-        
+    //static countriesAcquired = []
+
+    constructor(givenCountries){
+        this.givenCountries = givenCountries
+        //console.log(givenCountries)
     }
 
     dataForThirdViz(neededData){
         // set the dimensions and margins of the graph
         //console.log(neededData)
+        // countriesAcquired.push(neededData)
+        // console.log(countriesAcquired)
         let idSelector = function() { return this.id; }
         let checkedBoxes = $(":checkbox:checked").map(idSelector).get()
 
@@ -296,7 +301,7 @@ class ParallelCoordinate{
 
         let that = this
         if (selectedWeeksLength >= 2 && Table.countryCode != null){
-            getData2(selected).then(function(loadedData){
+            getData2(selected, this.givenCountries).then(function(loadedData){
                 that.dataForThirdViz(loadedData, selected)
             })
         }
@@ -307,11 +312,11 @@ class ParallelCoordinate{
 
 }
 
-async function getData2(selected){
+async function getData2(selected, countries){
     let givenValue = document.getElementById("data").value
     let givenValue2 = document.getElementById("timePeriod").value
 
-    let api_address = 'http://128.110.217.130/top/usernames?cluster='+givenValue+'&cc='+Table.countryCode+'&range='+selected.join(',')+'&period='+givenValue2
+    let api_address = 'http://128.110.217.128/top/usernames?cluster='+givenValue+'&cc='+Table.countryCode+'&range='+selected.join(',')+'&period='+givenValue2
     //console.log(api_address)
     const data = await fetch(api_address)
     const jsonData = await data.json()

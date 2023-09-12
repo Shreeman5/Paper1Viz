@@ -3,9 +3,10 @@ class VizScreen{
     static givenData
     static givenTimes
 
-    constructor(summaryData, selectedTimes){
+    constructor(summaryData, selectedTimes, timePeriod){
         this.summaryData = summaryData
         this.selectedTimes = selectedTimes
+        this.timePeriod = timePeriod
 
         VizScreen.givenData = summaryData
         VizScreen.givenTimes = selectedTimes
@@ -43,12 +44,21 @@ class VizScreen{
                 j = 50
             }
             else if (i % 3 === 1){
-                j = 300
+                j = 330
             }
             else if (i % 3 === 2){
-                j = 550
+                j = 600
             }
-            let text = this.selectedTimes[i] + ' --> TP' + (i+1)
+
+            let optionalString = ''
+            if (this.timePeriod === 'weeks'){
+                let stringForMoment = this.selectedTimes[i].substring(0,4) + 'W' + this.selectedTimes[i].substring(5,7)
+                let momentValue = moment(stringForMoment).add(1, 'days').toDate() + ''
+                optionalString = '-' + momentValue.substring(4,7) + '-' + momentValue.substring(8,10)
+            }
+            // console.log(moment("2013W20").toDate())
+            // console.log(this.selectedTimes[i])
+            let text = this.selectedTimes[i] + optionalString + ' --> TP' + (i+1)
             svg.append('text').attr("x", j).attr("y", k).text(text)
                 .style("font-size", "25px")
             if (i % 3 === 2){
@@ -232,6 +242,7 @@ class VizScreen{
 }
 
 function removeRedSpotInTable(){
+    //console.log('hello')
     let tableBody = document.getElementById('predictionTableBody');
     for (let i = 0, row; row = tableBody.rows[i]; i++) {
         for (let j = 0, col; col = row.cells[j]; j++) {
@@ -247,6 +258,7 @@ function removeRedSpotInTable(){
 }
 
 function threshold(){
+    //console.log('yoooooo')
     let slider1 = document.getElementById("myRange")
     let textBox1 = document.getElementById("PER")
     textBox1.value = slider1.value 
@@ -263,6 +275,7 @@ function threshold(){
     let value = VizScreen.givenData.filter(d => d.isForecast)
     let currentBaseTime = document.getElementById("dataset-select").value
     let table = new Table(value, currentBaseTime, VizScreen.givenTimes)
+    //table.removeEventListener()
     table.drawTable()
     this.removeRedSpotInTable()
     let linechartAttacks = new LineChartAttacks(value, VizScreen.givenTimes)
@@ -280,6 +293,7 @@ function threshold(){
 }
 
 function textBox1(typedNumber){
+    //console.log('yoooooohooooooooo')
     let slider = document.getElementById("myRange");
     if (isNaN(typedNumber) | typedNumber === ''){
         slider.value = slider.min
@@ -297,6 +311,7 @@ function textBox1(typedNumber){
     let value = VizScreen.givenData.filter(d => d.isForecast)
     let currentBaseTime = document.getElementById("dataset-select").value
     let table = new Table(value, currentBaseTime, VizScreen.givenTimes)
+    //table.removeEventListener()
     table.drawTable()
     this.removeRedSpotInTable()
     let linechartAttacks = new LineChartAttacks(value, VizScreen.givenTimes)
@@ -539,20 +554,39 @@ function dataSelect2(){
 }
 
 function dataSelect3(){
-    let cgbg = document.getElementById("comparisonGroupedBarGraph")
-    cgbg.innerHTML = ''
-    let barGraph = new BarGraph()
-    barGraph.fetchData()
+    //console.log('XXY:', Table.countriesChosenUsedInAnotherFunction)
 
-    let pcg = document.getElementById("parallelCoordinatesGraph")
-    pcg.innerHTML = ''
-    let parallelCoordinate = new ParallelCoordinate()
-    parallelCoordinate.fetchData2()
+    let checkedBoxes = document.querySelectorAll('input[type="checkbox"]:checked');
+    let selectedTPsLength = checkedBoxes.length
 
-    let dc = document.getElementById("donutGraph")
-    dc.innerHTML = ''
-    let donutGraph = new Donut()
-    donutGraph.fetchData3()
+    //console.log('XXR:', selectedTPsLength)
+
+    if (Table.countriesChosenUsedInAnotherFunction.length > 1 && selectedTPsLength > 1){
+        alert("Either deselect countries such that there is one country or deselect time periods such that there is one time period.")
+
+        let cgbg = document.getElementById("comparisonGroupedBarGraph")
+        cgbg.innerHTML = ''
+        let pcg = document.getElementById("parallelCoordinatesGraph")
+        pcg.innerHTML = ''
+        let dc = document.getElementById("donutGraph")
+        dc.innerHTML = ''
+    }
+    else{
+        let cgbg = document.getElementById("comparisonGroupedBarGraph")
+        cgbg.innerHTML = ''
+        let barGraph = new BarGraph(Table.countriesChosenUsedInAnotherFunction)
+        barGraph.fetchData()
+    
+        let pcg = document.getElementById("parallelCoordinatesGraph")
+        pcg.innerHTML = ''
+        let parallelCoordinate = new ParallelCoordinate(Table.countriesChosenUsedInAnotherFunction)
+        parallelCoordinate.fetchData2()
+    
+        let dc = document.getElementById("donutGraph")
+        dc.innerHTML = ''
+        let donutGraph = new Donut(Table.countriesChosenUsedInAnotherFunction)
+        donutGraph.fetchData3()
+    }
 }
 
 function fixNumbers2(value){

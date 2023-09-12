@@ -38,7 +38,7 @@ function finalCheck(){
                 //console.log(selectedDays)
                 closeNav()
                 fetchSummaryData(givenValue, givenValue2, selectedDays).then(function (summaryData){
-                    let vizScreen = new VizScreen(summaryData, selectedDays)
+                    let vizScreen = new VizScreen(summaryData, selectedDays, "days")
                     vizScreen.initializeProgram()
                 })
             }
@@ -57,7 +57,7 @@ function finalCheck(){
                 //console.log(selectedWeeks)
                 closeNav()
                 fetchSummaryData(givenValue, givenValue2, selectedWeeks).then(function (summaryData){
-                    let vizScreen = new VizScreen(summaryData, selectedWeeks)
+                    let vizScreen = new VizScreen(summaryData, selectedWeeks, "weeks")
                     vizScreen.initializeProgram()
                 })
             }
@@ -76,7 +76,7 @@ function finalCheck(){
                 //console.log(selectedMonths)
                 closeNav()
                 fetchSummaryData(givenValue, givenValue2, selectedMonths).then(function (summaryData){
-                    let vizScreen = new VizScreen(summaryData, selectedMonths)
+                    let vizScreen = new VizScreen(summaryData, selectedMonths, "months")
                     vizScreen.initializeProgram()
                 })
             }
@@ -219,7 +219,10 @@ function findMinandMaxWeek(minMaxDateData){
     for(i = 0 ; i < numberOfWeeks; i++){
         let yearWeek = moment(d1).format("YYYY-WW");
         let option = document.createElement("option")
-        option.text = yearWeek
+        let text = d1+ ''
+        let givenMonth = text.substring(4,7)
+        let givenDay = text.substring(8,10)
+        option.text = yearWeek + '-' + givenMonth + '-' + givenDay
         selectFunction.add(option)
         
         d1.setDate(d1.getDate() + 7);
@@ -244,7 +247,16 @@ function revealLaunchButton(){
 }
 
 async function fetchSummaryData(cluster, period, range){
-    let summaryAPI = 'http://128.110.217.130/summary/bycountry?cluster='+cluster+'&period='+period+'&range='+range.join(",")
+    //console.log(range)
+    //console.log(period)
+    //console.log(range)
+    if (period === 'week'){
+        for (let i = 0; i < range.length; i++){
+            range[i] = range[i].substring(0,7)
+        }
+    }
+    //console.log(range)
+    let summaryAPI = 'http://128.110.217.128/summary/bycountry?cluster='+cluster+'&period='+period+'&range='+range.join(",")
     const summaryData = await fetch(summaryAPI)
     const jsonSummaryData = await summaryData.json()
     //console.log(jsonSummaryData)
@@ -253,7 +265,7 @@ async function fetchSummaryData(cluster, period, range){
 }
 
 async function findMinMaxDate(givenValue){
-    let minMaxDatesAPI = 'http://128.110.217.130/timeframe/range?cluster='+givenValue
+    let minMaxDatesAPI = 'http://128.110.217.128/timeframe/range?cluster='+givenValue
     const minMaxDate = await fetch(minMaxDatesAPI)
     const jsonMinMaxDate = await minMaxDate.json()
     //console.log(jsonMinMaxDate)

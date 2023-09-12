@@ -1,7 +1,7 @@
 class DynamicSlider{
 
     constructor(neededData, baseTime){
-        console.log(neededData)
+        //console.log(neededData)
         this.neededData = neededData
         this.baseTime = baseTime
     }

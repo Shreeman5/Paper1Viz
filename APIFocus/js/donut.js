@@ -1,7 +1,8 @@
 class Donut{
 
-    constructor(){
-
+    constructor(givenCountries){
+        this.givenCountries = givenCountries
+        //console.log(givenCountries)
     }
 
     dataForFourthViz(neededData){
@@ -80,8 +81,8 @@ class Donut{
         //console.log(data)
 
         for (const key in data){
-            console.log(innerRadiusValue)
-            console.log(outerRadiusValue)
+            // console.log(innerRadiusValue)
+            // console.log(outerRadiusValue)
             let desiredData = {}
             let totalCount = 0
             for (const values of data[key]){
@@ -183,7 +184,7 @@ class Donut{
 
         let that = this
         if (selectedWeeksLength >= 2 && Table.countryCode != null){
-            getData3(selected).then(function(loadedData){
+            getData3(selected, this.givenCountries).then(function(loadedData){
                 that.dataForFourthViz(loadedData, selected)
             })
         }
@@ -195,11 +196,11 @@ class Donut{
 }
 
 
-async function getData3(selected){
+async function getData3(selected, countries){
     let givenValue = document.getElementById("data").value
     let givenValue2 = document.getElementById("timePeriod").value
 
-    let api_address = 'http://128.110.217.130/top/asn/type?cluster='+givenValue+'&cc='+Table.countryCode+'&range='+selected.join(',')+'&period='+givenValue2
+    let api_address = 'http://128.110.217.128/top/asn/type?cluster='+givenValue+'&cc='+Table.countryCode+'&range='+selected.join(',')+'&period='+givenValue2
     //console.log(api_address)
     const data = await fetch(api_address)
     const jsonData = await data.json()

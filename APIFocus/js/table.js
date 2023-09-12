@@ -2,11 +2,13 @@ class Table{
 
     
     static countryCode
+    static countriesChosenUsedInAnotherFunction
 
     constructor(neededData, baseTime, selectedTimes){
         this.neededData = neededData
         this.baseTime = baseTime
         this.selectedTimes = selectedTimes
+        //this.countriesChosen = []
 
         let variables = new VariablesForTable(this.neededData, this.baseTime, this.selectedTimes)
         
@@ -14,6 +16,10 @@ class Table{
         variables.continentMaxPercentageAttacks()
         //console.log(this.neededData)
 
+        
+        this.tableBody = document.getElementById('predictionTableBody');
+        this.chosenCountries = []
+        Table.countriesChosenUsedInAnotherFunction = []
         
 
         this.vizWidth = 20;
@@ -40,27 +46,53 @@ class Table{
     }
 
     drawTable(){
+        let that = this
+        this.changeStyle = function(e) {
+            let countryChosen = e.target.__data__.value
+
+            //console.log(e.target.__data__)
+            if (e.target.__data__.class !== 'continent'){
+                if (that.chosenCountries.includes(countryChosen)){
+                    that.chosenCountries = that.chosenCountries.filter(item => item !== countryChosen)
+                }
+                else{
+                    that.chosenCountries.push(countryChosen)
+                }
+            }
+
+            //console.log(that.chosenCountries)
+            for (let i = 0, row; row = that.tableBody.rows[i]; i++) {
+                for (let j = 0, col; col = row.cells[j]; j++) {
+                    // console.log(col)
+                    // console.log(col.innerText)
+                    if (col.className === 'continent'){
+                        col.style.font = "25px times" 
+                        col.style.color = 'black'
+                    }
+                    else{
+                        if (that.chosenCountries.includes(col.innerText)){
+                            col.style.font = "25px times"
+                            col.style.color = "red"
+                        }
+                        else{
+                            col.style.font = "20px times"
+                            col.style.color = 'black'
+                        }
+                    }
+                }  
+            }
+        };
+        this.tableBody.addEventListener('click', this.changeStyle, false)
+
+
+
         this.drawLegend()
 
         let rowSelection = d3.select('#predictionTableBody')
             .selectAll('tr')
             .data(this.neededData)
             .join('tr')
-        //console.log(rowSelection)
-
-        if (this.neededData.length === 6){
-            for (let i = 1; i < this.selectedTimes.length+1; i++){
-                let givenString = 'TP' + i
-                document.getElementById(givenString).disabled = true
-                document.getElementById(givenString).checked = false
-            }
-        }
-        else{
-            for (let i = 1; i < this.selectedTimes.length+1; i++){
-                let givenString = 'TP' + i
-                document.getElementById(givenString).disabled = false
-            }
-        }
+        
 
         //get back to this later
         rowSelection.on('click', (event, d) => 
@@ -90,31 +122,77 @@ class Table{
             else{      
                 Table.countryCode = d.cc
                 Table.country = d.country
-                let cgbg = document.getElementById("comparisonGroupedBarGraph")
-                cgbg.innerHTML = ''
-                let barGraph = new BarGraph()
-                barGraph.fetchData()
 
-                let pcg = document.getElementById("parallelCoordinatesGraph")
-                pcg.innerHTML = ''
-                let parallelCoordinate = new ParallelCoordinate()
-                parallelCoordinate.fetchData2()
+                if (Table.countriesChosenUsedInAnotherFunction.includes(d.country)){
+                    Table.countriesChosenUsedInAnotherFunction = Table.countriesChosenUsedInAnotherFunction.filter(item => item !== d.country)
+                }
+                else{
+                    Table.countriesChosenUsedInAnotherFunction.push(d.country)
+                }
 
-                let dc = document.getElementById("donutGraph")
-                dc.innerHTML = ''
-                let donutGraph = new Donut()
-                donutGraph.fetchData3()
+                //console.log('Hi:', Table.countriesChosenUsedInAnotherFunction)
+
+                let checkedBoxes = document.querySelectorAll('input[type="checkbox"]:checked');
+                let selectedTPsLength = checkedBoxes.length
+
+                //console.log('Hello:', selectedTPsLength)
+
+                if (Table.countriesChosenUsedInAnotherFunction.length > 1 && selectedTPsLength > 1){
+                    alert("Either deselect countries such that there is one country or deselect time periods such that there is one time period.")
+
+                    let cgbg = document.getElementById("comparisonGroupedBarGraph")
+                    cgbg.innerHTML = ''
+                    let pcg = document.getElementById("parallelCoordinatesGraph")
+                    pcg.innerHTML = ''
+                    let dc = document.getElementById("donutGraph")
+                    dc.innerHTML = ''
+                }
+                else{
+                    let cgbg = document.getElementById("comparisonGroupedBarGraph")
+                    cgbg.innerHTML = ''
+                    let barGraph = new BarGraph(Table.countriesChosenUsedInAnotherFunction)
+                    barGraph.fetchData()
+    
+                    let pcg = document.getElementById("parallelCoordinatesGraph")
+                    pcg.innerHTML = ''
+                    let parallelCoordinate = new ParallelCoordinate(Table.countriesChosenUsedInAnotherFunction)
+                    parallelCoordinate.fetchData2()
+    
+                    let dc = document.getElementById("donutGraph")
+                    dc.innerHTML = ''
+                    let donutGraph = new Donut(Table.countriesChosenUsedInAnotherFunction)
+                    donutGraph.fetchData3()
+                }
             }
         })
-        //get back to this later
+
+                
+        // if (this.neededData.length === 6){
+        //     for (let i = 1; i < this.selectedTimes.length+1; i++){
+        //         let givenString = 'TP' + i
+        //         document.getElementById(givenString).disabled = true
+        //         document.getElementById(givenString).checked = false
+        //     }
+        // }
+        // else{
+        //     for (let i = 1; i < this.selectedTimes.length+1; i++){
+        //         let givenString = 'TP' + i
+        //         document.getElementById(givenString).disabled = false
+        //     }
+        // }
 
         let tabularLogic = new TableLogic()
         let forecastSelection = rowSelection.selectAll('td')
             .data(tabularLogic.rowToCellDataTransform)
             .join('td')
-            .attr('class', d => d.class);
+            .attr('class', d => d.class)
+        
+        
 
-        forecastSelection.filter(d => d.type === 'text').text(d => d.class === 'continent' ? '+'+d.value : d.value).style("font", d => d.class === 'continent' ? "25px times": "20px times")
+        forecastSelection.filter(d => d.type === 'text')
+            .text(d => d.class === 'continent' ? '+'+d.value : d.value)
+            .style("font", d => d.class === 'continent' ? "25px times": "20px times")
+
 
         let vizSelection = forecastSelection.filter(d => d.type === 'viz');
 
@@ -131,29 +209,11 @@ class Table{
         this.rect = new Rectangle()
         this.rect.addRectangles(grouperSelect.filter((d,i) => i === 0));
         this.rect.addRectangles2(grouperSelect.filter((d,i) => i === 0));
-
-        let tableBody = document.getElementById('predictionTableBody');
-        let changeStyle = function(e) {
-            for (let i = 0, row; row = tableBody.rows[i]; i++) {
-                for (let j = 0, col; col = row.cells[j]; j++) {
-                    col.style.color = 'black'
-                    if (col.className === 'continent'){
-                        col.style.font = "25px times"
-                    }
-                    else{
-                        col.style.font = "20px times"
-                    }
-                }  
-            }
-            if (e.target.tagName === 'TD' && e.target.__data__.class !== 'continent') {
-                e.target.style.color = 'red';
-                e.target.style.font = "25px times"
-            }
-        };
-        tableBody.addEventListener('click', changeStyle, false)
     }
 
     toggleRow(rowData, index) {
+        
+        this.tableBody.removeEventListener('click', this.changeStyle, false)
         //console.log(rowData)
         if (rowData.isExpanded){
             d3.selectAll('rect').remove()
@@ -258,5 +318,10 @@ class Table{
 
         return finalFilter
     }
+
+    // removeEventListener(){
+    //     console.log("hereeeeee")
+    //     this.tableBody.removeEventListener('click', this.changeStyle, false)
+    // }
 
 }
