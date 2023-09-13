@@ -286,13 +286,23 @@ input[type='text']{
     position: absolute;
 }
 
+.countryOptions{
+    left:360px;
+    top:600px;
+    width: 300px;
+    height: 50px;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+}
+
 .linechartviewAttacks {
     width: 1000px;
     height: 1000px;
     flex-direction: column;
     align-items: center;
     position: absolute;
-    top: 650px;
+    top: 700px;
     left: 260px;
 }
 
@@ -324,7 +334,7 @@ input[type='text']{
     flex-direction: column;
     align-items: center;
     position: absolute;
-    top: 1700px;
+    top: 1750px;
     left: 260px;
 }
 

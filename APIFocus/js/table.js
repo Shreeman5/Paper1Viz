@@ -8,10 +8,8 @@ class Table{
         this.neededData = neededData
         this.baseTime = baseTime
         this.selectedTimes = selectedTimes
-        //this.countriesChosen = []
 
         let variables = new VariablesForTable(this.neededData, this.baseTime, this.selectedTimes)
-        
         variables.continentMaxAbsoluteAttacks()
         variables.continentMaxPercentageAttacks()
         //console.log(this.neededData)
@@ -45,12 +43,30 @@ class Table{
 
     }
 
-    drawTable(){
+    drawTable(){      
+        if (this.neededData.length === 6){
+            for (let i = 1; i < this.selectedTimes.length+1; i++){
+                let givenString = 'TP' + i
+                document.getElementById(givenString).disabled = true
+                document.getElementById(givenString).checked = false
+            }
+            let things = document.getElementById("comparisonGroupedBarGraph")
+            things.innerHTML = ''
+            let things2 = document.getElementById("parallelCoordinatesGraph")
+            things2.innerHTML = ''
+            let things3 = document.getElementById("donutGraph")
+            things3.innerHTML = ''
+        }
+        else{
+            for (let i = 1; i < this.selectedTimes.length+1; i++){
+                let givenString = 'TP' + i
+                document.getElementById(givenString).disabled = false
+            }
+        }
+
         let that = this
         this.changeStyle = function(e) {
             let countryChosen = e.target.__data__.value
-
-            //console.log(e.target.__data__)
             if (e.target.__data__.class !== 'continent'){
                 if (that.chosenCountries.includes(countryChosen)){
                     that.chosenCountries = that.chosenCountries.filter(item => item !== countryChosen)
@@ -59,12 +75,8 @@ class Table{
                     that.chosenCountries.push(countryChosen)
                 }
             }
-
-            //console.log(that.chosenCountries)
             for (let i = 0, row; row = that.tableBody.rows[i]; i++) {
                 for (let j = 0, col; col = row.cells[j]; j++) {
-                    // console.log(col)
-                    // console.log(col.innerText)
                     if (col.className === 'continent'){
                         col.style.font = "25px times" 
                         col.style.color = 'black'
@@ -98,47 +110,25 @@ class Table{
         rowSelection.on('click', (event, d) => 
         {
             if (d.isForecast){
-                //console.log('yeah') 
-                         
-                let things = document.getElementById("comparisonGroupedBarGraph")
-                things.innerHTML = ''
-                let things2 = document.getElementById("parallelCoordinatesGraph")
-                things2.innerHTML = ''
-                let things3 = document.getElementById("donutGraph")
-                things3.innerHTML = ''
-
-                // if (this.neededData.length > 6){
-                //     // console.log(this.neededData.length)
-                //     // console.log('paper')
-                //     let barGraph = new BarGraph()
-                //     barGraph.fetchData()
-                //     let parallelCoordinate = new ParallelCoordinate()
-                //     parallelCoordinate.fetchData2()
-                //     let donutGraph = new Donut()
-                //     donutGraph.fetchData3()
-                // }
                 this.toggleRow(d, this.neededData.indexOf(d));
             }
             else{      
                 Table.countryCode = d.cc
                 Table.country = d.country
 
-                if (Table.countriesChosenUsedInAnotherFunction.includes(d.country)){
-                    Table.countriesChosenUsedInAnotherFunction = Table.countriesChosenUsedInAnotherFunction.filter(item => item !== d.country)
+                if (Table.countriesChosenUsedInAnotherFunction.includes(d.cc)){
+                    Table.countriesChosenUsedInAnotherFunction = Table.countriesChosenUsedInAnotherFunction.filter(item => item !== d.cc)
                 }
                 else{
-                    Table.countriesChosenUsedInAnotherFunction.push(d.country)
+                    Table.countriesChosenUsedInAnotherFunction.push(d.cc)
                 }
 
-                //console.log('Hi:', Table.countriesChosenUsedInAnotherFunction)
 
-                let checkedBoxes = document.querySelectorAll('input[type="checkbox"]:checked');
-                let selectedTPsLength = checkedBoxes.length
+                let checkedBoxes2 = document.querySelectorAll('input[type="checkbox"]:checked');
+                let selectedTPsLength2 = checkedBoxes2.length
 
-                //console.log('Hello:', selectedTPsLength)
-
-                if (Table.countriesChosenUsedInAnotherFunction.length > 1 && selectedTPsLength > 1){
-                    alert("Either deselect countries such that there is one country or deselect time periods such that there is one time period.")
+                if (Table.countriesChosenUsedInAnotherFunction.length > 1 && selectedTPsLength2 > 1){
+                    alert("Press ok. Then, EITHER have multiple countries and one time period OR have multiple time periods and one country.")
 
                     let cgbg = document.getElementById("comparisonGroupedBarGraph")
                     cgbg.innerHTML = ''
@@ -165,21 +155,6 @@ class Table{
                 }
             }
         })
-
-                
-        // if (this.neededData.length === 6){
-        //     for (let i = 1; i < this.selectedTimes.length+1; i++){
-        //         let givenString = 'TP' + i
-        //         document.getElementById(givenString).disabled = true
-        //         document.getElementById(givenString).checked = false
-        //     }
-        // }
-        // else{
-        //     for (let i = 1; i < this.selectedTimes.length+1; i++){
-        //         let givenString = 'TP' + i
-        //         document.getElementById(givenString).disabled = false
-        //     }
-        // }
 
         let tabularLogic = new TableLogic()
         let forecastSelection = rowSelection.selectAll('td')
@@ -212,23 +187,24 @@ class Table{
     }
 
     toggleRow(rowData, index) {
-        
         this.tableBody.removeEventListener('click', this.changeStyle, false)
-        //console.log(rowData)
         if (rowData.isExpanded){
-            d3.selectAll('rect').remove()
             let negateRows = rowData.meta
+
+            if (this.neededData.length - negateRows.length === 6){
+                // console.log("I am here")
+                // console.log(Table.countriesChosenUsedInAnotherFunction)
+                this.chosenCountries = []
+                Table.countriesChosenUsedInAnotherFunction = []
+            }
             let negateCountries = []
             for (let row of negateRows){
                 negateCountries.push(row.country)
             }
             this.neededData = this.neededData.filter(d => d.isForecast || !negateCountries.includes(d.country));
-            //console.log('toggleA:', this.neededData)
         }
         else{
-            d3.selectAll('rect').remove()
             let addList = rowData.meta
-            //console.log(addList)
             let currentBaseTime = document.getElementById("dataset-select").value
             let sortTime = document.getElementById("dataset-select-2").value
 
@@ -264,16 +240,15 @@ class Table{
                 }
             });
         }
+        
         rowData.isExpanded = !rowData.isExpanded
         this.drawTable()
     }
 
     findValues(threshold, currentBaseTime){
         let finalFilter = []
-
         for (let i = 0; i < this.neededData.length; i++){
             let area = this.neededData[i]
-            //console.log(area)
             if (!('region' in area)){
                 let values = []
                 for (let time of this.selectedTimes){
@@ -296,7 +271,6 @@ class Table{
 
     findValues2(threshold2, currentBaseTime){
         let finalFilter = []
-
         for (let i = 0; i < this.neededData.length; i++){
             let area = this.neededData[i]
             if (!('region' in area)){
@@ -315,13 +289,7 @@ class Table{
                 finalFilter.push(area.region)
             }
         }
-
         return finalFilter
     }
-
-    // removeEventListener(){
-    //     console.log("hereeeeee")
-    //     this.tableBody.removeEventListener('click', this.changeStyle, false)
-    // }
 
 }

@@ -17,11 +17,13 @@ class VizScreen{
         //console.log(this.selectedTimes)
         this.removePreviousDatestoTPs()
         this.removeBaseandSortOptions()
+        this.removeCountryOptions()
         this.removeTableTHelements()
         this.removeTextElementsFromLineCharts()
         this.removeBarGraphParallelCoordinateDonutChart()
         this.fillInDateGapsForData()
         this.optionsForBaseAndSortBySelections()
+        this.optionForCountriesSelections()
         this.findMinMaxSliderValues()
         this.makeTableTHstructure()
         this.removeRedSpotFromTable()
@@ -113,6 +115,10 @@ class VizScreen{
         $('#dataset-select-2').find('option').remove()
     }
 
+    removeCountryOptions(){
+        $('#countries').find('option').remove()
+    }
+
     removeTableTHelements(){
         $("#predictionTable>thead>tr").find("th:gt(0)").remove()
     }
@@ -155,6 +161,19 @@ class VizScreen{
             option.text = 'Sort By -- ' + 'TP' + y
             sortSelect.add(option)
             y += 1
+        }
+    }
+
+    optionForCountriesSelections(){
+        let countrySelect = document.getElementById("countries")
+        //console.log(this.summaryData)
+        for (let forecast of this.summaryData){
+            for (let country of forecast.meta){
+                let option = document.createElement("option")
+                option.value = country.country
+                option.text = country.country
+                countrySelect.appendChild(option)
+            }
         }
     }
 
@@ -562,7 +581,7 @@ function dataSelect3(){
     //console.log('XXR:', selectedTPsLength)
 
     if (Table.countriesChosenUsedInAnotherFunction.length > 1 && selectedTPsLength > 1){
-        alert("Either deselect countries such that there is one country or deselect time periods such that there is one time period.")
+        alert("Press ok. Then, EITHER have multiple countries and one time period OR have multiple time periods and one country.")
 
         let cgbg = document.getElementById("comparisonGroupedBarGraph")
         cgbg.innerHTML = ''
@@ -587,6 +606,27 @@ function dataSelect3(){
         let donutGraph = new Donut(Table.countriesChosenUsedInAnotherFunction)
         donutGraph.fetchData3()
     }
+}
+
+function dataSelect4(value){
+    //console.log(VizScreen.givenData)
+
+    let countries = []
+    for (let forecast of VizScreen.givenData){
+        for (let country of forecast.meta){
+            if (value === country.country){
+                countries.push(country)
+            }
+        }
+    }
+    //console.log(countries)
+
+    let linechartAttacks = new LineChartAttacks(countries, VizScreen.givenTimes)
+    linechartAttacks.removeText()
+    linechartAttacks.drawLinechart()
+    let linechartAttackers = new LineChartAttackers(countries, VizScreen.givenTimes)
+    linechartAttackers.removeText()
+    linechartAttackers.drawLinechart()
 }
 
 function fixNumbers2(value){

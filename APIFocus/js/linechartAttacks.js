@@ -77,10 +77,23 @@ class LineChartAttacks{
     }
 
     drawLinechart(){
-        let countriesOnly = this.separateCountries()
-        //console.log(countriesOnly)
-        let filteredCountriesOnly = this.filterCountries(countriesOnly)
-        //console.log(filteredCountriesOnly)
+        // console.log(this.neededData)
+        // console.log(this.neededData.length)
+
+        let filteredCountriesOnly
+        if (this.neededData.length === 6){
+            let countriesOnly = this.separateCountries()
+            //console.log(countriesOnly)
+            filteredCountriesOnly = this.filterCountries(countriesOnly)
+            //console.log(filteredCountriesOnly)
+        }
+        else{
+            filteredCountriesOnly = this.neededData
+        }
+
+        
+
+
         LineChartAttacks.countries = filteredCountriesOnly
 
 

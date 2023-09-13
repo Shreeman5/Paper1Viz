@@ -3,7 +3,7 @@ class BarGraph {
 
     constructor(givenCountries){
         this.givenCountries = givenCountries
-        //console.log(givenCountries)
+        console.log(givenCountries)
     }
 
     dataForSecondViz(neededData, selected){

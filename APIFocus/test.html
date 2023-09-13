@@ -107,6 +107,15 @@
                 <svg id="textsForTP"></svg>
             </div>
 
+            <div class="countryOptions">
+                <label for="countriesFromData">Filter a country you would like to see on the linechart</label>
+                <input list="countries" name="country" id="country" onchange="dataSelect4(this.value)">
+                <datalist id="countries"></datalist>
+            </div>
+
+            
+
+
             <div class="linechartviewAttacks">
                 <svg id="line-chart-attacks">
                     <g id="x-axis-attacks"></g>
