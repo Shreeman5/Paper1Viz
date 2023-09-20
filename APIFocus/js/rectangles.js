@@ -14,9 +14,44 @@ class Rectangle{
         .domain([this.slider4ValueMin,this.slider4Value])
     }
 
-    addRectangles(containerSelect) {
-        this.rectangles = containerSelect.append('rect')
+
+    setBackgroundOfCell(containerSelect){
+        // let stuff = containerSelect['_parents']
+        // for (let i = 0; i < stuff.length; i++){
+        //     // console.log()
+        //     let nextStuff = stuff[i] 
+        //     console.log(nextStuff)
+        //     nextStuff.fill = "red"
+        //     //nextStuff['preserveAspectRatio'] = "none"
+        // }
+
+        containerSelect
+            .append('rect')
             .attr('x', 0)
+            .attr('y', 0)
+            .attr('width', 160)
+            .attr('height', d => {
+                if (d.value4 === undefined || d.value4 === 'yes'){
+                    return 0
+                }
+                else{
+                    return 10
+                }
+            })     
+            // .attr('stroke', 'black')
+            // .attr('stroke-width', 0)
+            .attr('fill', d => {
+                if (d.value4 === 'no'){
+                    return 'red'
+                }
+            })
+    }
+
+    addRectangles(containerSelect) {
+        console.log(containerSelect)
+
+        this.rectangles = containerSelect.append('rect')
+            .attr('x', 70)
             .attr('y', 0)
             .attr('width', 20)
             .attr('height', 20)     
@@ -51,12 +86,14 @@ class Rectangle{
         .on("mouseout", function(d) {
             tip.style("opacity", 0)
         })
+
+        //console.log(containerSelect)
     }
 
 
     addRectangles2(containerSelect) {
         this.rectangles3 = containerSelect.append('rect')
-            .attr('x', 0)
+            .attr('x', 70)
             .attr('y', 25)
             .attr('width', 20)
             .attr('height', 20)

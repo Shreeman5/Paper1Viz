@@ -15,6 +15,7 @@ class VizScreen{
     initializeProgram(){
         //console.log(this.summaryData)
         //console.log(this.selectedTimes)
+        this.removePreviousSVGs()
         this.removePreviousDatestoTPs()
         this.removeBaseandSortOptions()
         this.removeCountryOptions()
@@ -24,11 +25,27 @@ class VizScreen{
         this.fillInDateGapsForData()
         this.optionsForBaseAndSortBySelections()
         this.optionForCountriesSelections()
+        this.changeDatestoTPs()
         this.findMinMaxSliderValues()
         this.makeTableTHstructure()
         this.removeRedSpotFromTable()
         this.makeTableAndLineCharts()
-        this.changeDatestoTPs()
+    }
+
+    removePreviousSVGs(){
+        // console.log('here')
+        if (document.getElementById("svg1")){
+            document.getElementById("svg1").remove()
+        }
+        if (document.getElementById("svg2")){
+            document.getElementById("svg2").remove()
+        }
+        if (document.getElementById("svg3")){
+            document.getElementById("svg3").remove()
+        }
+        if (document.getElementById("svg4")){
+            document.getElementById("svg4").remove()
+        }
     }
 
     removePreviousDatestoTPs(){
@@ -38,19 +55,19 @@ class VizScreen{
 
     changeDatestoTPs(){
         const svg = d3.select("#textsForTP")
-        svg.append('text').attr("x", 50).attr("y", 30).text("TP = Time Period[Please consult this for all charts]").style("font-size", "25px")
+        svg.append('text').attr("x", 10).attr("y", 30).text("TP = Time Period").style("font-size", "25px")//[Please consult this for all charts]
         let k = 60
         for (let i = 0;  i < this.selectedTimes.length; i++){
-            let j
-            if (i % 3 === 0){
-                j = 50
-            }
-            else if (i % 3 === 1){
-                j = 330
-            }
-            else if (i % 3 === 2){
-                j = 600
-            }
+            // let j
+            // if (i % 3 === 0){
+            //     j = 50
+            // }
+            // else if (i % 3 === 1){
+            //     j = 330
+            // }
+            // else if (i % 3 === 2){
+            //     j = 600
+            // }
 
             let optionalString = ''
             if (this.timePeriod === 'weeks'){
@@ -61,11 +78,12 @@ class VizScreen{
             // console.log(moment("2013W20").toDate())
             // console.log(this.selectedTimes[i])
             let text = this.selectedTimes[i] + optionalString + ' --> TP' + (i+1)
-            svg.append('text').attr("x", j).attr("y", k).text(text)
+            svg.append('text').attr("x", 10).attr("y", k).text(text)
                 .style("font-size", "25px")
-            if (i % 3 === 2){
-                k = k + 30
-            }
+            // if (i % 3 === 2){
+            //     k = k + 30
+            // }
+            k = k + 30
         }
     }
 
@@ -166,8 +184,13 @@ class VizScreen{
 
     optionForCountriesSelections(){
         let countrySelect = document.getElementById("countries")
-        //console.log(this.summaryData)
+        // console.log(this.summaryData)
         for (let forecast of this.summaryData){
+            //console.log(forecast)
+            let option2 = document.createElement("option")
+            option2.value = forecast.region
+            option2.text = forecast.region
+            countrySelect.appendChild(option2)
             for (let country of forecast.meta){
                 let option = document.createElement("option")
                 option.value = country.country
@@ -190,7 +213,10 @@ class VizScreen{
         perSlider.value = percentSliderMin
         let perOutput = document.getElementById("PER")
         perOutput.value = ''
-        perOutput.placeholder = this.fixNumbers(percentSliderMin) + " <= x <= " + this.fixNumbers(percentSliderMax)   
+        // perOutput.placeholder = this.fixNumbers(percentSliderMin) + " <= x <= " + this.fixNumbers(percentSliderMax)  
+        let svg = d3.select(".slidecontainer").append("svg").attr("id", "svg1").attr("x", 0).attr("y", 0).attr("width", 300).attr("height", 310)
+        svg.append('text').attr("x", 130).attr("y", 30).text(this.fixNumbers(percentSliderMax)).style("font-size", "25px") 
+        svg.append('text').attr("x", 130).attr("y", 210).text(this.fixNumbers(percentSliderMin)).style("font-size", "25px") 
 
         let [absoluteSliderMin, absoluteSliderMax] = dynamicSlider.absoluteChangeSliderValues()
         //console.log(absoluteSliderMin, absoluteSliderMax)
@@ -200,7 +226,10 @@ class VizScreen{
         absSlider.value = absoluteSliderMin
         let absOutput = document.getElementById("ABS")
         absOutput.value = ''
-        absOutput.placeholder = this.fixNumbers(absoluteSliderMin) + " <= x <= " + this.fixNumbers(absoluteSliderMax) 
+        // absOutput.placeholder = this.fixNumbers(absoluteSliderMin) + " <= x <= " + this.fixNumbers(absoluteSliderMax) 
+        let svg2 = d3.select(".slidecontainer2").append("svg").attr("id", "svg2").attr("x", 0).attr("y", 0).attr("width", 300).attr("height", 310)
+        svg2.append('text').attr("x", 130).attr("y", 30).text(this.fixNumbers(absoluteSliderMax)).style("font-size", "25px") 
+        svg2.append('text').attr("x", 130).attr("y", 210).text(this.fixNumbers(absoluteSliderMin)).style("font-size", "25px") 
 
         let [percentSliderAnomalyMin, percentSliderAnomaly95, percentSliderAnomalyMax] = dynamicSlider.percentAnomalySliderValues()
         //console.log(percentSliderAnomalyMin, percentSliderAnomaly95, percentSliderAnomalyMax)
@@ -210,7 +239,10 @@ class VizScreen{
         perAnomSlider.value = percentSliderAnomaly95
         let perAnomOutput = document.getElementById("COUPER")
         perAnomOutput.value = ''
-        perAnomOutput.placeholder = this.fixNumbers(percentSliderAnomalyMin) + " <= x <= " + this.fixNumbers(percentSliderAnomalyMax)
+        // perAnomOutput.placeholder = this.fixNumbers(percentSliderAnomalyMin) + " <= x <= " + this.fixNumbers(percentSliderAnomalyMax)
+        let svg3 = d3.select(".slidecontainer3").append("svg").attr("id", "svg3").attr("x", 0).attr("y", 0).attr("width", 300).attr("height", 310)
+        svg3.append('text').attr("x", 150).attr("y", 40).text(this.fixNumbers(percentSliderAnomalyMax)).style("font-size", "25px") 
+        svg3.append('text').attr("x", 10).attr("y", 40).text(this.fixNumbers(percentSliderAnomalyMin)).style("font-size", "25px") 
         
         let [absoluteSliderAnomalyMin, absoluteSliderAnomaly95, absoluteSliderAnomalyMax] = dynamicSlider.absoluteAnomalySliderValues()
         //console.log(absoluteSliderAnomalyMin, absoluteSliderAnomaly95, absoluteSliderAnomalyMax)
@@ -220,7 +252,10 @@ class VizScreen{
         absAnomSlider.value = absoluteSliderAnomaly95
         let absAnomOutput = document.getElementById("COUABS")
         absAnomOutput.value = ''
-        absAnomOutput.placeholder = this.fixNumbers(absoluteSliderAnomalyMin) + " <= x <= " + this.fixNumbers(absoluteSliderAnomalyMax) 
+        // absAnomOutput.placeholder = this.fixNumbers(absoluteSliderAnomalyMin) + " <= x <= " + this.fixNumbers(absoluteSliderAnomalyMax) 
+        let svg4 = d3.select(".slidecontainer4").append("svg").attr("id", "svg4").attr("x", 0).attr("y", 0).attr("width", 300).attr("height", 310)
+        svg4.append('text').attr("x", 150).attr("y", 40).text(this.fixNumbers(absoluteSliderAnomalyMax)).style("font-size", "25px") 
+        svg4.append('text').attr("x", 10).attr("y", 40).text(this.fixNumbers(absoluteSliderAnomalyMin)).style("font-size", "25px") 
     }
 
     fixNumbers(value){
@@ -231,7 +266,7 @@ class VizScreen{
             return (value/1000).toFixed(1) + 'K'
         }
         else{
-            return value + ''
+            return value.toFixed(1) + ''
         }
     }
 
@@ -239,12 +274,29 @@ class VizScreen{
         //console.log(this.selectedTimes) 
         let i = 1
         for (let time of this.selectedTimes){
-            $("#predictionTable>thead>tr").append("<th class=sortable id=c"+i+">TP"+i+"<input type=checkbox id=TP"+i+" value="+time+" onchange=dataSelect3();></th>")
+
+            let timePeriodTotal = 0
+            for (let continent of this.summaryData){
+                let metaValues = continent.meta
+                for (let country of metaValues){
+                    for (const [key, value] of Object.entries(country)) {
+                        if (key === time){
+                            for (const [key2, value2] of Object.entries(value)) {
+                                if (key2 === 'attacks'){
+                                    timePeriodTotal += value2
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            $("#predictionTable>thead>tr").append("<th class=sortable id=c"+i+">TP"+i +"["+this.fixNumbers(timePeriodTotal)+"]<input type=checkbox id=TP"+i+" value="+time+" onchange=dataSelect3();></th>")
             let requiredBox = 'TP'+i
             document.getElementById(requiredBox).style.maxWidth = "70px"
             i++
         }
-
 
     }
 
@@ -609,17 +661,24 @@ function dataSelect3(){
 }
 
 function dataSelect4(value){
-    //console.log(VizScreen.givenData)
+    console.log(VizScreen.givenData)
 
     let countries = []
     for (let forecast of VizScreen.givenData){
-        for (let country of forecast.meta){
-            if (value === country.country){
+        if ('meta' in forecast){
+            for (let country of forecast.meta){
+                if (value === country.country){
+                    countries.push(country)
+                }
+            }
+        }
+        if (forecast.region === value){
+            for (let country of forecast.meta){
                 countries.push(country)
             }
         }
     }
-    //console.log(countries)
+    console.log(countries)
 
     let linechartAttacks = new LineChartAttacks(countries, VizScreen.givenTimes)
     linechartAttacks.removeText()
@@ -637,7 +696,7 @@ function fixNumbers2(value){
         return (value/1000).toFixed(1) + 'K'
     }
     else{
-        return value + ''
+        return value.toFixed(1) + ''
     }
 }
 

@@ -8,22 +8,29 @@ class ParallelCoordinate{
     }
 
     dataForThirdViz(neededData){
-        // set the dimensions and margins of the graph
-        //console.log(neededData)
-        // countriesAcquired.push(neededData)
-        // console.log(countriesAcquired)
+        // console.log('X:', neededData)
+        
         let idSelector = function() { return this.id; }
         let checkedBoxes = $(":checkbox:checked").map(idSelector).get()
 
         let widthNumber = 0
         let assignedWidth = ''
 
-        if (checkedBoxes.length <= 22){
+        let workingLength = 0
+        if (checkedBoxes.length > this.givenCountries.length){
+            workingLength = checkedBoxes.length
+        }
+        else{
+            workingLength = this.givenCountries.length
+        }
+
+
+        if (workingLength <= 22){
             widthNumber = 2100
             assignedWidth = widthNumber + 'px'
         }
         else{
-            widthNumber = 2100 + (50 * (checkedBoxes.length - 22))
+            widthNumber = 2100 + (50 * (workingLength - 22))
             assignedWidth = widthNumber + 'px'
         }
 
@@ -33,7 +40,7 @@ class ParallelCoordinate{
 
         let starterValue = document.getElementById('mySidebar').offsetWidth + 
             document.getElementsByClassName('linechartviewAttacks')[0].offsetWidth +
-            document.getElementById('predictionTable').offsetWidth + 50
+            document.getElementById('predictionTable').offsetWidth + 380
         let parallelCoordinateStarter = starterValue + "px"
 
         document.getElementById("parallelCoordinatesGraph").style.left = parallelCoordinateStarter
@@ -51,44 +58,80 @@ class ParallelCoordinate{
                 `translate(${margin.left},${margin.top})`)
         .attr("id", "x")
 
-        //svg.append('text').attr("x", 200).attr("y", parallelCoordinateStarter).text("Melvins").style("font-size", "25px")
-
+        
         let usernameCollection = []
         for (const property in neededData) {
             let x = neededData[property]
-            for (const values of x){
-                let usernameValue = values['username']
-                if (!usernameCollection.includes(usernameValue)){
-                    usernameCollection.push(usernameValue)
-                }
-            }
-        }
-
-        let dates = []
-        for (const property in neededData) {
-            dates.push(property)
-        }
-
-        let desiredData = []
-        for (let usernames in usernameCollection){
-            let chosenUsername = usernameCollection[usernames]
-            let collection = []
-            for (const property in neededData) {
-                let x = neededData[property]
-                for (const values of x){
-                    if (chosenUsername === values['username']){
-                        const prop1 = property
-                        collection[prop1] = values['count']
+            for (const values in x){
+                for (const values2 of x[values]){
+                    let usernameValue = values2['username']
+                    if (!usernameCollection.includes(usernameValue)){
+                        usernameCollection.push(usernameValue)
                     }
                 }
             }
-            collection['username'] = chosenUsername
-            desiredData.push(collection)
+        }
+        //console.log(usernameCollection)
+
+        let datesOrCountries = []
+        if (this.givenCountries.length === 1){
+            for (const property in neededData) {
+                let x = neededData[property]
+                for (const values in x){
+                    datesOrCountries.push(values)
+                }
+            }
+        }
+        else{
+            for (const property in neededData) {
+                datesOrCountries.push(property)
+            }
+        }
+        // console.log(datesOrCountries)
+
+        let desiredData = []
+        if (this.givenCountries.length === 1){
+            for (let usernames in usernameCollection){
+                let chosenUsername = usernameCollection[usernames]
+                let collection = []
+                for (const property in neededData) {
+                    let x = neededData[property]
+                    for (const values in x){
+                        for (const values2 of x[values]){
+                            if (chosenUsername === values2['username']){
+                                const prop1 = values
+                                collection[prop1] = values2['count']
+                            }
+                        } 
+                    }
+                }
+                collection['username'] = chosenUsername
+                desiredData.push(collection)
+            }
+        }
+        else{
+            for (let usernames in usernameCollection){
+                let chosenUsername = usernameCollection[usernames]
+                let collection = []
+                for (const property in neededData) {
+                    let x = neededData[property]
+                    for (const values in x){
+                        let y = x[values]
+                        for (const values2 of y){
+                            if (chosenUsername === values2['username']){
+                                const prop1 = property
+                                collection[prop1] = values2['count'] 
+                            }
+                        }
+                    }
+                }
+                collection['username'] = chosenUsername
+                desiredData.push(collection)
+            }
         }
 
-        //console.log(desiredData)
-
-        for (const property in neededData) {
+        for (let i = 0; i < datesOrCountries.length; i++) {
+            let property = datesOrCountries[i]
             for (const things in desiredData){
                 let value =  desiredData[things]
                 if (!value.hasOwnProperty(property)){
@@ -98,10 +141,13 @@ class ParallelCoordinate{
             }
         }
 
-        this.vizPart(desiredData, height, width, svg, usernameCollection, dates)
+        
+        //console.log(desiredData)
+
+        this.vizPart(desiredData, height, width, svg, usernameCollection, datesOrCountries)
     }
 
-    vizPart(data, height, width, svg, usernameCollection, dates){
+    vizPart(data, height, width, svg, usernameCollection, datesOrCountries){
         //console.log(data)
         //let lineColorScale = d3.scaleOrdinal(d3.schemeTableau10).domain(usernameCollection)
         let dimensions = Object.keys(data[0]).filter(function(d) { return d != "username" })
@@ -203,7 +249,7 @@ class ParallelCoordinate{
             //document.getElementById("userNameNumbers").remove()
         })
 
-        //console.log(dates)
+        //console.log(datesOrCountries)
 
         let idSelector = function() { return this.id; }
         let checkedBoxes = $(":checkbox:checked").map(idSelector).get()
@@ -212,18 +258,21 @@ class ParallelCoordinate{
         for(let i = 0; i < checkedBoxes.length;i++){
             weekData.push(checkedBoxes[i])
         }
+        // console.log(weekData)
 
         this.hardcodedKeys = {}
-        for (let j = 0; j < dates.length; j++){
-            this.hardcodedKeys[dates[j]] = weekData[j]
+        for (let j = 0; j < datesOrCountries.length; j++){
+            this.hardcodedKeys[datesOrCountries[j]] = weekData[j]
         }
+        // console.log(this.hardcodedKeys)
 
         this.lineIDs = {}
         let k = 1
-        for (let j = 0; j < dates.length; j++){
-            this.lineIDs[dates[j]] = 'ID' + k
+        for (let j = 0; j < datesOrCountries.length; j++){
+            this.lineIDs[datesOrCountries[j]] = 'ID' + k
             k++
         }
+        // console.log(this.lineIDs)
         
 
         let that = this
@@ -266,8 +315,14 @@ class ParallelCoordinate{
             .style("text-anchor", "middle")
             .attr("y", 830)
             .text(function(d) { 
-                //console.log(hardcodedKeys)
-                return that.hardcodedKeys[d]; 
+                // console.log(d)
+                //console.log(that.hardcodedKeys[d])
+                if(that.givenCountries.length === 1){
+                    return that.hardcodedKeys[d]; 
+                }
+                else{
+                    return d
+                }
             })
             .style("fill", "black")
 
@@ -278,7 +333,7 @@ class ParallelCoordinate{
         svg.append('text').attr("transform", "translate("+(firstLineCoord-60)+",500)rotate(270)").text("Username frequency").style("font-size", "25px")
         
 
-        let totalDatesLength = dates.length
+        let totalDatesLength = datesOrCountries.length
         let valuesN = document.getElementById('ID'+totalDatesLength)
         //console.log(valuesN)
         let lastLineString = window.getComputedStyle(valuesN).transform
@@ -286,9 +341,29 @@ class ParallelCoordinate{
         //console.log(lastLineCoord)
         let xaxistextAtMiddlePoint = (firstLineCoord + lastLineCoord)/2 - 60
         //console.log(xaxistextAtMiddlePoint)
-        svg.append('text').attr("transform", "translate("+xaxistextAtMiddlePoint+",850)").text("Time Periods").style("font-size", "25px")
+        let that2 = this
 
-        svg.append('text').attr("transform", "translate("+(xaxistextAtMiddlePoint-260)+",-20)").text(Table.countryCode+"[Username Frequency Over Time Periods]").style("font-size", "35px")
+        svg.append('text').attr("transform", "translate("+xaxistextAtMiddlePoint+",850)")
+        .text(function(){
+            if (that.givenCountries.length === 1){
+                return "Time Periods"
+            }
+            else{
+                return "Countries"
+            }
+        })
+        .style("font-size", "25px")
+
+        svg.append('text').attr("transform", "translate("+(xaxistextAtMiddlePoint-260)+",-20)")
+        .text(function(){
+            if (that.givenCountries.length === 1){
+                return that.givenCountries[0]+"[Username Frequency Over Time Periods]"
+            }
+            else{
+                return weekData[0]+"[Username Frequency For Countries]"
+            }
+        })
+        .style("font-size", "35px")
     }
 
     fetchData2(){
@@ -299,8 +374,14 @@ class ParallelCoordinate{
         // console.log('Weeks:', selected)
         // console.log(this.countryCode)
 
+        // console.log('A:', selected)
+        // console.log('B:', this.givenCountries)
+
+        // && Table.countryCode != null
+
         let that = this
-        if (selectedWeeksLength >= 2 && Table.countryCode != null){
+        if ( (selectedWeeksLength >= 2 && this.givenCountries.length === 1)  || 
+        (selectedWeeksLength === 1 && this.givenCountries.length >= 2)  ){
             getData2(selected, this.givenCountries).then(function(loadedData){
                 that.dataForThirdViz(loadedData, selected)
             })
@@ -316,7 +397,9 @@ async function getData2(selected, countries){
     let givenValue = document.getElementById("data").value
     let givenValue2 = document.getElementById("timePeriod").value
 
-    let api_address = 'http://128.110.217.128/top/usernames?cluster='+givenValue+'&cc='+Table.countryCode+'&range='+selected.join(',')+'&period='+givenValue2
+
+
+    let api_address = 'http://128.110.217.128/top/usernames?cluster='+givenValue+'&cc='+countries.join(',')+'&range='+selected.join(',')+'&period='+givenValue2
     //console.log(api_address)
     const data = await fetch(api_address)
     const jsonData = await data.json()

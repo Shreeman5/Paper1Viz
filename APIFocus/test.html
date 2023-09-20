@@ -31,43 +31,79 @@
     <div id="myDataScreen">
 
         <div id="mySidebar" class="sidebar">
-            <div class="slidecontainery"> 
-                <div class="tooltipSliderContainer">
+            <div class="sidebarButton"> 
+                <div class="tooltipForSidebarButtonAndSliders">
                     <button class="openbtn" onclick="openNav()">☰ Open Sidebar
                         <span class="tooltiptext">Click on the menu to open the sidebar, 
                             and push this content to the right. You can change starting values here.</span>
                     </button>  
                 </div>
             </div>
+       
+            <div class="textualChange">
+                <svg id="textsForTP"></svg>
+            </div>
+
+        </div>      
+
+        <div id="main">
+            <header>
+                <h1>Continents and Country Attacks and Attackers</h1>
+            </header>
+
+            <div class="linechartviewAttacks">
+                <svg id="line-chart-attacks">
+                    <g id="x-axis-attacks"></g>
+                    <g id="y-axis-attacks"></g>
+                    <g id="lines-attacks"></g>
+                    <g id="overlay-attacks"><line></line></g>
+                </svg>
+            </div>
+
+            <div class="countryOptions">
+                <label for="countriesFromData" style="color:red;font-size:30px;" id="labelText">Filter a country/continent you would like to see on both linecharts</label>
+                <input list="countries" name="country" id="country" onchange="dataSelect4(this.value)">
+                <datalist id="countries"></datalist>
+            </div>
+
+    
+            <div class="linechartviewAttackers">
+                <svg id="line-chart-attackers">
+                    <g id="x-axis-attackers"></g>
+                    <g id="y-axis-attackers"></g>
+                    <g id="lines-attackers"></g>
+                    <g id="overlay-attackers"><line></line></g>
+                </svg>
+            </div>
 
             <div class="slidecontainer"> 
-                <div class="tooltipSliderContainer">Percentage Change
+                <div class="tooltipForSidebarButtonAndSliders" id="Text1">Percentage Change
                     <span class="tooltiptext">Use this slider to filter 
                         countries(in the linecharts and heatmap) that had a 
                         percentage increase of more than x from base week 'a' 
                         to any other week 'b'.</span>
                 </div>
-                <input type="range" class="slider" id="myRange" step="1" onchange="threshold()">
+                <input type="range" orient="vertical" class="slider" id="myRange" step="1" onchange="threshold()">
                 <input type="text" id="PER" onchange="textBox1(this.value)">
             </div>
             
             <div class="slidecontainer2">
-                <div class="tooltipSliderContainer">Absolute Change
+                <div class="tooltipForSidebarButtonAndSliders" id="Text2">Absolute Change
                     <span class="tooltiptext">Use this slider to filter countries
                         (in the linecharts and heatmap) that had an absolute increase 
                         of more than x from base week 'a' to any other week 'b'.</span>
                 </div>
-                <input type="range" class="slider" id="myRange2" step="1" onchange="threshold2()">
+                <input type="range" orient="vertical" class="slider" id="myRange2" step="1" onchange="threshold2()">
                 <input type="text" id="ABS" onchange="textBox2(this.value)">
             </div>
     
-            <div class="slidecontainerx">
+            <!-- <div class="slidecontainerx">
                 <div class="tooltipSliderContainer2">---Anomaly Sliders below---</div>
-            </div>
+            </div>  -->
     
             
             <div class="slidecontainer3">
-                <div class="tooltipSliderContainer">Country/Continent Percentage
+                <div class="tooltipForSidebarButtonAndSliders" id="Text3">Country/Continent Percentage
                     <span class="tooltiptext">Use this slider to separate anomalies
                         (colored purple as opposed to shades of green) for country/continent 
                         percentage numbers in any given week.</span>
@@ -79,22 +115,22 @@
 
     
             <div class="slidecontainer4">
-                <div class="tooltipSliderContainer">Country/Continent Absolute
+                <div class="tooltipForSidebarButtonAndSliders" id="Text4">Country/Continent Absolute
                     <span class="tooltiptext">Use this slider to separate anomalies
                         (colored purple as opposed to shades of blue) for country/continent absolute 
                         numbers in any given week.</span>
                 </div>
                 <input type="range" class="slider" id="myRange4" step="1" onchange="threshold4()">
                 <input type="text" id="COUABS" onchange="textBox4(this.value)">
-            </div> 
-        </div>      
+            </div>
 
-        <div id="main">
-            <header>
-                <h1>Continents and Country Attacks and Attackers</h1>
-            </header>
+
 
             <div class = "buttons">
+                <button id="resetButton" onclick="finalCheck()">
+                    Reset
+                </button>
+
                 <select name="dataset" id="dataset-select" onchange="dataSelect(this.value);">
                    <!-- ///////// Always uncommented <option selected="selected" disabled="true">--Please Select Base Week--</option> -->
                 </select>
@@ -103,36 +139,6 @@
                 </select>
             </div>
 
-            <div class="textualChange">
-                <svg id="textsForTP"></svg>
-            </div>
-
-            <div class="countryOptions">
-                <label for="countriesFromData">Filter a country you would like to see on the linechart</label>
-                <input list="countries" name="country" id="country" onchange="dataSelect4(this.value)">
-                <datalist id="countries"></datalist>
-            </div>
-
-            
-
-
-            <div class="linechartviewAttacks">
-                <svg id="line-chart-attacks">
-                    <g id="x-axis-attacks"></g>
-                    <g id="y-axis-attacks"></g>
-                    <g id="lines-attacks"></g>
-                    <g id="overlay-attacks"><line></line></g>
-                </svg>
-            </div>
-    
-            <div class="linechartviewAttackers">
-                <svg id="line-chart-attackers">
-                    <g id="x-axis-attackers"></g>
-                    <g id="y-axis-attackers"></g>
-                    <g id="lines-attackers"></g>
-                    <g id="overlay-attackers"><line></line></g>
-                </svg>
-            </div>
     
             
             <div class = "tableLegend">

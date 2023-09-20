@@ -12,6 +12,9 @@ class Table{
         let variables = new VariablesForTable(this.neededData, this.baseTime, this.selectedTimes)
         variables.continentMaxAbsoluteAttacks()
         variables.continentMaxPercentageAttacks()
+        variables.continentAndCountryTotalAttacks()
+        variables.userNameParsing()
+
         //console.log(this.neededData)
 
         
@@ -20,9 +23,9 @@ class Table{
         Table.countriesChosenUsedInAnotherFunction = []
         
 
-        this.vizWidth = 20;
-        this.vizHeight = 45; //originally 30
-        this.smallVizHeight = 45;//originally 20
+        this.vizWidth = 160;
+        this.vizHeight = 60; //originally 30
+        this.smallVizHeight = 60;//originally 20
     }
 
     drawLegend(){
@@ -161,6 +164,8 @@ class Table{
             .data(tabularLogic.rowToCellDataTransform)
             .join('td')
             .attr('class', d => d.class)
+
+        //console.log(forecastSelection)
         
         
 
@@ -175,15 +180,18 @@ class Table{
             .data(d => [d])
             .join('svg')
             .attr('width', this.vizWidth)
-            .attr('height', d => d.isForecast ? this.vizHeight : this.smallVizHeight);
+            .attr('height', d => d.isForecast ? this.vizHeight : this.smallVizHeight)
+            // .attr('preserveAspectRatio', 'none')
 
         let grouperSelect = svgSelect.selectAll('g')
         .data(d => [d])
         .join('g')
 
         this.rect = new Rectangle()
+        this.rect.setBackgroundOfCell(grouperSelect.filter((d,i) => i === 0))
         this.rect.addRectangles(grouperSelect.filter((d,i) => i === 0));
         this.rect.addRectangles2(grouperSelect.filter((d,i) => i === 0));
+        //this.rect.fetchDataForUsername(grouperSelect.filter((d,i) => i === 0))
     }
 
     toggleRow(rowData, index) {

@@ -5,10 +5,11 @@ class TableLogic{
     }
 
     rowToCellDataTransform(d) {
+        
         let stateInfo = {
             type: 'text',
             class: d.isForecast ? 'continent' : 'country',
-            value: d.isForecast ? d.region : d.country
+            value: d.isForecast ? d.region + '[' + d.totalAttacks + ']' : d.country + '[' + d.totalAttacks + ']'
         };
 
         let dataList = [stateInfo]
@@ -21,7 +22,8 @@ class TableLogic{
                     type: 'viz',
                     value: d.isForecast ? d['continent_max_attacks_' + i] : d[d.number].attacks,
                     value2: 0,
-                    value3: 0
+                    value3: 0,
+                    //value4: d.isForecast ? 'yes' : 
                 }
                 dataList.push(marginInfo)
             }
@@ -38,6 +40,16 @@ class TableLogic{
                 j++
             }
             i++
+        }
+
+        for (let i = 1; i < dataList.length; i++){
+            let thisCell = dataList[i]
+            if (thisCell.isForecast){
+                thisCell['value4'] = 'yes'
+            }
+            else{
+                thisCell['value4'] = d['country_root_admin_top_' + i]
+            }
         }
 
         //console.log(dataList)

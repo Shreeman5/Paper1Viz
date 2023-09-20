@@ -3,11 +3,11 @@ class BarGraph {
 
     constructor(givenCountries){
         this.givenCountries = givenCountries
-        console.log(givenCountries)
+        //console.log(givenCountries)
     }
 
     dataForSecondViz(neededData, selected){
-        console.log(neededData)
+        //console.log(neededData)
         let idSelector = function() { return this.id; }
         let checkedBoxes = $(":checkbox:checked").map(idSelector).get()
 
@@ -47,7 +47,7 @@ class BarGraph {
         
         let starterValue = document.getElementById('mySidebar').offsetWidth + 
             document.getElementsByClassName('linechartviewAttacks')[0].offsetWidth +
-            document.getElementById('predictionTable').offsetWidth + 50
+            document.getElementById('predictionTable').offsetWidth + 380
         let barGraphStarter = starterValue + "px"
 
         
@@ -366,8 +366,8 @@ class BarGraph {
         // console.log('Weeks:', selected)
         // console.log(this.countryCode)
 
-        console.log(selected)
-        console.log(this.givenCountries)
+        // console.log(selected)
+        // console.log(this.givenCountries)
 
         let that = this
         if (selectedWeeksLength >= 2 && Table.countryCode != null){
