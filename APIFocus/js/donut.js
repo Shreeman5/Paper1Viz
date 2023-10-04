@@ -23,15 +23,15 @@ class Donut{
             workingLength = this.givenCountries.length
         }
 
-        if (workingLength <= 24){
-            widthNumber = 1300
-            heightNumber = 1300
+        if (workingLength <= 2){
+            widthNumber = 680
+            heightNumber = 480
             assignedWidth = widthNumber + 'px'
             assignedHeight = heightNumber + 'px'
         }
         else{
-            widthNumber = 1300 + (60 * (workingLength - 24))
-            heightNumber = 1300 + (60 * (workingLength - 24))
+            widthNumber = 680 + (60 * (workingLength - 2))
+            heightNumber = 480 + (45 * (workingLength - 2))
             assignedWidth = widthNumber + 'px'
             assignedHeight = heightNumber + 'px'
         }
@@ -40,13 +40,12 @@ class Donut{
         width = widthNumber - margin.left - margin.right,
         height = heightNumber - margin.top - margin.bottom;
 
-        let starterValue = document.getElementById('mySidebar').offsetWidth + 
-            document.getElementsByClassName('linechartviewAttacks')[0].offsetWidth +
-            document.getElementById('predictionTable').offsetWidth + 380
+        let starterValue =  document.getElementById('predictionTable').offsetWidth + 660
         let donutStarter = starterValue + "px"
         
+        document.getElementById("donutGraph").style.outline = "5px dashed black"
         document.getElementById("donutGraph").style.left = donutStarter
-        document.getElementById("donutGraph").style.top = "2100px"
+        document.getElementById("donutGraph").style.top = "1500px"
         document.getElementById("donutGraph").style.width = assignedWidth
         document.getElementById("donutGraph").style.height = assignedHeight
 
@@ -58,8 +57,23 @@ class Donut{
             .attr("transform",
                 "translate(" + margin.left + "," + margin.top + ")");
         
+        svg.append("rect").attr("x", "-40").attr("y", "-140").attr("width", "20").attr("height", "20").style("fill", "navy")
+        svg.append('text').attr("x", "-15").attr("y", "-120").text("hosting").style("fill", "navy").style("font-size", "25px")
+        
+        svg.append("rect").attr("x", "70").attr("y", "-140").attr("width", "20").attr("height", "20").style("fill", "grey")
+        svg.append('text').attr("x", "95").attr("y", "-120").text("isp").style("fill", "grey").style("font-size", "25px")
+
+        svg.append("rect").attr("x", "135").attr("y", "-140").attr("width", "20").attr("height", "20").style("fill", "maroon")
+        svg.append('text').attr("x", "160").attr("y", "-120").text("education").style("fill", "maroon").style("font-size", "25px")
+
+        svg.append("rect").attr("x", "275").attr("y", "-140").attr("width", "20").attr("height", "20").style("fill", "purple")
+        svg.append('text').attr("x", "300").attr("y", "-120").text("business").style("fill", "purple").style("font-size", "25px")
+
+        svg.append("rect").attr("x", "410").attr("y", "-140").attr("width", "20").attr("height", "20").style("fill", "black")
+        svg.append('text').attr("x", "435").attr("y", "-120").text("NONE").style("fill", "black").style("font-size", "25px")
+        
         let that2 = this
-        svg.append('text').attr("x", "350").attr("y", "-110")
+        svg.append('text').attr("x", "-45").attr("y", "-80")
         .text(function(){
             if (that2.givenCountries.length === 1){
                 return that2.givenCountries[0] + '[ASN Type Frequency Over Time Periods]'
@@ -68,45 +82,30 @@ class Donut{
                 return checkedBoxes[0] + '[ASN Type Frequency For Countries]'
             } 
         })
-        .style("font-size", "35px")
-
-        svg.append("rect").attr("x", "0").attr("y", "-100").attr("width", "20").attr("height", "20").style("fill", "navy")
-        svg.append('text').attr("x", "25").attr("y", "-80").text("hosting").style("fill", "navy").style("font-size", "25px")
-        
-        svg.append("rect").attr("x", "280").attr("y", "-100").attr("width", "20").attr("height", "20").style("fill", "grey")
-        svg.append('text').attr("x", "305").attr("y", "-80").text("isp").style("fill", "grey").style("font-size", "25px")
-
-        svg.append("rect").attr("x", "560").attr("y", "-100").attr("width", "20").attr("height", "20").style("fill", "maroon")
-        svg.append('text').attr("x", "585").attr("y", "-80").text("education").style("fill", "maroon").style("font-size", "25px")
-
-        svg.append("rect").attr("x", "840").attr("y", "-100").attr("width", "20").attr("height", "20").style("fill", "purple")
-        svg.append('text').attr("x", "865").attr("y", "-80").text("business").style("fill", "purple").style("font-size", "25px")
-
-        svg.append("rect").attr("x", "1120").attr("y", "-100").attr("width", "20").attr("height", "20").style("fill", "black")
-        svg.append('text').attr("x", "1145").attr("y", "-80").text("NONE").style("fill", "black").style("font-size", "25px")
+        .style("font-size", "30px")
 
         let that = this
-        svg.append('text').attr("x", "0").attr("y", "-40")
+        svg.append('text').attr("x", "-45").attr("y", "-45")
         .text(function(){
             if (that.givenCountries.length === 1){
-                return "The innermost donut is the left-most and the outermost donut is the right-most"
+                return "Left Most Checked TP = Innermost Donut"
             }
             else{
-                return "The innermost donut is the most attacking and the outermost donut is the least"
+                return "Top Most Selected Country = Innermost Donut"
             }
         })
-        .style("fill", "black").style("font-size", "35px")
-        svg.append('text').attr("x", "0").attr("y", "-5")
+        .style("fill", "black").style("font-size", "30px")
+        svg.append('text').attr("x", "-45").attr("y", "-10")
         .text(function(){
             if (that.givenCountries.length === 1){
-                return "checked box in the table."
+                return "Right Most Checked TP = Outermost Donut"
             }
             else{
-                return "attacking selected country in the table."
+                return "Bottom Most Selected Country = Outermost Donut"
             }
         })
-        .style("fill", "black").style("font-size", "35px")
-        //console.log(BarGraph.rectPositions)
+        .style("fill", "black").style("font-size", "30px")
+
         this.makeDonutChart(neededData, svg, widthNumber, heightNumber)
     }
 
@@ -131,8 +130,8 @@ class Donut{
                 }
 
                 //console.log(desiredData)
-                let centerWidth = (widthNumber/2) - 50
-                let centerHeight = (heightNumber/2) - 50
+                let centerWidth = (widthNumber/2) - 220
+                let centerHeight = (heightNumber/2) - 80
                 const g = svg.append("g")
                             .attr("transform", `translate(${centerWidth}, ${centerHeight})`)
 
@@ -188,11 +187,11 @@ class Donut{
                         //console.log(this.givenCountries.length)
                         let percentageString = ((d.data[1]/totalCount) * 100).toFixed(2) + '%'
                         svg.append('text').attr("id", "tempTextSpecificAttack").attr("transform", `translate(${centerWidth - 110}, ${centerHeight - 30})`)
-                                    .text(d.data[0] + ": " + specificCountinString).style("font-size", "25px").style("fill", color(d.data[0]))
+                                    .text(d.data[0] + ": " + specificCountinString).style("font-size", "20px").style("fill", color(d.data[0]))
                         svg.append('text').attr("id", "tempTextTotalAttacks").attr("transform", `translate(${centerWidth - 110}, ${centerHeight})`)
-                                    .text("Total Attacks: " + totalCountinString).style("font-size", "25px")
+                                    .text("Total Attacks: " + totalCountinString).style("font-size", "20px")
                         svg.append('text').attr("id", "tempTextPercentage").attr("transform", `translate(${centerWidth - 115}, ${centerHeight + 30})`)
-                                    .text(d.data[0] + " share = " + percentageString).style("font-size", "25px").style("fill", color(d.data[0]))
+                                    .text(d.data[0] + " share = " + percentageString).style("font-size", "20px").style("fill", color(d.data[0]))
                         svg.append('text').attr("id", "tempTextTimePeriod").attr("transform", `translate(${centerWidth - 60}, ${centerHeight + 60})`)
                                     .text(function(){
                                         if (that.givenCountries.length === 1){
@@ -202,7 +201,7 @@ class Donut{
                                             return key
                                         }
                                     })
-                                    .style("font-size", "25px")
+                                    .style("font-size", "20px")
 
                         d3.select(this).attr("stroke", "lime").style("stroke-width", "7px")
                         
@@ -253,7 +252,7 @@ async function getData3(selected, countries){
     let givenValue = document.getElementById("data").value
     let givenValue2 = document.getElementById("timePeriod").value
 
-    let api_address = 'http://128.110.217.128/top/asn/type?cluster='+givenValue+'&cc='+countries.join(',')+'&range='+selected.join(',')+'&period='+givenValue2
+    let api_address = 'http://128.110.218.53/top/asn/type?cluster='+givenValue+'&cc='+countries.join(',')+'&range='+selected.join(',')+'&period='+givenValue2
     //console.log(api_address)
     const data = await fetch(api_address)
     const jsonData = await data.json()

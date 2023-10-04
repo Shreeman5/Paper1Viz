@@ -2,19 +2,11 @@ class LineChartAttacks{
 
     static countries 
 
-    constructor(neededData, selectedTimes){
+    constructor(neededData, selectedTimes, booleanForSoloLineChart){
         this.neededData = neededData
+        //console.log(this.neededData)
         this.selectedTimes = selectedTimes
-    }
-
-    separateCountries(){
-        let countries = []
-        for (let forecast of this.neededData){
-            for (let country of forecast.meta){
-                countries.push(country)
-            }
-        }
-        return countries
+        this.booleanForSoloLineChart = booleanForSoloLineChart
     }
 
     findValues(threshold, currentBaseTime, countriesOnly){
@@ -80,30 +72,50 @@ class LineChartAttacks{
         // console.log(this.neededData)
         // console.log(this.neededData.length)
 
-        let filteredCountriesOnly
-        if (this.neededData.length === 6){
-            let countriesOnly = this.separateCountries()
-            //console.log(countriesOnly)
-            filteredCountriesOnly = this.filterCountries(countriesOnly)
-            //console.log(filteredCountriesOnly)
-        }
-        else{
-            filteredCountriesOnly = this.neededData
+        // let filteredCountriesOnly
+        // if (this.neededData.length === 6){
+        //     let countriesOnly = this.separateCountries()
+        //     //console.log(countriesOnly)
+        //     filteredCountriesOnly = this.filterCountries(countriesOnly)
+        //     //console.log(filteredCountriesOnly)
+        // }
+        // else{
+        //     filteredCountriesOnly = this.neededData
+        // }
+
+        
+        let dimensionOfLineChartWidth = 540
+        let dimensionOfLineChartHeight = 500
+        if (this.selectedTimes.length > 10){
+            dimensionOfLineChartWidth = 540 + 30 * (this.selectedTimes.length - 10)
         }
 
         
 
+        let linechartElement = document.getElementById("line-chart-attacks")
+        linechartElement.style.height = dimensionOfLineChartHeight+"px"
+        linechartElement.style.width = dimensionOfLineChartWidth +"px"
+        
 
-        LineChartAttacks.countries = filteredCountriesOnly
+        let filteredCountriesOnly
+        if (this.booleanForSoloLineChart === "One"){
+            filteredCountriesOnly = this.neededData
+        }
+        else{
+            filteredCountriesOnly = this.filterCountries(this.neededData)
+        }
+        // console.log('Y:', filteredCountriesOnly.length)
+        //LineChartAttacks.countries = filteredCountriesOnly
 
 
         let pad_left = 100
         let pad_right = 10
-        let pad_bottom = 130
+        let pad_bottom = 100
         let attacksByPlaceMappedByLocation = new Map([])
         let csvTypeData = []
 
         for (let country of filteredCountriesOnly){
+            // console.log(country)
             let number = 1
             let val = []
             for (let time of this.selectedTimes){
@@ -136,7 +148,7 @@ class LineChartAttacks{
         
         let upperlimit = 0.1 + this.selectedTimes.length
         //console.log(limit)
-        let xScale = d3.scaleLinear().domain([1, upperlimit]).range([pad_left, 1000 - pad_right]);
+        let xScale = d3.scaleLinear().domain([1, upperlimit]).range([pad_left, dimensionOfLineChartWidth - pad_right]);
         let xAxis = d3.axisBottom(xScale).ticks(this.selectedTimes.length)
         .tickFormat(x => {
             if (x % 1 === 0){
@@ -146,17 +158,17 @@ class LineChartAttacks{
                 return ''
             }
         })
-        lineChart.select("#x-axis-attacks").attr("class", "axisxattacks")
-        .attr("transform", "translate(0," + (1000 - pad_bottom) + ")").call(xAxis)
+        lineChart.select("#x-axis-attacks").style("font-size", "25px")
+        .attr("transform", "translate(0," + (dimensionOfLineChartHeight - pad_bottom) + ")").call(xAxis)
         .selectAll("text").style("text-anchor", "end")
-        .style("font-size", "25px")
-        .attr("dx", this.selectedTimes.length > 16 ? "-.8em" : "0em")
-        .attr("dy", this.selectedTimes.length > 16 ? ".15em" :".55em")
-        .attr("transform", this.selectedTimes.length > 16 ? "rotate(-90)" :"rotate(0)")
+        .style("font-size", "20px")
+        .attr("dx", "-.8em")
+        .attr("dy", ".15em")
+        .attr("transform", "rotate(-90)")
 
-        let yScale = d3.scaleLinear().domain([0, d3.max(cases)]).range([1000 - pad_bottom, 40]);
+        let yScale = d3.scaleLinear().domain([0, d3.max(cases)]).range([dimensionOfLineChartHeight - pad_bottom, 40]);
         let yAxis = d3.axisLeft().scale(yScale).ticks(8)//
-        lineChart.select("#y-axis-attacks").attr("class", "axisyattacks").attr("transform", "translate(" + pad_left + ",0)").call(yAxis)
+        lineChart.select("#y-axis-attacks").style("font-size", "20px").attr("transform", "translate(" + pad_left + ",0)").call(yAxis)
         .selectAll("text")
         .text(d => {
             if (d >= 100000){
@@ -170,9 +182,9 @@ class LineChartAttacks{
             }
         })
 
-        lineChart.append('text').text('Time Periods').attr('x', 430).attr('y', 970).attr("class", "axisxattacks").attr("id", "t1")
-        lineChart.append('text').text('Attacks').attr('x', -550).attr('y', 30).attr('transform', 'rotate(-90)').attr("class", "axisxattacks").attr("id", "t2")
-        lineChart.append('text').text('Attacks Over The Time Periods').attr('x', 380).attr('y', 20).attr("class", "axisxattacks").attr("id", "t3")
+        lineChart.append('text').text('Time Periods').attr('x', (dimensionOfLineChartWidth/2) - 30).attr('y', 470).style("font-size", "25px").attr("id", "t1")
+        lineChart.append('text').text('Attacks').attr('x', -250).attr('y', 30).attr('transform', 'rotate(-90)').style("font-size", "25px").attr("id", "t2")
+        lineChart.append('text').text('Attacks Over The Time Periods').attr('x', (dimensionOfLineChartWidth/2) - 90).attr('y', 20).style("font-size", "25px").attr("id", "t3")
 
         let lineColorScale 
         if (filteredCountriesOnly.length <= 20){
@@ -190,9 +202,9 @@ class LineChartAttacks{
                                          (values)) 
 
         lineChart.on('mousemove', (event) => {
-          if (event.offsetX > pad_left && event.offsetX < 1000 - pad_right) {
+          if (event.offsetX > pad_left && event.offsetX < dimensionOfLineChartWidth - pad_right) {
             // Set the line position
-            lineChart.select('#overlay-attacks').select('line').attr('stroke', 'black').attr('x1', event.offsetX).attr('x2', event.offsetX).attr('y1', 1000 - pad_bottom).attr('y2', 20);
+            lineChart.select('#overlay-attacks').select('line').attr('stroke', 'black').attr('x1', event.offsetX).attr('x2', event.offsetX).attr('y1', dimensionOfLineChartHeight - pad_bottom).attr('y2', 20);
             const yearHovered = Math.floor(xScale.invert(event.offsetX))
             //console.log('X:', yearHovered)
     
@@ -211,10 +223,10 @@ class LineChartAttacks{
               .text(d=>`${d.country}, ${this.convert(d.cases)}`)
               .attr('x', function(){
                 if (filteredCountriesOnly.length > 20){
-                    return event.offsetX < 560 ? event.offsetX : event.offsetX - 460
+                    return event.offsetX < (dimensionOfLineChartWidth/2) + pad_right ? event.offsetX : event.offsetX - 300
                 }
                 else{
-                    return event.offsetX < 500 ? event.offsetX : event.offsetX - 500
+                    return event.offsetX < (dimensionOfLineChartWidth/2) + pad_right ? event.offsetX : event.offsetX - 400
                 }
               }) 
               .attr('y', (d, i) => {
@@ -222,12 +234,12 @@ class LineChartAttacks{
                     return 20*i + 30
                 }
                 else{
-                    return 30*i + 30
+                    return 25*i + 30
                 }
                })
               .attr('alignment-baseline', 'hanging')
               .attr('fill', (d) => lineColorScale(d.country))
-              .attr("class", filteredCountriesOnly.length <= 20 ? "textattacksbig" : "textattackssmall")
+              .style("font-size", filteredCountriesOnly.length <= 20 ? "25px" : "18px")
           }
         });
     }

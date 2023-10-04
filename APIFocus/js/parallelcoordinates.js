@@ -2,14 +2,14 @@ class ParallelCoordinate{
 
     //static countriesAcquired = []
 
-    constructor(givenCountries){
+    constructor(givenCountries, givenChoice){
         this.givenCountries = givenCountries
+        this.givenChoice = givenChoice
         //console.log(givenCountries)
     }
 
     dataForThirdViz(neededData){
         // console.log('X:', neededData)
-        
         let idSelector = function() { return this.id; }
         let checkedBoxes = $(":checkbox:checked").map(idSelector).get()
 
@@ -25,28 +25,27 @@ class ParallelCoordinate{
         }
 
 
-        if (workingLength <= 22){
-            widthNumber = 2100
+        if (workingLength <= 6){
+            widthNumber = 1000
             assignedWidth = widthNumber + 'px'
         }
         else{
-            widthNumber = 2100 + (50 * (workingLength - 22))
+            widthNumber = 1000 + (100 * (workingLength - 6))
             assignedWidth = widthNumber + 'px'
         }
 
         let margin = {top: 100, right: 30, bottom: 100, left: 50},
         width = widthNumber - margin.left - margin.right,
-        height = 1000 - margin.top - margin.bottom;
+        height = 600 - margin.top - margin.bottom;
 
-        let starterValue = document.getElementById('mySidebar').offsetWidth + 
-            document.getElementsByClassName('linechartviewAttacks')[0].offsetWidth +
-            document.getElementById('predictionTable').offsetWidth + 380
+        let starterValue = document.getElementById('predictionTable').offsetWidth + 660
         let parallelCoordinateStarter = starterValue + "px"
 
+        document.getElementById("parallelCoordinatesGraph").style.outline = "5px dashed black"
         document.getElementById("parallelCoordinatesGraph").style.left = parallelCoordinateStarter
-        document.getElementById("parallelCoordinatesGraph").style.top = "1050px"
+        document.getElementById("parallelCoordinatesGraph").style.top = "870px"
         document.getElementById("parallelCoordinatesGraph").style.width = assignedWidth
-        document.getElementById("parallelCoordinatesGraph").style.height = "1000px"
+        document.getElementById("parallelCoordinatesGraph").style.height = "600px"
 
         // append the svg object to the body of the page
         const svg = d3.select("#parallelCoordinatesGraph")
@@ -141,16 +140,61 @@ class ParallelCoordinate{
             }
         }
 
+
+        //this.removeUserNameFilterOptions()
+        this.addUserNameFilterOptions(desiredData, parallelCoordinateStarter)
+
+        
         
         //console.log(desiredData)
 
+        let sel = document.getElementById('usernameFilter')
+        let filteredUsername = sel.options[sel.selectedIndex].text
+
+        // console.log(filteredUsername)
+        if (this.givenChoice === "yes"){
+            if (filteredUsername !== '-- SEE ALL USERNAMES --'){
+                desiredData = desiredData.filter(item => item.username === filteredUsername)
+            }
+        }
+        // console.log(desiredData)
         this.vizPart(desiredData, height, width, svg, usernameCollection, datesOrCountries)
     }
 
+    addUserNameFilterOptions(desiredData, parallelCoordinateStarter){
+        document.getElementById("usernameFilter").style.width = "420px"
+        document.getElementById("usernameFilter").style.height = "50px"
+        document.getElementById("usernameFilter").style.top = "770px"
+        document.getElementById("usernameFilter").style.left = parallelCoordinateStarter
+        let usernameSelect = document.getElementById("usernameFilter")
+
+        let allUsernames = []
+        for (let indivData of desiredData){
+            allUsernames.push(indivData['username'])
+            let exists = $("#usernameFilter option").filter(function (i, o) { return o.text === indivData['username']; }).length > 0
+            if (exists == false){
+                let option = document.createElement("option")
+                option.value = [indivData['username']]
+                option.text = indivData['username']
+                usernameSelect.add(option)
+            }
+        }
+
+        let exists2 = $("#usernameFilter option").filter(function (i, o) { return o.text === '-- SEE ALL USERNAMES --'; }).length > 0
+        if (exists2 == false){
+            let option2 = document.createElement("option")
+            option2.value = allUsernames
+            option2.text = '-- SEE ALL USERNAMES --'
+            usernameSelect.add(option2)
+        }
+    }
+
     vizPart(data, height, width, svg, usernameCollection, datesOrCountries){
-        //console.log(data)
+        console.log(data)
+        console.log(datesOrCountries)
         //let lineColorScale = d3.scaleOrdinal(d3.schemeTableau10).domain(usernameCollection)
-        let dimensions = Object.keys(data[0]).filter(function(d) { return d != "username" })
+        let dimensions = datesOrCountries
+        //Object.keys(data[0]).filter(function(d) { return d != "username" })
         //console.log(dimensions)
         const y = {}
         for (let i in dimensions) {
@@ -313,7 +357,7 @@ class ParallelCoordinate{
             })
             .append("text")
             .style("text-anchor", "middle")
-            .attr("y", 830)
+            .attr("y", 430)
             .text(function(d) { 
                 // console.log(d)
                 //console.log(that.hardcodedKeys[d])
@@ -326,24 +370,31 @@ class ParallelCoordinate{
             })
             .style("fill", "black")
 
+
+
         let values = document.getElementById('ID1')
         let firstLineString = window.getComputedStyle(values).transform
         let firstLineCoord = Number(firstLineString.substring(19, 22))
-        //console.log(firstLineCoord)
-        svg.append('text').attr("transform", "translate("+(firstLineCoord-60)+",500)rotate(270)").text("Username frequency").style("font-size", "25px")
-        
+        svg.append('text').attr("transform", "translate("+(firstLineCoord-70)+",310)rotate(270)").text("Username frequency").style("font-size", "25px")
 
         let totalDatesLength = datesOrCountries.length
         let valuesN = document.getElementById('ID'+totalDatesLength)
-        //console.log(valuesN)
         let lastLineString = window.getComputedStyle(valuesN).transform
-        let lastLineCoord = Number(lastLineString.substring(19, 23))
+        let importantString = lastLineString.substring(22, 23)
+        if (importantString === '.' || importantString === ','){
+            importantString = lastLineString.substring(19, 22)
+        }
+        else{
+            importantString = lastLineString.substring(19, 23)
+        }
+        // console.log(importantString)
+        let lastLineCoord = Number(importantString)
+        // console.log(lastLineCoord)
         //console.log(lastLineCoord)
         let xaxistextAtMiddlePoint = (firstLineCoord + lastLineCoord)/2 - 60
-        //console.log(xaxistextAtMiddlePoint)
-        let that2 = this
+        //console.log('A:', xaxistextAtMiddlePoint)
 
-        svg.append('text').attr("transform", "translate("+xaxistextAtMiddlePoint+",850)")
+        svg.append('text').attr("transform", "translate("+xaxistextAtMiddlePoint+",460)")
         .text(function(){
             if (that.givenCountries.length === 1){
                 return "Time Periods"
@@ -354,7 +405,7 @@ class ParallelCoordinate{
         })
         .style("font-size", "25px")
 
-        svg.append('text').attr("transform", "translate("+(xaxistextAtMiddlePoint-260)+",-20)")
+        svg.append('text').attr("transform", "translate("+(xaxistextAtMiddlePoint-160)+",-20)")
         .text(function(){
             if (that.givenCountries.length === 1){
                 return that.givenCountries[0]+"[Username Frequency Over Time Periods]"
@@ -363,7 +414,7 @@ class ParallelCoordinate{
                 return weekData[0]+"[Username Frequency For Countries]"
             }
         })
-        .style("font-size", "35px")
+        .style("font-size", "25px")
     }
 
     fetchData2(){
@@ -399,7 +450,7 @@ async function getData2(selected, countries){
 
 
 
-    let api_address = 'http://128.110.217.128/top/usernames?cluster='+givenValue+'&cc='+countries.join(',')+'&range='+selected.join(',')+'&period='+givenValue2
+    let api_address = 'http://128.110.218.53/top/usernames?cluster='+givenValue+'&cc='+countries.join(',')+'&range='+selected.join(',')+'&period='+givenValue2
     //console.log(api_address)
     const data = await fetch(api_address)
     const jsonData = await data.json()
