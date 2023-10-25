@@ -43,7 +43,7 @@ class DynamicSlider{
         arr.sort(function(a, b){return a-b;})
         let firstIndexNumber = arr[0]
         let lastIndexNumber = arr[arr.length - 1]
-        return [firstIndexNumber, lastIndexNumber]
+        return [firstIndexNumber, lastIndexNumber, arr]
     }
 
     absoluteChangeSliderValues(){
@@ -79,7 +79,7 @@ class DynamicSlider{
         arr.sort(function(a, b){return a-b;})
         let firstIndexNumber = arr[0]
         let lastIndexNumber = arr[arr.length - 1]
-        return [firstIndexNumber, lastIndexNumber]
+        return [firstIndexNumber, lastIndexNumber, arr]
     }
 
 
@@ -116,7 +116,7 @@ class DynamicSlider{
         let firstIndexNumber = arr[0]
         let anomalyThreshold = arr[Math.floor(arr.length * 0.95)]
         let lastIndexNumber = arr[arr.length - 1]
-        return [firstIndexNumber, anomalyThreshold, lastIndexNumber]
+        return [firstIndexNumber, anomalyThreshold, lastIndexNumber, arr]
     }
 
     //gathers all absolute numbers, irrespective of base date, seprates out 95% anomalies
@@ -137,6 +137,6 @@ class DynamicSlider{
         let firstIndexNumber = arr[0]
         let anomalyThreshold = arr[Math.floor(arr.length * 0.95)]
         let lastIndexNumber = arr[arr.length - 1]
-        return [firstIndexNumber, anomalyThreshold, lastIndexNumber]
+        return [firstIndexNumber, anomalyThreshold, lastIndexNumber, arr]
     }
 }

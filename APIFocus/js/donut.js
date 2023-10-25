@@ -40,12 +40,12 @@ class Donut{
         width = widthNumber - margin.left - margin.right,
         height = heightNumber - margin.top - margin.bottom;
 
-        let starterValue =  document.getElementById('predictionTable').offsetWidth + 660
+        let starterValue =  document.getElementById('predictionTable').offsetWidth + 680
         let donutStarter = starterValue + "px"
         
         document.getElementById("donutGraph").style.outline = "5px dashed black"
         document.getElementById("donutGraph").style.left = donutStarter
-        document.getElementById("donutGraph").style.top = "1500px"
+        document.getElementById("donutGraph").style.top = "1670px"
         document.getElementById("donutGraph").style.width = assignedWidth
         document.getElementById("donutGraph").style.height = assignedHeight
 
@@ -165,23 +165,34 @@ class Donut{
                         if (totalCount >= 1000000){
                             totalCountinString = (totalCount/1000000).toFixed(1) + 'M'
                         }
+                        else if (totalCount >= 100000){
+                            totalCountinString = (totalCount/1000000).toFixed(2) + 'M'
+                        }
+                        else if (totalCount >= 10000){
+                            totalCountinString =  (totalCount/1000).toFixed(1) + 'K'
+                        }
                         else if (totalCount >= 1000){
-                            totalCountinString = (totalCount/1000).toFixed(1) + 'K'
+                            totalCountinString = (totalCount/1000).toFixed(2) + 'K'
                         }
                         else{
-                            totalCountinString = totalCount + ''
+                            totalCountinString = totalCount.toFixed(1) + ''
                         }
-
                         
                         let specificCountinString = ''
                         if (d.data[1] >= 1000000){
                             specificCountinString = (d.data[1]/1000000).toFixed(1) + 'M'
                         }
-                        else if (d.data[1] >= 1000){
+                        else if (d.data[1] >= 100000){
+                            specificCountinString = (d.data[1]/1000000).toFixed(2) + 'M'
+                        }
+                        else if (d.data[1] >= 10000){
                             specificCountinString = (d.data[1]/1000).toFixed(1) + 'K'
                         }
+                        else if (d.data[1] >= 1000){
+                            specificCountinString = (d.data[1]/1000).toFixed(2) + 'K'
+                        }
                         else{
-                            specificCountinString = d.data[1] + ''
+                            specificCountinString = d.data[1].toFixed(1) + ''
                         }
 
                         //console.log(this.givenCountries.length)
@@ -241,7 +252,7 @@ class Donut{
             })
         }
         else{
-            console.log("not enough checks")
+            // console.log("not enough checks")
         }
     }
 
@@ -252,7 +263,7 @@ async function getData3(selected, countries){
     let givenValue = document.getElementById("data").value
     let givenValue2 = document.getElementById("timePeriod").value
 
-    let api_address = 'http://128.110.218.53/top/asn/type?cluster='+givenValue+'&cc='+countries.join(',')+'&range='+selected.join(',')+'&period='+givenValue2
+    let api_address = 'http://128.110.217.95/top/asn/type?cluster='+givenValue+'&cc='+countries.join(',')+'&range='+selected.join(',')+'&period='+givenValue2
     //console.log(api_address)
     const data = await fetch(api_address)
     const jsonData = await data.json()

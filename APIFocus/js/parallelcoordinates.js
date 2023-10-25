@@ -1,6 +1,7 @@
 class ParallelCoordinate{
 
     //static countriesAcquired = []
+    static dataUsedInVizScreen
 
     constructor(givenCountries, givenChoice){
         this.givenCountries = givenCountries
@@ -9,6 +10,8 @@ class ParallelCoordinate{
     }
 
     dataForThirdViz(neededData){
+        ParallelCoordinate.dataUsedInVizScreen = neededData
+        // console.log(neededData)
         // console.log('X:', neededData)
         let idSelector = function() { return this.id; }
         let checkedBoxes = $(":checkbox:checked").map(idSelector).get()
@@ -38,12 +41,13 @@ class ParallelCoordinate{
         width = widthNumber - margin.left - margin.right,
         height = 600 - margin.top - margin.bottom;
 
-        let starterValue = document.getElementById('predictionTable').offsetWidth + 660
+        let starterValue = document.getElementById('predictionTable').offsetWidth + 680
         let parallelCoordinateStarter = starterValue + "px"
+        let parallelCoordinateStarter2 = (starterValue-15) + "px"
 
         document.getElementById("parallelCoordinatesGraph").style.outline = "5px dashed black"
         document.getElementById("parallelCoordinatesGraph").style.left = parallelCoordinateStarter
-        document.getElementById("parallelCoordinatesGraph").style.top = "870px"
+        document.getElementById("parallelCoordinatesGraph").style.top = "1040px"
         document.getElementById("parallelCoordinatesGraph").style.width = assignedWidth
         document.getElementById("parallelCoordinatesGraph").style.height = "600px"
 
@@ -142,7 +146,7 @@ class ParallelCoordinate{
 
 
         //this.removeUserNameFilterOptions()
-        this.addUserNameFilterOptions(desiredData, parallelCoordinateStarter)
+        this.addUserNameFilterOptions(desiredData, parallelCoordinateStarter2)
 
         
         
@@ -164,7 +168,7 @@ class ParallelCoordinate{
     addUserNameFilterOptions(desiredData, parallelCoordinateStarter){
         document.getElementById("usernameFilter").style.width = "420px"
         document.getElementById("usernameFilter").style.height = "50px"
-        document.getElementById("usernameFilter").style.top = "770px"
+        document.getElementById("usernameFilter").style.top = "970px"
         document.getElementById("usernameFilter").style.left = parallelCoordinateStarter
         let usernameSelect = document.getElementById("usernameFilter")
 
@@ -190,8 +194,8 @@ class ParallelCoordinate{
     }
 
     vizPart(data, height, width, svg, usernameCollection, datesOrCountries){
-        console.log(data)
-        console.log(datesOrCountries)
+        // console.log(data)
+        // console.log(datesOrCountries)
         //let lineColorScale = d3.scaleOrdinal(d3.schemeTableau10).domain(usernameCollection)
         let dimensions = datesOrCountries
         //Object.keys(data[0]).filter(function(d) { return d != "username" })
@@ -341,14 +345,20 @@ class ParallelCoordinate{
                     else {
                         let integerCheck = Math.log10(x)
                         if (Number.isInteger(integerCheck)){
-                            if (x >= 1000000){
-                                return x/1000000 + 'M'
+                            if (Math.abs(x) >= 1000000){
+                                return (x/1000000).toFixed(1) + 'M'
                             }
-                            else if (x < 1000000 && x >= 1000){
-                                return x/1000 + 'K'
+                            else if (Math.abs(x) >= 100000){
+                                return (x/1000000).toFixed(2) + 'M'
                             }
-                            else if (x < 1000){
-                                return x
+                            else if (Math.abs(x) >= 10000){
+                                return (x/1000).toFixed(1) + 'K'
+                            }
+                            else if (Math.abs(x) >= 1000){
+                                return (x/1000).toFixed(2) + 'K'
+                            }
+                            else{
+                                return x.toFixed(1) + ''
                             }
                         }
                     }
@@ -438,7 +448,7 @@ class ParallelCoordinate{
             })
         }
         else{
-            console.log("not enough checks")
+            // console.log("not enough checks")
         }
     }
 
@@ -450,7 +460,7 @@ async function getData2(selected, countries){
 
 
 
-    let api_address = 'http://128.110.218.53/top/usernames?cluster='+givenValue+'&cc='+countries.join(',')+'&range='+selected.join(',')+'&period='+givenValue2
+    let api_address = 'http://128.110.217.95/top/usernames?cluster='+givenValue+'&cc='+countries.join(',')+'&range='+selected.join(',')+'&period='+givenValue2
     //console.log(api_address)
     const data = await fetch(api_address)
     const jsonData = await data.json()

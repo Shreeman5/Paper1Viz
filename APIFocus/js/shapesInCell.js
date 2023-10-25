@@ -2,13 +2,13 @@ class ShapesInCell{
 
     constructor(){
         this.slider3Value = document.getElementById("myRange3").value
-        if (this.slider3Value < 0){
-            this.slider3Value = 0
-        }
+        // if (this.slider3Value < 0){
+        //     this.slider3Value = 0
+        // }
         this.slider3ValueMin = document.getElementById("myRange3").min
         this.colorScaleForPercentAttacks= d3.scaleSequential()
         .interpolator(d3.interpolateGreens)
-        .domain([0,this.slider3Value])
+        .domain([this.slider3ValueMin,this.slider3Value])
 
         this.slider4Value = document.getElementById("myRange4").value
         this.slider4ValueMin = document.getElementById("myRange4").min
@@ -265,13 +265,7 @@ class ShapesInCell{
         let tip = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 10).style("font-size", "30px")
         this.rectangles.on("mouseover", function(e, d) {
             //console.log(d)
-            let tiptext
-            if (d.isForecast === true){
-                tiptext = "This continent has a country which had "+that.better(d.value)+ " attacks (max value among all countries) for this time period."
-            }
-            else{
-                tiptext = "This country had a total of "+that.better(d.value)+ " attacks for this time period."
-            }
+            let tiptext = "This country had a total of "+that.better(d.value)+ " attacks for this time period."
             tip.style("opacity", 5)
                 .html(tiptext)
                 .style("left", (e.pageX) + "px")
@@ -283,20 +277,21 @@ class ShapesInCell{
 
     }
 
-    better(number){  
-        if (Math.abs(number) >= 1000000){
-            return (number/1000000).toFixed(2) + 'M'
-        } 
-        else if (Math.abs(number) >= 1000){
-            return (number/1000).toFixed(2) + 'K'
+    better(value){  
+        if (Math.abs(value) >= 1000000){
+            return (value/1000000).toFixed(1) + 'M'
         }
-        else if (Math.abs(number) < 1000){
-            if (number % 1 != 0){
-                return number.toFixed(2)
-            }
-            else{
-                return number
-            }
+        else if (Math.abs(value) >= 100000){
+            return (value/1000000).toFixed(2) + 'M'
+        }
+        else if (Math.abs(value) >= 10000){
+            return (value/1000).toFixed(1) + 'K'
+        }
+        else if (Math.abs(value) >= 1000){
+            return (value/1000).toFixed(2) + 'K'
+        }
+        else{
+            return value.toFixed(1) + ''
         }
     }
 

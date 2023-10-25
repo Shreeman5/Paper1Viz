@@ -156,7 +156,7 @@ class VariablesForTable{
 async function getData4(selected, countries){
     let givenValue = document.getElementById("data").value
     let givenValue2 = document.getElementById("timePeriod").value
-    let api_address = 'http://128.110.218.53/top/usernames?cluster='+givenValue+'&cc='+countries.join(',')+'&range='+selected+'&period='+givenValue2
+    let api_address = 'http://128.110.217.95/top/usernames?cluster='+givenValue+'&cc='+countries.join(',')+'&range='+selected+'&period='+givenValue2
     const data = await fetch(api_address)
     const jsonData = await data.json()
     return jsonData

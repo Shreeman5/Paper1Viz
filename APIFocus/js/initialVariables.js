@@ -1,6 +1,9 @@
+
 document.getElementById("datePick").style.display = "none"
 document.getElementById("weekPick").style.display = "none"
 document.getElementById("monthPick").style.display = "none"
+
+
 
 
 function specifyTimePeriod(){
@@ -37,7 +40,7 @@ function specifyTimePeriod(){
 }
 
 async function findMinMaxDate(givenValue){
-    let minMaxDatesAPI = 'http://128.110.218.53/timeframe/range?cluster='+givenValue
+    let minMaxDatesAPI = 'http://128.110.217.95/timeframe/range?cluster='+givenValue
     const minMaxDate = await fetch(minMaxDatesAPI)
     const jsonMinMaxDate = await minMaxDate.json()
     return jsonMinMaxDate
@@ -45,6 +48,7 @@ async function findMinMaxDate(givenValue){
 
 
 function findMinandMaxDay(minMaxDateData){
+    // console.log(minMaxDateData)
     let minDate = minMaxDateData['min']['date']
     let minDateString = minDate.substring(5,7)+'/'+minDate.substring(8,10)+'/'+minDate.substring(0,4)
     let maxDate = minMaxDateData['max']['date']
@@ -232,7 +236,7 @@ async function fetchSummaryData(cluster, period, range){
         }
     }
     
-    let summaryAPI = 'http://128.110.218.53/summary/bycountry?cluster='+cluster+'&period='+period+'&range='+range.join(",")
+    let summaryAPI = 'http://128.110.217.95/summary/bycountry?cluster='+cluster+'&period='+period+'&range='+range.join(",")
     const summaryData = await fetch(summaryAPI)
     const jsonSummaryData = await summaryData.json()
     return jsonSummaryData

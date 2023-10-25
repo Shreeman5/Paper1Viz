@@ -67,25 +67,52 @@
 
     <div id="filterDiv">
         <div id="slidecontainer"> 
-            <div class="tooltipForSidebarButtonAndSliders" id="Text1">Percentage Change
-                <span class="tooltiptext">Use this slider to filter 
-                    countries(in the linecharts and heatmap) that had a 
-                    percentage increase of more than x from base week 'a' 
-                    to any other week 'b'.</span>
+            <div class="tooltipForSidebarButtonAndSliders" id="Text1">Percentage Change Distribution(Hover Me)
+                <span class="tooltiptext">
+                    The histogram below shows the distribution of percentage
+                    change numbers from base time period x to non-base time period(s).
+                    
+                    Use the slider to filter 
+                    countries in the table that had a 
+                    percentage increase of more than x(where x is the number on the 
+                    slider and input box) from base time period x
+                    to non base time period y.
+                </span>
             </div>
-            <input type="range" class="slider" id="myRange" step="1" onchange="threshold()">
-            <input type="text" id="PER" onchange="textBox1(this.value)">
+            <input type="range" class="slider" id="myRange" step="1" onchange="threshold1()">
+            <div id="combobox1">
+                <div class="select-editable">
+                    <select id="PERCHOOSE" onchange="chooseBox1(this.value)">
+                        <option selected="selected" disabled="true">Please Select Or Type</option>
+                    </select>
+                    <input id="PERWRITE" type="text" name="format" value="" onchange="textBox1(this.value)"/>
+                </div>
+            </div>
             <svg id="svg1"></svg>
         </div>
 
         <div id="slidecontainer2">
-            <div class="tooltipForSidebarButtonAndSliders" id="Text2">Absolute Change
-                <span class="tooltiptext">Use this slider to filter countries
-                    (in the linecharts and heatmap) that had an absolute increase 
-                    of more than x from base week 'a' to any other week 'b'.</span>
+            <div class="tooltipForSidebarButtonAndSliders" id="Text2">Absolute Change Distribution(Hover Me)
+                <span class="tooltiptext">
+                    The histogram below shows the distribution of absolute
+                    change numbers from base time period x to non-base time period(s).
+                    
+                    Use the slider to filter 
+                    countries in the table that had an 
+                    absolute increase of more than x(where x is the number on the 
+                    slider and input box) from base time period x
+                    to non base time period y.
+                </span>
             </div>
             <input type="range" class="slider" id="myRange2" step="1" onchange="threshold2()">
-            <input type="text" id="ABS" onchange="textBox2(this.value)">
+            <div id="combobox2">
+                <div class="select-editable">
+                    <select id="ABSCHOOSE" onchange="chooseBox2(this.value)">
+                        <option selected="selected" disabled="true">Please Select Or Type</option>
+                    </select>
+                    <input id="ABSWRITE" type="text" name="format" value="" onchange="textBox2(this.value)"/>
+                </div>
+            </div>
             <svg id="svg2"></svg>
         </div>
 
@@ -107,33 +134,53 @@
         </div>
 
         <div id="slidecontainer3">
-            <div class="tooltipForSidebarButtonAndSliders" id="Text3">Anomaly Percentage
-                <span class="tooltiptext">Use this slider to separate anomalies
-                    (colored purple as opposed to shades of green) for country/continent 
-                    percentage numbers in any given week.</span>
-            </div>
-            <input type="range" orient="vertical" class="slider" id="myRange3" step="1" onchange="threshold3()">
-            <input type="text" id="COUPER" onchange="textBox3(this.value)">
             <svg id="svg3"></svg>
+            <input type="range" orient="vertical" class="slider" id="myRange3" step="1" onchange="threshold3()">
+            <div class="tooltipForSidebarButtonAndSliders" id="Text3">Anomaly Percentage(Hover Me)
+                <span class="tooltiptext">
+                    The histogram above shows the distribution of percentage
+                    change numbers from any time period x to any time period y.
+                    Unlike the percentage change distribution slider, the distribution
+                    shown in this slider does not depend on the current base time period.
+                    Use the slider to change the threshold for percentage anomalies.
+                </span>
+            </div>
+            <div id="combobox3">
+                <div class="select-editable-2">
+                    <select id="ANOMPERCHOOSE" onchange="chooseBox3(this.value)">
+                        <option selected="selected" disabled="true">Please Select Or Type</option>
+                    </select>
+                    <input id="ANOMPERWRITE" type="text" name="format" value="" onchange="textBox3(this.value)"/>
+                </div>
+            </div>
         </div> 
 
         <div id="slidecontainer4">
-            <div class="tooltipForSidebarButtonAndSliders" id="Text4">Anomaly Absolute
-                <span class="tooltiptext">Use this slider to separate anomalies
-                    (colored purple as opposed to shades of blue) for country/continent absolute 
-                    numbers in any given week.</span>
-            </div>
-            <input type="range" orient="vertical" class="slider" id="myRange4" step="1" onchange="threshold4()">
-            <input type="text" id="COUABS" onchange="textBox4(this.value)">
             <svg id="svg4"></svg>
+            <input type="range" orient="vertical" class="slider" id="myRange4" step="1" onchange="threshold4()">
+            <div class="tooltipForSidebarButtonAndSliders" id="Text4">Anomaly Absolute(Hover Me)
+                <span class="tooltiptext">
+                    The histogram above shows the distribution of absolute
+                    numbers for all the time periods.
+                    Use the slider to change the threshold for absolute anomalies.
+                </span>
+            </div>
+            <div id="combobox4">
+                <div class="select-editable-2">
+                    <select id="ANOMABSCHOOSE" onchange="chooseBox4(this.value)">
+                        <option selected="selected" disabled="true">Please Select Or Type</option>
+                    </select>
+                    <input id="ANOMABSWRITE" type="text" name="format" value="" onchange="textBox4(this.value)"/>
+                </div>
+            </div>
         </div>
 
     </div>
 
     <div id = "tableLegend">
         <svg id = "legend">
-            <text x = "0" y = "20" style="font-size:20px; ">Absolute Attack Numbers for Countries, Max absolute number for Continents</text>
-            <text x = "0" y = "45" style="font-size:20px; ">Given base week, Percentage Change Attack Numbers for Countries, Max percentage number for Continents</text>
+            <text x = "0" y = "20" style="font-size:20px; ">Absolute Attack Numbers for Countries</text>
+            <text x = "0" y = "45" style="font-size:20px; ">Given base TP, Percentage Change Attack Numbers for Countries</text>
             <text x = "0" y = "70" style="font-size:20px; ">Percentage or Absolute Numbers which are outliers</text>     
         </svg>
         <svg id = "colorForLegend"></svg>
@@ -150,7 +197,9 @@
         </table>
     </div>
 
-    <div id="comparisonGroupedBarGraph"></div>
+    <button id="exportButton" onclick="exportData()">Export IP Data ⭷⭷</button>
+    <button id="goBackButton" onclick="goBack()">Go Back 🡠</button>
+    <div id="attacksAndAttackers"></div>
 
     <div id="usernameFilterDiv">
         <select id="usernameFilter" onchange="filterUsername()"></select>
@@ -158,7 +207,35 @@
 
     <div id="parallelCoordinatesGraph"></div>
 
-    <div id="donutGraph"></div>      
+    <div id="donutGraph"></div>    
+    
+    <div id="crossReferenceTools">
+        
+        <select id="ipsClicked">
+            <option value="" disabled selected>Selected IPs</option>
+        </select>
+        <button id="removeIPButton" onclick="removeIP()">Remove this IP</button>
+
+        <input type="text" id="startDatePick" placeholder="Start Date"/>
+        <select name="startWeekPick" id="startWeekPick">
+            <option value="" disabled selected>Start Week</option>
+        </select>
+        <select name="startMonthPick" id="startMonthPick">
+            <option value="" disabled selected>Start Month</option>
+        </select>
+
+        <input type="text" id="endDatePick" placeholder="End Date">
+        <select name="endWeekPick" id="endWeekPick">
+            <option value="" disabled selected>End Week</option>
+        </select>
+        <select name="endMonthPick" id="endMonthPick">
+            <option value="" disabled selected>End Month</option>
+        </select>
+        
+        <button id="crButton" onclick="finalCRChecker()">Cross Reference!</button>
+    </div>
+
+    <div id="crossReferenceIPGraphs"></div>
 
     <script src="js/initialVariables.js"></script>
     <script src="js/vizscreen.js"></script>
@@ -167,7 +244,9 @@
     <script src="js/variablesForTable.js"></script>
     <script src="js/tableLogic.js"></script>
     <script src="js/shapesInCell.js"></script>
-    <script src="js/bargraph.js"></script>
+    <script src="js/attacksAndAttackersLineChart.js"></script>
+    <script src="js/IPLineChart.js"></script>
+    <script src="js/crossReferenceIPLineChart.js"></script>
     <script src="js/parallelcoordinates.js"></script>
     <script src="js/donut.js"></script>
 
