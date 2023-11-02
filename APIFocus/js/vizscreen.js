@@ -63,6 +63,11 @@ class VizScreen{
         document.getElementById("startDatePick").style.visibility = "hidden"
         document.getElementById("endDatePick").style.visibility = "hidden"
         document.getElementById("crButton").style.visibility = "hidden"
+        document.getElementById("crossReferenceIPGraphs").innerHTML = ""
+        document.getElementById("crossReferenceIPGraphs").style.outline = "none"
+        document.getElementById("legendForIPGraph").innerHTML = ""
+        document.getElementById("legendForIPGraph").style.outline = "none"
+        document.getElementById("exportIPButton").style.visibility = "hidden"
     }
 
     initializeIPDatePicker(){
@@ -1840,6 +1845,9 @@ function finalCRChecker(){
                 for (let x = value1; x <= value2; x++){
                     timeRangeList.push(monthList.options[x].text)
                 }
+                document.getElementById("exportIPButton").style.visibility = "visible"
+                document.getElementById("legendForIPGraph").innerHTML = ""
+                document.getElementById("crossReferenceIPGraphs").innerHTML = ""
                 let crossReferenceIPObject = new CrossReferenceIPLineChart(timeRangeList)
                 crossReferenceIPObject.fetchData()
             }
@@ -1864,6 +1872,9 @@ function finalCRChecker(){
                     let neededText = totalText.substring(0,7)
                     timeRangeList.push(neededText)
                 }
+                document.getElementById("legendForIPGraph").innerHTML = ""
+                document.getElementById("crossReferenceIPGraphs").innerHTML = ""
+                document.getElementById("exportIPButton").style.visibility = "visible"
                 let crossReferenceIPObject = new CrossReferenceIPLineChart(timeRangeList)
                 crossReferenceIPObject.fetchData()
             }
@@ -1876,10 +1887,11 @@ function finalCRChecker(){
         }
     }
     if (dateValue === "day"){
-        let startDate = new Date($('#startDatePick').val())
-        let endDate = new Date($('#endDatePick').val())
+        let startDate = new Date($('#startDatePick').val() + "GMT-0700")
+        let endDate = new Date($('#endDatePick').val() + "GMT-0700")
         let diffTime = Math.abs(endDate - startDate)
         let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+        // console.log(diffDays)
         if (endDate > startDate){
             if (diffDays + 1 <= 30){
                 let timeRangeList = []
@@ -1916,6 +1928,9 @@ function finalCRChecker(){
                 dates.forEach(function (date) {
                     timeRangeList.push(formatDate(date))
                 })
+                document.getElementById("exportIPButton").style.visibility = "visible"
+                document.getElementById("legendForIPGraph").innerHTML = ""
+                document.getElementById("crossReferenceIPGraphs").innerHTML = ""
                 let crossReferenceIPObject = new CrossReferenceIPLineChart(timeRangeList)
                 crossReferenceIPObject.fetchData()
             }
@@ -1939,6 +1954,7 @@ function removeIP(){
     }
 
     if ($('#ipsClicked').children('option').length < 2){
+        document.getElementById("exportIPButton").style.visibility = "hidden"
         document.getElementById("startMonthPick").style.visibility = "hidden"
         document.getElementById("endMonthPick").style.visibility = "hidden"
         document.getElementById("startWeekPick").style.visibility = "hidden"
@@ -1946,6 +1962,10 @@ function removeIP(){
         document.getElementById("startDatePick").style.visibility = "hidden"
         document.getElementById("endDatePick").style.visibility = "hidden"
         document.getElementById("crButton").style.visibility = "hidden"
+        document.getElementById("crossReferenceIPGraphs").style.outline = "none"
+        document.getElementById("crossReferenceIPGraphs").innerHTML = ""
+        document.getElementById("legendForIPGraph").style.outline = "none"
+        document.getElementById("legendForIPGraph").innerHTML = ""
     }
 }
 

@@ -4,8 +4,9 @@ class IPLineChart{
     static resendData
     static resendTimes
     static resendCountries
+    static resendBCData
 
-    constructor(givenDate, loadedData, givenCountries, neededData, selected){
+    constructor(givenDate, loadedData, givenCountries, neededData, selected, barChartData){
         this.givenDate = givenDate
         this.loadedData = loadedData
         this.givenCountries = givenCountries
@@ -13,6 +14,7 @@ class IPLineChart{
         IPLineChart.resendData = neededData
         IPLineChart.resendTimes = selected
         IPLineChart.resendCountries = givenCountries
+        IPLineChart.resendBCData = barChartData
     }
 
     makeLineChart(){
@@ -165,13 +167,13 @@ class IPLineChart{
                         document.getElementById("endDatePick").style.visibility = "visible"
                     }
                     document.getElementById("crButton").style.visibility = "visible"
-                    
+                    document.getElementById("exportIPButton").style.visibility = "visible"
                 }
                 
             })
         }
 
-        console.log(dataset1)
+        // console.log(dataset1)
 
         
         for (let i = 0; i < dataset1.length; i++){
@@ -203,9 +205,25 @@ class IPLineChart{
             .style("stroke", "black")
             .style("stroke-width", "2");
         }
+
+        let periodValue = document.getElementById("timePeriod").value
+        let periodText
+        let xPos
+        if (periodValue === "month"){
+            periodText = "Months"
+            xPos = 200
+        }
+        else if(periodValue === "week"){
+            periodText = "Weeks"
+            xPos = 180
+        }
+        else if (periodValue === "day"){
+            periodText = "Days"
+            xPos = 190
+        }
         
         svg.append('text').attr("transform", "translate("+(widthNumber/2 - 500)+",-20)").text(this.givenCountries[0]+"[Top 10 IPs of "+this.givenDate+" at most 7 TPs before and after]").style("font-size", "25px")
-        svg.append('text').attr("transform", "translate("+(widthNumber/2 - 230)+",335)").text("Time Periods").style("font-size", "25px")
+        svg.append('text').attr("transform", "translate("+(widthNumber/2 - xPos)+",335)").text(periodText).style("font-size", "25px")
         svg.append('text').attr("transform", "translate(-70,190)rotate(270)").text("Frequency").style("font-size", "25px")
 
         let starterValue = document.getElementById('predictionTable').offsetWidth + 680
@@ -245,7 +263,7 @@ function goBack(){
     document.getElementById("goBackButton").style.visibility = "hidden"
     document.getElementById("attacksAndAttackers").innerHTML = ""
     let aAndALineChart = new AttacksAndAttackers(IPLineChart.resendCountries)
-    aAndALineChart.dataForSecondViz(IPLineChart.resendData, IPLineChart.resendTimes)
+    aAndALineChart.dataForSecondViz(IPLineChart.resendData, IPLineChart.resendTimes, IPLineChart.resendBCData)
 }
 
 function exportData(){
@@ -270,7 +288,7 @@ function exportData(){
         }
         allRows.push(ipRow)
     }
-    // console.log(allRows)
+    console.log(allRows)
 
     let csvContent = "data:text/csv;charset=utf-8,";
     

@@ -56,7 +56,11 @@ function findMinandMaxDay(minMaxDateData){
     $(document).ready(function () {
         $('#datePick').multiDatesPicker({
             minDate : minDateString,
-            maxDate: maxDateString
+            maxDate: maxDateString,
+            showButtonPanel: true,
+            changeMonth: true,
+            changeYear: true,
+            onSelect: function(dateText, inst) { inst.settings.defaultDate = dateText; }
         });
     });
 }

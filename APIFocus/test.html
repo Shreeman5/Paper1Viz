@@ -201,13 +201,6 @@
     <button id="goBackButton" onclick="goBack()">Go Back 🡠</button>
     <div id="attacksAndAttackers"></div>
 
-    <div id="usernameFilterDiv">
-        <select id="usernameFilter" onchange="filterUsername()"></select>
-    </div>
-
-    <div id="parallelCoordinatesGraph"></div>
-
-    <div id="donutGraph"></div>    
     
     <div id="crossReferenceTools">
         
@@ -233,9 +226,24 @@
         </select>
         
         <button id="crButton" onclick="finalCRChecker()">Cross Reference!</button>
+
+        <button id="exportIPButton" onclick="exportCRData()">Export CR IP Data ⭷⭷</button>
     </div>
 
     <div id="crossReferenceIPGraphs"></div>
+
+    <div id="legendForIPGraph"></div>
+
+    
+    <div id="usernameFilterDiv">
+        <select id="usernameFilter" onchange="filterUsername()"></select>
+    </div>
+
+    <div id="parallelCoordinatesGraph"></div>
+
+    <div id="donutGraph"></div>    
+
+    <!-- <div id="treeMapGraph"></div> -->
 
     <script src="js/initialVariables.js"></script>
     <script src="js/vizscreen.js"></script>
@@ -247,6 +255,7 @@
     <script src="js/attacksAndAttackersLineChart.js"></script>
     <script src="js/IPLineChart.js"></script>
     <script src="js/crossReferenceIPLineChart.js"></script>
+    <script src="js/treemap.js"></script>
     <script src="js/parallelcoordinates.js"></script>
     <script src="js/donut.js"></script>
 

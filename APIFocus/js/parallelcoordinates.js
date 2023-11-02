@@ -158,7 +158,20 @@ class ParallelCoordinate{
         // console.log(filteredUsername)
         if (this.givenChoice === "yes"){
             if (filteredUsername !== '-- SEE ALL USERNAMES --'){
-                desiredData = desiredData.filter(item => item.username === filteredUsername)
+                if (filteredUsername === '-- SEE W/OUT ROOT --'){
+                    desiredData = desiredData.filter(item => item.username !== 'root')
+                }
+                else if(filteredUsername === '-- SEE W/OUT ADMIN --'){
+                    desiredData = desiredData.filter(item => item.username !== 'admin')
+                }
+                else if(filteredUsername === '-- SEE W/OUT ROOT AND ADMIN --'){
+                    desiredData = desiredData.filter(item => item.username !== 'root')
+                    desiredData = desiredData.filter(item => item.username !== 'admin')
+                }
+                else{
+                    desiredData = desiredData.filter(item => item.username === filteredUsername)
+                }
+                // console.log(desiredData)
             }
         }
         // console.log(desiredData)
@@ -191,6 +204,42 @@ class ParallelCoordinate{
             option2.text = '-- SEE ALL USERNAMES --'
             usernameSelect.add(option2)
         }
+
+        // console.log(allUsernames)
+        if (allUsernames.includes('root')){
+            let exceptRoot = allUsernames.filter(d => d !== 'root')
+            let exists3 = $("#usernameFilter option").filter(function (i, o) { return o.text === '-- SEE W/OUT ROOT --'; }).length > 0
+            if (exists3 == false){
+                let option3 = document.createElement("option")
+                option3.value = exceptRoot
+                option3.text = '-- SEE W/OUT ROOT --'
+                usernameSelect.add(option3)
+            }
+        }
+
+        if (allUsernames.includes('admin')){
+            let exceptAdmin = allUsernames.filter(d => d !== 'admin')
+            let exists4 = $("#usernameFilter option").filter(function (i, o) { return o.text === '-- SEE W/OUT ADMIN --'; }).length > 0
+            if (exists4 == false){
+                let option4 = document.createElement("option")
+                option4.value = exceptAdmin
+                option4.text = '-- SEE W/OUT ADMIN --'
+                usernameSelect.add(option4)
+            }
+        }
+
+        if (allUsernames.includes('admin') && allUsernames.includes('root')){
+            let exceptRootAndAdmin = allUsernames.filter(d => d !== 'admin')
+            exceptRootAndAdmin =  exceptRootAndAdmin.filter(d => d !== 'root')
+            let exists5 = $("#usernameFilter option").filter(function (i, o) { return o.text === '-- SEE W/OUT ROOT AND ADMIN --'; }).length > 0
+            if (exists5 == false){
+                let option5 = document.createElement("option")
+                option5.value = exceptRootAndAdmin
+                option5.text = '-- SEE W/OUT ROOT AND ADMIN --'
+                usernameSelect.add(option5)
+            }
+        }
+        
     }
 
     vizPart(data, height, width, svg, usernameCollection, datesOrCountries){
@@ -238,6 +287,7 @@ class ParallelCoordinate{
             .style("stroke", "grey")
             //.style("opacity", 0.5)
             .on('mouseover', function(d, i){
+                // console.log(this)
                 d3.select(this).attr('stroke-width', 5).style("stroke", "red")//.style('opacity', 1)
             })
             .on('mouseout', function(d, i){
@@ -249,43 +299,11 @@ class ParallelCoordinate{
         const stuff = document.getElementById('x')
         stuff.addEventListener("mouseover", (event) => {
             let value = event.toElement.__data__
-
-            // let givenNumbers = []
-            // for (const property in value) {
-            //     if (property !== 'username'){
-            //         let desiredNumber = value[property]
-            //         if (desiredNumber >= 1000000){
-            //             givenNumbers.push((desiredNumber/1000000).toFixed(1) + 'M')
-            //         }
-            //         else if (desiredNumber >= 1000){
-            //             givenNumbers.push((desiredNumber/1000).toFixed(1) + 'K')
-            //         }
-            //         else{
-            //             givenNumbers.push(desiredNumber + '')
-            //         }
-            //     }
-            // }
-            // console.log(givenNumbers)
-
-            // for (let z = 0; z < givenNumbers.length; z++){
-            //     let givenLine = document.getElementById('ID'+(z+1))
-            //     let position = givenLine.getBoundingClientRect();
-            //     var x = position.left;
-            //     var y = position.top
-            //     svg.append('text').attr("id", "userNameNumbers").attr("transform", `translate(${x}, ${y})`)
-            //                     .text(givenNumbers[z]).style("font-size", "55px").style("fill", "red")
-            // }
-            
-
             let tiptext = null
 
             if (value !== null){
                 tiptext = value['username']
             }
-            // else{
-            //     console.log('line')
-            // }
-
             tip.style("opacity", 5)
             .html(tiptext)
             .style("left", (event.pageX) + "px")
@@ -294,7 +312,6 @@ class ParallelCoordinate{
         })
         stuff.addEventListener("mouseout", (event) => {
             tip.style("opacity", 0)
-            //document.getElementById("userNameNumbers").remove()
         })
 
         //console.log(datesOrCountries)

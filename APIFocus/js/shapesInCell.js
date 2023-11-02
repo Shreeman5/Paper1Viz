@@ -225,6 +225,7 @@ class ShapesInCell{
                 .html(tiptext)
                 .style("left", (e.pageX) + "px")
                 .style("top", (e.pageY) + "px")
+                .style("width", "600px")
         })
         .on("mouseout", function(d) {
             tip.style("opacity", 0)
@@ -236,6 +237,7 @@ class ShapesInCell{
                 .html(tiptext)
                 .style("left", (e.pageX) + "px")
                 .style("top", (e.pageY) + "px")
+                .style("width", "600px")
         })
         .on("mouseout", function(d) {
             tip.style("opacity", 0)
@@ -270,6 +272,7 @@ class ShapesInCell{
                 .html(tiptext)
                 .style("left", (e.pageX) + "px")
                 .style("top", (e.pageY) + "px")
+                .style("width", "500px")
         })
         .on("mouseout", function(d) {
             tip.style("opacity", 0)

@@ -672,6 +672,45 @@ body {
     visibility: hidden;
 }
 
+#exportIPButton{
+    position: absolute;
+    font-size: 20px;
+    top: 164px;
+    left: 3115px;
+    width: 230px; 
+    height: 28px ;
+    border-radius: 1em; 
+    visibility: hidden;
+}
+
+
+#crossReferenceIPGraphs{
+    position: absolute;
+}
+
+/* #legendForIPGraph{
+    
+} */
+
+.node {
+    box-sizing: border-box;
+    position: absolute;
+    overflow: hidden;
+}
+  
+.node-label {
+    padding: 4px;
+    line-height: 1em;
+    white-space: pre;
+    font-size: 20px;
+}
+
+.node-value {
+    color: rgba(0,0,0,0.8);
+    font-size: 18px;
+    margin-top: 1px;
+}
+
 #parallelCoordinatesGraph{
     position: absolute;
 }
@@ -696,9 +735,7 @@ body {
     position: absolute;
 }
 
-#crossReferenceIPGraphs{
-    position: absolute;
-}
+
 
 
 
