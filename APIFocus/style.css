@@ -7,7 +7,7 @@ body {
         left:5px;
         top:5px;
         height: 150px;
-        width:99.5%;
+        width:2065px;
         background-color: darkseagreen;
         position: absolute; 
         outline: 5px dashed black
@@ -17,8 +17,8 @@ body {
         position: absolute;
         font-size: 40px;
         top: 30%;
-        left: 2%;
-        width: 500px; 
+        left: 0px;
+        width: 450px; 
         height: 50px;
         border-radius: 1em; 
     }
@@ -28,8 +28,8 @@ body {
         position: absolute;
         font-size: 40px;
         top: 30%;
-        left: 73%;
-        width: 600px;
+        left: 1510px;
+        width: 550px;
         height: 50px ; 
         border-radius: 1em; 
     }
@@ -38,8 +38,8 @@ body {
         position: absolute;
         font-size: 40px;
         top: 15%;
-        left: 25%;
-        width: 660px; 
+        left: 460px;
+        width: 720px; 
         height: 100px ;
         border-radius: 1em; 
     }
@@ -48,12 +48,20 @@ body {
         font-size:39px;
     }
 
+    /* .ui-state-highlight a{ 
+        background: green; 
+    } */
+
+    /* .ui-datepicker-calendar tbody tr td{
+        background-color: blue;
+    } */
+
     #weekPick {
         position: absolute;
         font-size: 40px;
         top: 0%;
-        left: 27%;
-        width: 520px; 
+        left: 535px;
+        width: 570px; 
         border-radius: 1em; 
         height:150px;
         overflow:auto;
@@ -63,8 +71,8 @@ body {
         position: absolute; 
         font-size: 40px;
         top: 0%;
-        left: 27%;
-        width:550px;
+        left: 550px;
+        width:580px;
         height: 150px ;
         border-radius: 1em; 
     }
@@ -74,8 +82,8 @@ body {
         position: absolute;
         font-size: 40px;
         top: 30%;
-        left: 52%;
-        width: 400px; 
+        left: 1200px;
+        width: 300px; 
         height: 50px ;
         border-radius: 1em; 
     }
@@ -688,9 +696,25 @@ body {
     position: absolute;
 }
 
-/* #legendForIPGraph{
-    
-} */
+#legendForIPGraph{
+    position: absolute;
+    font-size: 20px;
+    top: 5px;
+    left: 2085px;
+    /* outline: 5px dashed black;
+    width: 230px; 
+    height: 150px ; */
+}
+
+#legendForTreeMap{
+    position: absolute;
+    font-size: 20px;
+    top: 170px;
+    left: 3360px;
+    /* outline: 5px dashed black;
+    width: 230px; 
+    height: 20px ; */
+}
 
 .node {
     box-sizing: border-box;

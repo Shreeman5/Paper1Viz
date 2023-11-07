@@ -68,6 +68,8 @@ class VizScreen{
         document.getElementById("legendForIPGraph").innerHTML = ""
         document.getElementById("legendForIPGraph").style.outline = "none"
         document.getElementById("exportIPButton").style.visibility = "hidden"
+        $(".node").remove()
+        document.getElementById("legendForTreeMap").innerHTML = ""
     }
 
     initializeIPDatePicker(){
@@ -1848,6 +1850,8 @@ function finalCRChecker(){
                 document.getElementById("exportIPButton").style.visibility = "visible"
                 document.getElementById("legendForIPGraph").innerHTML = ""
                 document.getElementById("crossReferenceIPGraphs").innerHTML = ""
+                document.getElementById("legendForTreeMap").innerHTML = ""
+                $(".node").remove()
                 let crossReferenceIPObject = new CrossReferenceIPLineChart(timeRangeList)
                 crossReferenceIPObject.fetchData()
             }
@@ -1875,6 +1879,8 @@ function finalCRChecker(){
                 document.getElementById("legendForIPGraph").innerHTML = ""
                 document.getElementById("crossReferenceIPGraphs").innerHTML = ""
                 document.getElementById("exportIPButton").style.visibility = "visible"
+                document.getElementById("legendForTreeMap").innerHTML = ""
+                $(".node").remove()
                 let crossReferenceIPObject = new CrossReferenceIPLineChart(timeRangeList)
                 crossReferenceIPObject.fetchData()
             }
@@ -1931,6 +1937,8 @@ function finalCRChecker(){
                 document.getElementById("exportIPButton").style.visibility = "visible"
                 document.getElementById("legendForIPGraph").innerHTML = ""
                 document.getElementById("crossReferenceIPGraphs").innerHTML = ""
+                document.getElementById("legendForTreeMap").innerHTML = ""
+                $(".node").remove()
                 let crossReferenceIPObject = new CrossReferenceIPLineChart(timeRangeList)
                 crossReferenceIPObject.fetchData()
             }
@@ -1966,6 +1974,8 @@ function removeIP(){
         document.getElementById("crossReferenceIPGraphs").innerHTML = ""
         document.getElementById("legendForIPGraph").style.outline = "none"
         document.getElementById("legendForIPGraph").innerHTML = ""
+        $(".node").remove()
+        document.getElementById("legendForTreeMap").innerHTML = ""
     }
 }
 

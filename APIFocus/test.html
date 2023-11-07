@@ -30,7 +30,7 @@
 <body>
     <div id="initialVariablesDiv">
         <select name="data" id="data" onchange="specifyTimePeriod();">
-            <option selected="selected" disabled="true">--- Please Select A Cluster ---</option>
+            <option selected="selected" disabled="true">Please Select A Cluster</option>
             <option value="utah" class="dropdown-container">utah</option>
             <option value="clem">clem</option>
             <option value="wisc">wisc</option>
@@ -38,7 +38,7 @@
 
     
         <select name="timePeriod" id="timePeriod" onchange="specifyTimePeriod();">
-            <option selected="selected" disabled="true">--- Please Select A Time Period ---</option>
+            <option selected="selected" disabled="true">Please Select A Time Period</option>
             <option value="month">month</option>
             <option value="week">week</option>
             <option value="day">day</option>
@@ -234,6 +234,8 @@
 
     <div id="legendForIPGraph"></div>
 
+    <div id="legendForTreeMap"></div>
+
     
     <div id="usernameFilterDiv">
         <select id="usernameFilter" onchange="filterUsername()"></select>
@@ -243,7 +245,6 @@
 
     <div id="donutGraph"></div>    
 
-    <!-- <div id="treeMapGraph"></div> -->
 
     <script src="js/initialVariables.js"></script>
     <script src="js/vizscreen.js"></script>

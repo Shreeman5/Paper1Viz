@@ -15,6 +15,7 @@ function specifyTimePeriod(){
         findMinMaxDate(givenValue).then(function (minMaxDateData){
             if (givenValue2 === 'day'){
                 findMinandMaxDay(minMaxDateData)
+                // findAllDays(minMaxDateData)
                 document.getElementById("datePick").style.display = "block"
                 document.getElementById("weekPick").style.display = "none"
                 removeWeekOptions()
@@ -23,6 +24,7 @@ function specifyTimePeriod(){
             }
             else if (givenValue2 === 'week'){
                 findMinandMaxWeek(minMaxDateData)
+                colorWeeks()
                 document.getElementById("datePick").style.display = "none"
                 document.getElementById("weekPick").style.display = "block"
                 document.getElementById("monthPick").style.display = "none"
@@ -30,6 +32,7 @@ function specifyTimePeriod(){
             }
             else if (givenValue2 === 'month'){
                 findMinandMaxMonth(minMaxDateData)
+                colorMonths()
                 document.getElementById("datePick").style.display = "none"
                 document.getElementById("weekPick").style.display = "none"
                 removeWeekOptions()
@@ -65,6 +68,74 @@ function findMinandMaxDay(minMaxDateData){
     });
 }
 
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
+function dateRange(startDate, endDate, steps = 1) {
+    const dateArray = [];
+    let currentDate = new Date(startDate);
+    while (currentDate <= new Date(endDate)) {
+      dateArray.push(formatDate(new Date(currentDate)));
+      // Use UTC date to prevent problems with time zones and DST
+      currentDate.setUTCDate(currentDate.getUTCDate() + steps);
+    }
+    return dateArray;
+  }
+
+function findAllDays(minMaxDateData){
+    let start = minMaxDateData['min']['date']
+    start = new Date(start)
+    start.setUTCDate(start.getUTCDate()+1)
+    let end = minMaxDateData['max']['date']
+    end = new Date(end)
+    end.setUTCDate(end.getUTCDate()+1)
+    const dates = dateRange(start, end);
+    console.log(dates)
+
+    var approvedDates = dates.slice(0, 4); // Array of approved leave dates
+    console.log(approvedDates)
+
+    var rejectedDates = dates.slice(4, 10); // Array of rejected leave dates
+    console.log(rejectedDates)
+
+    // $("#datePick").multiDatesPicker({ 
+    //     onSelect: function(value, date) { 
+    //         console.log(date)
+    //         console.log(date.dpDiv[0])
+    //         let myStuff = date.dpDiv
+    //         let myElement = myStuff.find('.ui-datepicker-week-end ui-state-highlight  ui-datepicker-current-day a')
+    //         console.log(myElement)
+    //     } 
+    // });
+
+    // $(document).ready(function () {
+    //     $(".ui-datepicker-calendar tbody tr td").each(
+    //         function(){
+    //             // if ($(this).text() == "0.0000 XBT"){
+    //             //     $(this).text("changed text"); 
+    //             // }
+    //             console.log(this)
+    //             console.log(this.style)
+    //             this.style.backgroundColor = "blue"
+    //             $(this).css('background-color','red')
+    //         }
+    //     )
+    // })
+    // var tds = table.getElementsByTagName("td")
+    // console.log(tds)
+}
+
 function findMinandMaxWeek(minMaxDateData){
     let selectFunction = document.getElementById("weekPick")
 
@@ -95,11 +166,70 @@ function findMinandMaxWeek(minMaxDateData){
         let text = d1+ ''
         let givenMonth = text.substring(4,7)
         let givenDay = text.substring(8,10)
+        option.value = yearWeek + '-' + givenMonth
         option.text = yearWeek + '-' + givenMonth + '-' + givenDay
         selectFunction.add(option)
         
         d1.setDate(d1.getDate() + 7);
     }
+}
+
+
+function colorWeeks(){
+    let myList = []
+    $("#weekPick option").each(function()
+    {   
+        if ($(this).val() !== "Please Select Multiple Weeks"){
+            myList.push($(this).val())
+        }
+    })
+
+    let givenValue = document.getElementById("data").value
+    let givenValue2 = document.getElementById("timePeriod").value
+    fetchSummaryData(givenValue, givenValue2, myList).then(function (summaryData){
+        for (let i = 0; i < myList.length; i++){
+            myList[i] = myList[i].substring(0,7)
+        }
+        // console.log(myList)
+        // console.log(summaryData)
+
+        let values = []
+        for (let i = 0; i < myList.length; i++){
+            let runningTotal = 0
+            for (let j = 0; j < summaryData.length; j++){
+                let countries = summaryData[j].meta
+                for (let k = 0; k < countries.length; k++){
+                    let country = countries[k]
+                    if (myList[i] in country){
+                        let weekStuff = country[myList[i]]
+                        let weekStuffNum = weekStuff['attacks']
+                        runningTotal += weekStuffNum
+                    }
+                    else{
+                        runningTotal += 0
+                    }
+                }
+            }
+            values.push(runningTotal)
+        }
+        // console.log(values)
+        // console.log(Math.min(...values))
+
+        this.colorScaleForPercentAttacks= d3.scaleSequential()
+                                            .interpolator(d3.interpolateReds)
+                                            .domain([Math.min(...values), Math.max(...values)])
+        let i = 0
+        let that = this
+        $("#weekPick option").each(function()
+        {   
+            if ($(this).val() !== "Please Select Multiple Weeks"){
+                let str = $(this).val() 
+                let color = that.colorScaleForPercentAttacks(values[i])
+                $('#weekPick option[value='+str+']').css('background-color', color)
+                i++
+            }
+        })
+    })
 }
 
 
@@ -134,9 +264,67 @@ function findMinandMaxMonth(minMaxDateData){
 
         let yearMonth = moment(d1).format("YYYY-MM");
         let option = document.createElement("option")
+        option.value = yearMonth
         option.text = yearMonth
         selectFunction.add(option)
     }
+}
+
+function colorMonths(){
+    let myList = []
+    $("#monthPick option").each(function()
+    {   
+        if ($(this).val() !== "Please Select Multiple Months"){
+            myList.push($(this).val())
+        }
+    })
+
+    let givenValue = document.getElementById("data").value
+    let givenValue2 = document.getElementById("timePeriod").value
+    fetchSummaryData(givenValue, givenValue2, myList).then(function (summaryData){
+        // for (let i = 0; i < myList.length; i++){
+        //     myList[i] = myList[i].substring(0,7)
+        // }
+        console.log(myList)
+        // console.log(summaryData)
+
+        let values = []
+        for (let i = 0; i < myList.length; i++){
+            let runningTotal = 0
+            for (let j = 0; j < summaryData.length; j++){
+                let countries = summaryData[j].meta
+                for (let k = 0; k < countries.length; k++){
+                    let country = countries[k]
+                    if (myList[i] in country){
+                        let weekStuff = country[myList[i]]
+                        let weekStuffNum = weekStuff['attacks']
+                        runningTotal += weekStuffNum
+                    }
+                    else{
+                        runningTotal += 0
+                    }
+                }
+            }
+            values.push(runningTotal)
+        }
+        console.log(values)
+
+        this.colorScaleForPercentAttacks= d3.scaleSequential()
+                                            .interpolator(d3.interpolateReds)
+                                            .domain([Math.min(...values), Math.max(...values)])
+        let i = 0
+        let that = this
+        $("#monthPick option").each(function()
+        {   
+            if ($(this).val() !== "Please Select Multiple Months"){
+                let str = $(this).val() 
+                console.log
+                let color = that.colorScaleForPercentAttacks(values[i])
+                $('#monthPick option[value='+str+']').css('background-color', color)
+                i++
+            }
+        })
+    })
 }
 
 function removeWeekOptions(){
@@ -155,6 +343,7 @@ function finalCheck(){
     if (givenValue !== '--Please Select --' && givenValue2 !== '--Please Select --'){
         if (givenValue2 === 'day'){
             let selectedDaysString = $('#datePick').val()
+            console.log(selectedDaysString)
             let selectedDays = []
             if (selectedDaysString){
                 selectedDays = selectedDaysString.split(',')
@@ -171,6 +360,7 @@ function finalCheck(){
                     }
                     selectedDays[i] = newDate
                 }
+                console.log(selectedDays)
                 fetchSummaryData(givenValue, givenValue2, selectedDays).then(function (summaryData){
                     let vizScreen = new VizScreen(summaryData, selectedDays, "days")
                     vizScreen.initializeProgram()
@@ -188,6 +378,7 @@ function finalCheck(){
         else if (givenValue2 === 'week'){
             let selectedWeeks = $('#weekPick').val()
             if (selectedWeeks.length >= 2){
+                console.log(selectedWeeks)
                 fetchSummaryData(givenValue, givenValue2, selectedWeeks).then(function (summaryData){
                     let vizScreen = new VizScreen(summaryData, selectedWeeks, "weeks")
                     vizScreen.initializeProgram()

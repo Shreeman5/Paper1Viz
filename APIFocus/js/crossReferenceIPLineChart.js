@@ -75,14 +75,14 @@ class CrossReferenceIPLineChart{
                             }
                         }
                         if (myVal === 0){
-                            specificIPInfo.push([checkTime, 0, 0, 0, 0, 0])
+                            specificIPInfo.push([checkTime, 0, 0, 0, 0, 0, myIP])
                         }
                         else{
-                            specificIPInfo.push([checkTime, myVal, meanVal, stdVal, minValInArray, maxValInArray])
+                            specificIPInfo.push([checkTime, myVal, meanVal, stdVal, minValInArray, maxValInArray, myIP])
                         }
                     }
                     else{
-                        specificIPInfo.push([checkTime, 0, 0, 0, 0, 0])
+                        specificIPInfo.push([checkTime, 0, 0, 0, 0, 0, myIP])
                     }
                 }
                 dataset.push(specificIPInfo)
@@ -131,6 +131,7 @@ class CrossReferenceIPLineChart{
 
         let that = this
         svg.append("g")
+        .attr("id", "xaxis")
         .style("font", "20px times")
          .attr("transform", "translate(0," + height + ")")
          .call(d3.axisBottom(xScale))
@@ -146,6 +147,18 @@ class CrossReferenceIPLineChart{
          })
          .attr("dy", "0em")
          .attr("transform", "rotate(-45)")
+        
+        function clickMe(e, d){
+            $(".node").remove()
+            document.getElementById("legendForTreeMap").innerHTML = ""
+            let treemap = new Treemap(d, "All")
+            treemap.buildTreeMap()
+        }
+
+        d3.select('#xaxis')
+            .selectAll('.tick')
+            .on('click',clickMe)
+
 
         svg.append("g").style("font", "20px times")
          .call(d3.axisLeft(yScale).ticks(4).tickFormat(x => that.better(x)))
@@ -183,13 +196,20 @@ class CrossReferenceIPLineChart{
                                 + "Max destination val: " + that.better(d[5]) + '<br>'
                 tip2.style("opacity", 5)
                     .html(tiptext)
-                    .style("left", (e.pageX) + "px")
-                    .style("top", (e.pageY) + "px")
+                    .style("left", (e.pageX  - 450) + "px")
+                    .style("top", (e.pageY)  + "px")
                     .style("width", "450px")
                 // console.log(d)
             }).on("mouseout", function(d) {
                 d3.select(this).attr('stroke-width', 0)
                 tip2.style("opacity", 0)
+            })
+
+            this.circles.on("click", function(e, d) {
+                $(".node").remove()
+                document.getElementById("legendForTreeMap").innerHTML = ""
+                let treemap = new Treemap(d[0], d[6])
+                treemap.buildTreeMap()
             })
 
                   
@@ -256,28 +276,27 @@ class CrossReferenceIPLineChart{
 
         // legend for IP graph
 
-        // document.getElementById("legendForIPGraph").style.outline = "5px dashed black"
-        // let svg2 = d3.select("#legendForIPGraph")
-        // .append("svg")
-        //     .attr("width", 750)
-        //     .attr("height", 320)
+        let upperBound = Math.ceil((this.IPsAndCountries.length/5)) * 220
+        document.getElementById("legendForIPGraph").style.outline = "5px dashed black"
+        let svg2 = d3.select("#legendForIPGraph")
+        .append("svg")
+            .attr("width", upperBound)
+            .attr("height", 150)
 
-        // let starterY = 15
-        // let starterX = 10
-        // for (let i = 0; i < this.IPsAndCountries.length; i++){
-        //     if (i % 10 === 0 && i !== 0){
-        //         starterX += 220
-        //         starterY = 15
-        //     }
-        //     svg2.append('circle').style("fill", colors[i]).attr("r", 8).attr("cx", starterX).attr("cy", starterY)
-        //     svg2.append('text').attr("transform", "translate("+(starterX+10)+","+(starterY+8)+")")
-        //         .text(this.IPsAndCountries[i]).style("font-size", "20px")
-        //         .style("fill", colors[i]).style("stroke", "black")
-        //     starterY +=  31
-        // }
+        let starterY = 15
+        let starterX = 10
+        for (let i = 0; i < this.IPsAndCountries.length; i++){
+            if (i % 5 === 0 && i !== 0){
+                starterX += 220
+                starterY = 15
+            }
+            svg2.append('circle').style("fill", colors[i]).attr("r", 8).attr("cx", starterX).attr("cy", starterY)
+            svg2.append('text').attr("transform", "translate("+(starterX+10)+","+(starterY+8)+")")
+                .text(this.IPsAndCountries[i]).style("font-size", "20px")
+                .style("fill", colors[i]).style("stroke", "black")
+            starterY +=  31
+        }
 
-        let treemap = new Treemap()
-        treemap.buildTreeMap()
         
     }
 
