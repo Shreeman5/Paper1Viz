@@ -1,0 +1,808 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* div for initial variables */
+div#initialVariablesDiv {
+    left:5px;
+    top:5px;
+    height: 680px;
+    width:1700px;
+    background-color: white;
+    overflow-y: scroll;
+}
+
+
+#data {
+    position: relative;
+    font-size: 40px;
+    top: 30px;
+    left: 570px;
+    width: 450px; 
+    height: 50px;
+    border-radius: 1em; 
+}
+
+svg#dateHeatMap{
+    width: 1660px; 
+}
+
+
+.button-64 {
+    position: relative;
+    top: -650px;
+    left:1400px;
+    align-items: center;
+    background-image: linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB);
+    border: 0;
+    border-radius: 8px;
+    box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    display: flex;
+    font-family: Phantomsans, sans-serif;
+    font-size: 20px;
+    justify-content: center;
+    line-height: 1em;
+    max-width: 100%;
+    min-width: 140px;
+    padding: 3px;
+    text-decoration: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.button-64:active, .button-64:hover {
+  outline: 0;
+}
+
+.button-64 span {
+  background-color: rgb(5, 6, 45);
+  padding: 16px 24px;
+  border-radius: 6px;
+  width: 100%;
+  height: 100%;
+  transition: 300ms;
+}
+
+.button-64:hover span {
+  background: none;
+}
+
+@media (min-width: 768px) {
+  .button-64 {
+    font-size: 24px;
+    min-width: 196px;
+  }
+}
+/* div for initial variables */
+
+
+    /* #timePeriod {
+        position: absolute;
+        font-size: 40px;
+        top: 30%;
+        left: 1510px;
+        width: 550px;
+        height: 50px ; 
+        border-radius: 1em; 
+    }
+
+    #datePick {
+        position: absolute;
+        font-size: 40px;
+        top: 15%;
+        left: 460px;
+        width: 720px; 
+        height: 100px ;
+        border-radius: 1em; 
+    }
+
+    div.ui-datepicker, .ui-datepicker td, .ui-datepicker th{
+        font-size:39px;
+    }
+
+    #weekPick {
+        position: absolute;
+        font-size: 40px;
+        top: 0%;
+        left: 535px;
+        width: 570px; 
+        border-radius: 1em; 
+        height:150px;
+        overflow:auto;
+    }
+
+    #monthPick {
+        position: absolute; 
+        font-size: 40px;
+        top: 0%;
+        left: 550px;
+        width:580px;
+        height: 150px ;
+        border-radius: 1em; 
+    }
+
+
+    #launchPad {
+        position: absolute;
+        font-size: 40px;
+        top: 30%;
+        left: 1200px;
+        width: 300px; 
+        height: 50px ;
+        border-radius: 1em; 
+    } */
+
+/* div for initial variables ends*/
+
+/* svg for textual chart */
+
+    /* #textsForTP{
+        left:5px;
+        top:170px;
+        height: 0px;
+        width:300px;
+        background-color: white;
+        position: absolute; 
+    } */
+
+/* svg for textual chart ends */
+
+/* div for base button */
+
+    /* #baseTPDiv{
+        position: absolute;
+        left:320px;
+        top:285px;
+        width: 300px;
+        height: 50px;
+    }
+
+
+    #baseTP{
+        position: absolute;
+        font-size: 30px;
+        top: 0px;
+        left: 0px;
+        min-width: 300px; 
+        height: 50px;
+        border-radius: 1em; 
+    } */
+
+/* div for base button ends */
+
+
+
+/* Below Used By sliders */
+
+    /* .tooltipForSidebarButtonAndSliders {
+        position: relative;
+        display: inline-block;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .tooltipForSidebarButtonAndSliders .tooltiptext {
+        left:10px;
+        visibility: hidden;
+        width: 240px;
+        background-color: black;
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+    
+        
+        position: absolute;
+        z-index: 1;
+    }
+    
+    .tooltipForSidebarButtonAndSliders:hover .tooltiptext {
+        visibility: visible;
+    }
+
+    
+    input[type="range"][orient=vertical]{
+        position: absolute;
+        transform: rotate(270deg);
+        -webkit-appearance: none;
+        appearance: none;
+        background: black;
+        cursor: pointer;
+        width: 15rem;
+        background: grey;
+    } */
+
+    /* input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: blue;
+        cursor: pointer  
+    } */
+
+/* Above Used By sidebar button AND sliders from div */
+
+/* div for filtering things */
+
+    /* #filterDiv{
+        position: absolute;
+        left:660px;
+        top:170px;
+        height: 270px;
+        width: 1410px;
+        outline: 5px dashed black
+    } */
+
+    /* sliders start */
+        /* #slidecontainer{
+            position: absolute;
+            top: 20px;
+            left: 0px;
+            width: 520px; 
+            height:240px;
+        }
+
+        #slidecontainer2{
+            position: absolute;
+            top: 20px;
+            left: 530px;
+            width: 500px; 
+            height:240px;
+        }
+
+        #Text1{
+            position: absolute;
+            top: 0px;
+            left: 50px;
+            width: 600px; 
+            height:35px;
+        }
+
+        #Text2{
+            position: absolute;
+            top: 0px;
+            left: 80px;
+            width: 600px; 
+            height:35px;
+        }
+
+        #svg1, #svg2{
+            position: absolute;
+            top: 30px;
+            left: 0px;
+            width: 500px; 
+            height:140px;
+            font-size:18pt;
+        }
+
+        #myRange, #myRange2{
+            position: absolute;
+            top: 180px;
+            left: 50px;
+            width: 430px; 
+            height:1px;
+        }
+
+        #combobox1, #combobox2{
+            position: absolute;
+            top: 200px; 
+            left: 50px;
+        }
+
+        .select-editable {
+            position:absolute; 
+            background-color:white; 
+            border:solid grey 1px;  
+            height:30px;
+            width:430px; 
+        }
+
+        .select-editable select {
+            position:absolute; 
+            top:0px; 
+            left:0px; 
+            font-size:14px; 
+            border:none; 
+            width:430px; 
+            margin:0;
+            font-size: 25px;
+        }
+
+        .select-editable input {
+            position:absolute; 
+            top:0px; 
+            left:0px; 
+            width:400px; 
+            padding:1px; 
+            font-size:12px; 
+            border:none;
+            font-size: 25px;
+        }
+
+        .select-editable select:focus, .select-editable input:focus {
+            outline:none;
+        } */
+    /* sliders end */
+
+
+    /* Country datalist filter */
+
+        /* #countryOptions{
+            left:1050px;
+            top:175px;
+            width: 360px;
+            height: 100px;
+            flex-direction: column;
+            align-items: center;
+            position: absolute;
+        }
+
+        #labelText{
+            position: absolute;
+            top:-10px;
+            left:0px;
+        }
+
+        #labelText2{
+            position: absolute;
+            top:15px;
+            left:0px;
+        }
+
+
+        #countries-from-data{
+            position: absolute;
+            top:45px;
+            left:0px;
+            font-size: 25px;
+        } */
+
+    /* Country datalist filter ends*/
+
+
+    /* #resetButton {
+        position: absolute;
+        font-size: 40px;
+        top: 10px;
+        left: 1050px;
+        border-radius: 1em; 
+    } */
+
+/* div for filtering things ends */
+
+/* div for non filtering things */
+
+    /* #nonFilterDiv{
+        position: absolute;
+        left:320px;
+        top:350px;
+        height: 1050px;
+        width: 320px;
+        outline: 5px dashed black
+    }
+
+    #sortTPDiv{
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: 25px;
+    }
+
+    #sortTP{
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        height: 50px;
+        min-width:280px;
+        font-size: 25px;
+    } */
+
+    /* sliders start */
+        /* #slidecontainer3{
+            position: absolute;
+            top: 80px;
+            left: 0px;
+            width: 320px; 
+            height:475px;
+        }
+
+        #slidecontainer4{
+            position: absolute;
+            top: 570px;
+            left: 0px;
+            width: 320px; 
+            height:475px;
+        }
+
+        #svg3, #svg4{
+            position: absolute;
+            top: 50px;
+            left: -60px;
+            width: 400px; 
+            height:270px;
+            font-size:18pt;
+            transform: rotate(270deg)
+        }
+
+        #myRange3, #myRange4{
+            position: absolute;
+            top: 180px;
+            left: 125px;
+            width: 350px; 
+            height:1px;
+        }
+
+        #Text3{
+            position: absolute;
+            top: 390px;
+            left: 10px;
+            width: 330px; 
+            height:35px;
+        }
+
+        #Text4{
+            position: absolute;
+            top: 390px;
+            left: 20px;
+            width: 330px; 
+            height:35px;
+        }
+
+        #combobox3, #combobox4{
+            position: absolute;
+            top: 420px;
+            left: 5px;
+        }
+
+        .select-editable-2 {
+            position:absolute; 
+            background-color:white; 
+            border:solid grey 1px;  
+            height:35px;
+            width:300px; 
+        }
+
+        .select-editable-2 select {
+            position:absolute; 
+            top:0px; 
+            left:0px; 
+            font-size:14px; 
+            border:none; 
+            width:300px; 
+            margin:0;
+            font-size: 25px;
+        }
+
+        .select-editable-2 input {
+            position:absolute; 
+            top:0px; 
+            left:0px; 
+            width:270px; 
+            padding:1px; 
+            font-size:12px; 
+            border:none;
+            font-size: 25px;
+        }
+        
+        .select-editable-2 select:focus, .select-editable-2 input:focus {
+            outline:none;
+        } */
+    /* sliders end */
+
+    /* svgs*/
+
+    /* svgs end */
+
+/* div for non filtering things ends*/
+
+
+/* div for table legend */
+
+    /* #tableLegend{
+        position: absolute;
+        top: 450px;
+        left: 655px;
+        width: 660px;
+        height: 90px;
+    }
+
+    #colorForLegend{
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 175px;
+        height: 90px;
+    }
+
+    #legend{
+        position: absolute;
+        top: 0px;
+        left: 110px;
+        width: 585px;
+        height: 90px;
+    } */
+
+/* div for table legend ends*/
+
+/* table starts */
+
+    /* #view {
+        flex-direction: column;
+        align-items: center;
+        position: absolute;
+        top: 535px;
+        left: 660px;
+        outline: 5px dashed black;
+    }
+
+    table, th, td{
+        border: 0px solid black;
+        border-collapse: collapse;
+        font: 14px sans-serif;
+    }
+
+    .sortable {
+        user-select: none;
+        border-radius: 3px;
+        cursor: pointer;
+        padding: 6px;
+        font: 25px times;
+    }
+
+    th:first-of-type {
+        text-align: left;
+    }
+
+    th {
+        font-weight: normal;
+        text-align: center;
+    }
+
+    th:last-of-type
+    {
+        text-align: center;
+    }
+
+    #predictionTable td {
+        line-height: 0;
+    }
+
+    #predictionTable tbody tr {
+        cursor: pointer;
+    }
+
+    tbody tr:hover {
+        background-color: pink;
+    }
+
+    td:first-of-type {
+        text-align: left;
+    }
+
+    td {
+        text-align: center;
+    }
+
+    td:last-of-type
+    {
+        text-align: center;
+    }
+
+    .tooltip {
+        position: absolute;
+        pointer-events: none;
+        background-color: white;
+        color: black;
+        border: solid;
+        border-width: 1px;
+        border-radius: 5px;
+        padding: 10px;
+    } */
+
+/* table ends */
+
+
+
+/* #attacksAndAttackers{
+    position: absolute;
+}
+
+#exportButton {
+    position: absolute;
+    font-size: 20px;
+    top: 530px;
+    border-radius: 1em; 
+    visibility: hidden;
+}
+
+#goBackButton {
+    position: absolute;
+    font-size: 20px;
+    top: 530px;
+    border-radius: 1em; 
+    visibility: hidden;
+}
+
+#ipsClicked{
+    position: absolute;
+    font-size: 20px;
+    top: 165px;
+    left:2080px;
+    border-radius: 1em; 
+}
+
+#removeIPButton{
+    position: absolute;
+    font-size: 20px;
+    top: 165px;
+    left: 2315px;
+    width: 190px; 
+    height: 25px ;
+    border-radius: 1em; 
+}
+
+#startDatePick {
+    position: absolute;
+    font-size: 20px;
+    top: 165px;
+    left: 2515px;
+    width: 180px; 
+    height: 20px ;
+    border-radius: 1em; 
+    visibility: hidden;
+}
+
+#startWeekPick {
+    position: absolute;
+    font-size: 20px;
+    top: 165px;
+    left: 2520px;
+    width: 190px; 
+    height: 25px ;
+    border-radius: 1em; 
+    visibility: hidden;
+}
+
+#startMonthPick {
+    position: absolute;
+    font-size: 20px;
+    top: 165px;
+    left: 2520px;
+    width: 190px; 
+    height: 25px ;
+    border-radius: 1em; 
+    visibility: hidden;
+}
+
+
+#endDatePick{
+    position: absolute;
+    font-size: 20px;
+    top: 165px;
+    left: 2715px;
+    width: 180px; 
+    height: 20px ;
+    border-radius: 1em; 
+    visibility: hidden;
+}
+
+#endWeekPick{
+    position: absolute;
+    font-size: 20px;
+    top: 165px;
+    left: 2715px;
+    width: 190px; 
+    height: 25px ;
+    border-radius: 1em; 
+    visibility: hidden;
+}
+
+#endMonthPick{
+    position: absolute;
+    font-size: 20px;
+    top: 165px;
+    left: 2715px;
+    width: 190px; 
+    height: 25px ;
+    border-radius: 1em; 
+    visibility: hidden;
+}
+
+
+#crButton{
+    position: absolute;
+    font-size: 20px;
+    top: 165px;
+    left: 2915px;
+    width: 190px; 
+    height: 25px ;
+    border-radius: 1em; 
+    visibility: hidden;
+}
+
+#exportIPButton{
+    position: absolute;
+    font-size: 20px;
+    top: 164px;
+    left: 3115px;
+    width: 230px; 
+    height: 28px ;
+    border-radius: 1em; 
+    visibility: hidden;
+}
+
+
+#crossReferenceIPGraphs{
+    position: absolute;
+}
+
+#legendForIPGraph{
+    position: absolute;
+    font-size: 20px;
+    top: 5px;
+    left: 2085px;
+}
+
+#legendForTreeMap{
+    position: absolute;
+    font-size: 20px;
+    top: 170px;
+    left: 3360px;
+}
+
+.node {
+    box-sizing: border-box;
+    position: absolute;
+    overflow: hidden;
+}
+  
+.node-label {
+    padding: 4px;
+    line-height: 1em;
+    white-space: pre;
+    font-size: 20px;
+}
+
+.node-value {
+    color: rgba(0,0,0,0.8);
+    font-size: 18px;
+    margin-top: 1px;
+}
+
+#parallelCoordinatesGraph{
+    position: absolute;
+}
+
+#usernameFilterDiv{
+    position: absolute;
+    width: 300px;
+    height: 50px;
+}
+
+#usernameFilter{
+    position: absolute;
+    font-size: 30px;
+    top: 0px;
+    left: 0px;
+    width: 0px; 
+    height: 0px;
+    border-radius: 1em; 
+}
+
+#donutGraph{
+    position: absolute;
+} */
+
+
+
+
+
+
+
