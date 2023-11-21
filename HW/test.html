@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+
+<head>
+    <meta charset="UTF-8">
+    <title>Compact Dashboard</title>
+
+    <!-- For d3 -->
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <script src="https://d3js.org/d3.v7.js"></script>
+    <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
+    <script src="https://"></script>
+
+    <!-- moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.2/d3.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-color/1.2.1/d3-color.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
+
+    
+
+
+</head>
+
+<body>
+    <!-- date heatmap -->
+    <div id="initialVariablesDiv">
+        <select name="data" id="data" onchange="specifyTimePeriod();">
+            <option selected="selected" disabled="true">Please Select A Cluster</option>
+            <option value="utah" class="dropdown-container">utah</option>
+            <option value="clem">clem</option>
+            <option value="wisc">wisc</option>
+        </select>
+
+        <svg id="dateHeatMap"></svg>
+
+        <button class="button-64" role="button" onclick="clearSelectedTimes()"><span class="text">Clear Selection</span></button>
+    </div>
+
+
+
+    <button id="resetButton" title="Reset to Initial Selection" onclick="finalCheck()">Reset</button>
+
+
+    <div id="countryOptions">
+        <label for="countries-from-data" style="color:red;font-size:25px;" id="labelText">Filter 1 Country in Linechart and</label>
+        <label for="countries-from-data-2" style="color:red;font-size:25px;" id="labelText2">Table(or enter a blank to return</label>
+        <label for="countries-from-data-3" style="color:red;font-size:25px;" id="labelText3">to previous state).</label>
+        <input list="countries" name="countries-from-data" id="countries-from-data" onchange="countrySelect(this.value)">
+        <datalist id="countries"></datalist>
+    </div>
+
+    
+    <div id="baseTPDiv">
+        <select id="baseTP" onchange="baseTPFunc(this.value);"></select>
+    </div>
+
+
+
+    <div id="dependentDiv">
+
+        <div id="slidecontainer1"> 
+            <div class="tooltipForSliders" id="Text1">Percentage Change Distribution(Hover Me)
+                <span class="tooltiptext">
+                    The histogram below shows the distribution of percentage
+                    change numbers from base time period x to non-base time period(s).
+                    <br>
+                    <br>
+                    Use the slider to filter 
+                    countries in the table and the linechart that had a 
+                    percentage increase of more than or equal to x(where x is the number on the 
+                    slider and input box) from base time period x
+                    to any other non base time period(s).
+                    <br>
+                    <br>
+                    X-axis shows the percentage change bins while y-axis shows the frequency of these bins.
+                    Hover on the bins to know exact details.
+                </span>
+            </div>
+            <svg id="svg1"></svg>
+            <input type="range" class="slider" id="myRange" step="1" onchange="threshold1()">
+            <div id="combobox1">
+                <div class="select-editable">
+                    <select id="PERCHANGECHOOSE" onchange="chooseBox1(this.value)">
+                        <option selected="selected" disabled="true">Please Select Or Type</option>
+                    </select>
+                    <input id="PERCHANGEWRITE" type="text" name="format" value="" onchange="textBox1(this.value)"/>
+                </div>
+            </div>
+        </div> 
+
+
+        <div id="slidecontainer2">
+            <div class="tooltipForSliders" id="Text2">Absolute Change Distribution(Hover Me)
+                <span class="tooltiptext">
+                    The histogram below shows the distribution of absolute
+                    change numbers from base time period x to non-base time period(s).
+                    <br>
+                    <br>
+                    Use the slider to filter 
+                    countries in the table and the linechart that had an 
+                    absolute increase of more than or equal to x(where x is the number on the 
+                    slider and input box) from base time period x
+                    to any other non base time period y.
+                    <br>
+                    <br>
+                    X-axis shows the absolute change bins while y-axis shows the frequency of these bins.
+                    Hover on the bins to know exact details.
+                </span>
+            </div>
+            <svg id="svg2"></svg>
+            <input type="range" class="slider" id="myRange2" step="1" onchange="threshold2()">
+            <div id="combobox2">
+                <div class="select-editable">
+                    <select id="ABSCHANGECHOOSE" onchange="chooseBox2(this.value)">
+                        <option selected="selected" disabled="true">Please Select Or Type</option>
+                    </select>
+                    <input id="ABSCHANGEWRITE" type="text" name="format" value="" onchange="textBox2(this.value)"/>
+                </div>
+            </div>
+            
+        </div>
+
+        <span id="baseText">
+            BASE DEPENDENT
+        </span>
+
+    </div>
+
+    <div id="independentDiv">
+        <div id="slidecontainer3">
+            <div class="tooltipForSliders" id="Text3">Absolute Attack(Hover Me)
+                <span class="tooltiptext">
+                    The histogram below shows the distribution of absolute
+                    numbers for all the time periods.
+                    <br>
+                    <br>
+                    Use the slider to filter 
+                    countries in the table and the linechart that had an 
+                    absolute attack number of more than or equal to x(where x is the number on the 
+                    slider and input box).
+                    <br>
+                    <br>
+                    X-axis shows the absolute number bins while y-axis shows the frequency of these bins.
+                    Hover on the bins to know exact details.
+                </span>
+            </div>
+            <svg id="svg3"></svg>
+            <input type="range" class="slider" id="myRange3" step="1" onchange="threshold3()">
+            <div id="combobox3">
+                <div class="select-editable">
+                    <select id="ABSCHOOSE" onchange="chooseBox4(this.value)">
+                        <option selected="selected" disabled="true">Please Select Or Type</option>
+                    </select>
+                    <input id="ABSWRITE" type="text" name="format" value="" onchange="textBox3(this.value)"/>
+                </div>
+            </div>
+        </div>
+
+        <span id="nonbaseText">
+            BASE INDEPENDENT
+        </span>
+
+    </div>
+
+
+
+    <div id="sortTPDiv">
+        <select id="sortTP" onchange="sortTPFunc(this.value);"></select>
+    </div>
+
+
+    <!-- line chart -->
+    <div class="linechartView">
+        <svg id="line-chart-aa">
+            <g id="x-axis-aa"></g>
+            <g id="y-axis-aa"></g>
+            <g id="y-axis-aa-2"></g>
+            <g id="lines-aa"></g>
+            <g id="lines-aa-2"></g>
+            <g id="overlay-aa"><line></line></g>
+        </svg>
+    </div>
+
+
+    <!-- table -->
+    <div id = "view">
+        <table id="predictionTable">
+            <thead id="predictionTableHead">
+                <tr id="columnHeaders">
+                </tr>
+            </thead>
+            <tbody id="predictionTableBody">
+            </tbody>
+        </table>
+    </div>
+
+
+    <div id = "tableLegend">
+        <svg id = "legend"></svg>
+    </div>
+
+
+    <!-- <button id="exportButton" onclick="exportData()">Export IP Data ⭷⭷</button>
+    <button id="goBackButton" onclick="goBack()">Go Back 🡠</button>
+    <div id="attacksAndAttackers"></div>
+
+    
+    <div id="crossReferenceTools">
+        
+        <select id="ipsClicked">
+            <option value="" disabled selected>Selected IPs</option>
+        </select>
+        <button id="removeIPButton" onclick="removeIP()">Remove this IP</button>
+
+        <input type="text" id="startDatePick" placeholder="Start Date"/>
+        <select name="startWeekPick" id="startWeekPick">
+            <option value="" disabled selected>Start Week</option>
+        </select>
+        <select name="startMonthPick" id="startMonthPick">
+            <option value="" disabled selected>Start Month</option>
+        </select>
+
+        <input type="text" id="endDatePick" placeholder="End Date">
+        <select name="endWeekPick" id="endWeekPick">
+            <option value="" disabled selected>End Week</option>
+        </select>
+        <select name="endMonthPick" id="endMonthPick">
+            <option value="" disabled selected>End Month</option>
+        </select>
+        
+        <button id="crButton" onclick="finalCRChecker()">Cross Reference!</button>
+
+        <button id="exportIPButton" onclick="exportCRData()">Export CR IP Data ⭷⭷</button>
+    </div>
+
+    <div id="crossReferenceIPGraphs"></div>
+
+    <div id="legendForIPGraph"></div>
+
+    <div id="legendForTreeMap"></div>
+
+    
+    <div id="usernameFilterDiv">
+        <select id="usernameFilter" onchange="filterUsername()"></select>
+    </div>
+
+    <div id="parallelCoordinatesGraph"></div>
+
+    <div id="donutGraph"></div>     -->
+
+
+    <script src="js/initialVariables.js"></script>
+    <script src="js/vizscreen.js"></script>
+    <script src="js/linechartAA.js"></script>
+    <script src="js/dynamicSliderValues.js"></script>
+    <script src="js/table.js"></script>
+    <script src="js/variablesForTable.js"></script>
+    <script src="js/tableLogic.js"></script>
+    <script src="js/shapesAroundTable.js"></script>
+
+
+    <!-- <script src="js/attacksAndAttackersLineChart.js"></script>
+    <script src="js/IPLineChart.js"></script>
+    <script src="js/crossReferenceIPLineChart.js"></script>
+    <script src="js/treemap.js"></script>
+    <script src="js/parallelcoordinates.js"></script>
+    <script src="js/donut.js"></script> -->
+
+   
+</body>
+</html> 
