@@ -1,71 +1,262 @@
 class Table{
-
-    
-    static countryCode
     static countriesChosenUsedInAnotherFunction
 
-    constructor(neededData, baseTime, selectedTimes){
+    constructor(neededData, baseTime, selectedTimes, absoluteAnomVal, percentAnomVal, percentMaxVal){
         this.neededData = neededData
         this.baseTime = baseTime
         this.selectedTimes = selectedTimes
+        this.absoluteAnomVal = absoluteAnomVal
+        this.percentAnomVal = percentAnomVal
+        this.percentMaxVal = percentMaxVal
 
         let variables = new VariablesForTable(this.neededData, this.baseTime, this.selectedTimes)
-        variables.continentMaxAbsoluteAttacks()
-        variables.continentMaxPercentageAttacks()
-        variables.continentAndCountryTotalAttacks()
-        variables.userNameParsing()
+        variables.countrySpecificInfo()
+        // variables.userNameParsing()
 
-        //console.log(this.neededData)
-
-        
         this.tableBody = document.getElementById('predictionTableBody');
         this.chosenCountries = []
         Table.countriesChosenUsedInAnotherFunction = []
         
 
-        this.vizWidth = 310;
-        this.vizHeight = 60; //originally 30
-        this.smallVizHeight = 180;//originally 20
+        this.vizWidth = 60;
+        this.vizHeight = 30; //originally 30
     }
 
     drawLegend(){
-        let legend = d3.select('#legend')
-        legend.append("rect").attr("x", "10").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(0.1))
-        legend.append("rect").attr("x", "30").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(0.3))
-        legend.append("rect").attr("x", "50").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(0.5))
-        legend.append("rect").attr("x", "70").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(0.8))
-        legend.append("rect").attr("x", "90").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(1.0))
+        document.getElementById('tableLegend').style.display = 'display'
 
-        legend.append("rect").attr("x", "10").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(0.1))
-        legend.append("rect").attr("x", "30").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(0.3))
-        legend.append("rect").attr("x", "50").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(0.5))
-        legend.append("rect").attr("x", "70").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(0.8))
-        legend.append("rect").attr("x", "90").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(1.0))
+        let legend = d3.select('#colorForLegend')
+        legend.append("rect").attr("x", "5").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(0.1))
+        legend.append("rect").attr("x", "25").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(0.3))
+        legend.append("rect").attr("x", "45").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(0.5))
+        legend.append("rect").attr("x", "65").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(0.8))
+        legend.append("rect").attr("x", "85").attr("y", "0").attr("width", "20").attr("height", "20").style("fill", d3.interpolateBlues(1.0))
+
+        legend.append("rect").attr("x", "5").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(0.1))
+        legend.append("rect").attr("x", "25").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(0.3))
+        legend.append("rect").attr("x", "45").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(0.5))
+        legend.append("rect").attr("x", "65").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(0.8))
+        legend.append("rect").attr("x", "85").attr("y", "25").attr("width", "20").attr("height", "20").style("fill", d3.interpolateGreens(1.0))
     
-        legend.append("rect").attr("x", "90").attr("y", "50").attr("width", "20").attr("height", "20").style("fill", "purple")
+        legend.append("rect").attr("x", "85").attr("y", "50").attr("width", "20").attr("height", "20").style("fill", "purple")
 
     }
 
-    drawTable(){      
-        if (this.neededData.length === 6){
-            for (let i = 1; i < this.selectedTimes.length+1; i++){
-                let givenString = 'TP' + i
-                document.getElementById(givenString).disabled = true
-                document.getElementById(givenString).checked = false
-            }
-            let things = document.getElementById("comparisonGroupedBarGraph")
-            things.innerHTML = ''
-            let things2 = document.getElementById("parallelCoordinatesGraph")
-            things2.innerHTML = ''
-            let things3 = document.getElementById("donutGraph")
-            things3.innerHTML = ''
+    sortData(){
+        let currentBaseTime = document.getElementById("baseTP").value
+        let sortTime = document.getElementById("sortTP").value
+
+        if (currentBaseTime === sortTime){
+            this.neededData.sort((rowA, rowB) => rowB[sortTime].attacks - rowA[sortTime].attacks)
         }
         else{
-            for (let i = 1; i < this.selectedTimes.length+1; i++){
-                let givenString = 'TP' + i
-                document.getElementById(givenString).disabled = false
+            this.neededData.sort((rowA, rowB) => {
+                let y = (rowB[sortTime].attacks - rowB[currentBaseTime].attacks)/rowB[currentBaseTime].attacks
+                let x = (rowA[sortTime].attacks - rowA[currentBaseTime].attacks)/rowA[currentBaseTime].attacks 
+                let b = isFinite(y) ? y : 0
+                let a = isFinite(x) ? x : 0
+                return b - a
+            })
+        }
+    }
+
+    filterCountries(){
+        // console.log(document.getElementById("myRange").value)
+        // console.log(document.getElementById("PERCHANGECHOOSE").value)
+        // console.log(document.getElementById("PERCHANGEWRITE").value)
+        // console.log(document.getElementById("ABSCHANGECHOOSE").value)
+        // console.log(document.getElementById("ABSCHANGEWRITE").value)
+
+        let writtenPvalue = document.getElementById("PERCHANGEWRITE").value
+        let minVal 
+        let maxVal
+        if (writtenPvalue === ''){
+            // console.log('here')
+            let turningPointValue = document.getElementById("PERCHANGECHOOSE").value
+            if (turningPointValue === '0A'){
+                minVal = document.getElementById("myRange").min
+                maxVal = document.getElementById("myRange").max
+            }
+            else if (turningPointValue === '1A'){
+                minVal = document.getElementById("myRange").min
+                maxVal = 0
+            }
+            else if (turningPointValue === '2A'){
+                minVal = 0
+                maxVal = document.getElementById("myRange").max
+            }
+            else if (turningPointValue === '3A'){
+                minVal = 100
+                maxVal = document.getElementById("myRange").max
+            }
+            else if (turningPointValue === '4A'){
+                minVal = 1000
+                maxVal = document.getElementById("myRange").max
+            }
+            else if (turningPointValue === '5A'){
+                minVal = 10000
+                maxVal = document.getElementById("myRange").max
+            }
+            else if (turningPointValue === '6A'){
+                minVal = 100000
+                maxVal = document.getElementById("myRange").max
+            }
+            else if (turningPointValue === '7A'){
+                minVal = 1000000
+                maxVal = document.getElementById("myRange").max
+            }
+            //taking care of initial state where there is an exception
+            else{
+                minVal = document.getElementById("myRange").min
+                maxVal = document.getElementById("myRange").max
             }
         }
+        else{
+            // console.log('there')
+            minVal = Number(document.getElementById("myRange").value)
+            // console.log(minVal)
+            maxVal = document.getElementById("myRange").max
+        }
+        
+
+
+        let currentBaseTime = document.getElementById("baseTP").value
+        
+        let finalFilter = this.findValues(minVal, maxVal, currentBaseTime)
+        this.neededData = this.neededData.filter(function(el) { 
+            if (finalFilter.includes(el.country)){
+                return el
+            }
+        });
+        // console.log('A:', this.neededData)
+
+        let writtenAvalue = document.getElementById("ABSCHANGEWRITE").value
+        let minVal2 
+        let maxVal2
+        if (writtenAvalue === ''){
+            // console.log('here2')
+            let turningPointValue = document.getElementById("ABSCHANGECHOOSE").value
+            if (turningPointValue === '0B'){
+                minVal2 = document.getElementById("myRange2").min
+                maxVal2 = document.getElementById("myRange2").max
+            }
+            else if (turningPointValue === '1B'){
+                minVal2 = document.getElementById("myRange2").min
+                maxVal2 = 0
+            }
+            else if (turningPointValue === '2B'){
+                minVal2 = 0
+                maxVal2 = document.getElementById("myRange2").max
+            }
+            else if (turningPointValue === '3B'){
+                minVal2 = 1000
+                maxVal2 = document.getElementById("myRange2").max
+            }
+            else if (turningPointValue === '4B'){
+                minVal2 = 10000
+                maxVal2 = document.getElementById("myRange2").max
+            }
+            else if (turningPointValue === '5B'){
+                minVal2 = 100000
+                maxVal2 = document.getElementById("myRange2").max
+            }
+            else if (turningPointValue === '6B'){
+                minVal2 = 1000000
+                maxVal2 = document.getElementById("myRange2").max
+            }
+            //taking care of initial state where there is an exception
+            else{
+                minVal2 = document.getElementById("myRange2").min
+                maxVal2 = document.getElementById("myRange2").max
+            }
+        }
+        else{
+            // console.log('there2')
+            minVal2 = Number(document.getElementById("myRange2").value)
+            // console.log(minVal2)
+            maxVal2 = document.getElementById("myRange2").max
+        }
+
+        let finalFilter2 = this.findValues2(minVal2, maxVal2, currentBaseTime)
+        this.neededData = this.neededData.filter(function(el) { 
+            if (finalFilter2.includes(el.country)){
+                return el
+            }
+        });
+        // console.log('B:', this.neededData)
+
+        //$('#countries').find('option').remove()
+
+        // let countrySelect = document.getElementById("countries")
+        // for (let country of this.neededData){
+        //     let option = document.createElement("option")
+        //     option.value = country.country
+        //     option.text = country.country
+        //     countrySelect.appendChild(option)
+        // }
+    }
+
+    
+    findValues(minVal, maxVal, currentBaseTime){
+        // console.log(minVal)
+        // console.log(maxVal)
+        let finalFilter = []
+        for (let i = 0; i < this.neededData.length; i++){
+            let area = this.neededData[i]
+            let values = []
+            for (let time of this.selectedTimes){
+                if (time !== currentBaseTime){
+                    let value = ((area[time].attacks - area[currentBaseTime].attacks)/area[currentBaseTime].attacks) * 100
+                    let actualValue = isFinite(value) ? value : 0
+                    values.push(actualValue)
+                }
+            }
+            // console.log(values)
+            if (maxVal === document.getElementById("myRange").max){
+                if (values.some(el => el >= minVal && el <= maxVal)){
+                    finalFilter.push(area.country)
+                }
+            }
+            else{
+                if (values.some(el => el >= minVal && el < maxVal)){
+                    finalFilter.push(area.country)
+                }
+            }
+        }
+        // console.log(finalFilter)
+        return finalFilter
+    }
+
+    findValues2(minVal2, maxVal2, currentBaseTime){
+        let finalFilter = []
+        for (let i = 0; i < this.neededData.length; i++){
+            let area = this.neededData[i]
+            let values = []
+            for (let time of this.selectedTimes){
+                if (time !== currentBaseTime){
+                    let value = area[time].attacks - area[currentBaseTime].attacks
+                    values.push(value)
+                }
+            }
+            if (maxVal2 === document.getElementById("myRange2").max){
+                if (values.some(el => el >= minVal2 && el <= maxVal2)){
+                    finalFilter.push(area.country)
+                }
+            }
+            else{
+                if (values.some(el => el >= minVal2 && el < maxVal2)){
+                    finalFilter.push(area.country)
+                }
+            }
+        }
+        return finalFilter
+    }
+
+    drawTable(){     
+          
+        //this.drawLegend() 
+        this.sortData()
+        this.filterCountries()
 
         let that = this
         this.changeStyle = function(e) {
@@ -99,26 +290,15 @@ class Table{
         };
         this.tableBody.addEventListener('click', this.changeStyle, false)
 
-
-
-        this.drawLegend()
-
         let rowSelection = d3.select('#predictionTableBody')
             .selectAll('tr')
             .data(this.neededData)
             .join('tr')
+
         
-
-        //get back to this later
         rowSelection.on('click', (event, d) => 
-        {
-            if (d.isForecast){
-                this.toggleRow(d, this.neededData.indexOf(d));
-            }
-            else{      
-                Table.countryCode = d.cc
-                Table.country = d.country
-
+        { 
+            if(event.target.__data__.class === 'country'){ 
                 if (Table.countriesChosenUsedInAnotherFunction.includes(d.cc)){
                     Table.countriesChosenUsedInAnotherFunction = Table.countriesChosenUsedInAnotherFunction.filter(item => item !== d.cc)
                 }
@@ -130,48 +310,61 @@ class Table{
                 let checkedBoxes2 = document.querySelectorAll('input[type="checkbox"]:checked');
                 let selectedTPsLength2 = checkedBoxes2.length
 
-                if (Table.countriesChosenUsedInAnotherFunction.length > 1 && selectedTPsLength2 > 1){
+                if ((Table.countriesChosenUsedInAnotherFunction.length > 1 || Table.countriesChosenUsedInAnotherFunction.length === 0) && selectedTPsLength2 > 1){
                     alert("Press ok. Then, EITHER have multiple countries and one time period OR have multiple time periods and one country.")
 
-                    let cgbg = document.getElementById("comparisonGroupedBarGraph")
+                    let cgbg = document.getElementById("attacksAndAttackers")
                     cgbg.innerHTML = ''
                     let pcg = document.getElementById("parallelCoordinatesGraph")
                     pcg.innerHTML = ''
                     let dc = document.getElementById("donutGraph")
                     dc.innerHTML = ''
+                    document.getElementById("attacksAndAttackers").style.outline = "none"
+                    document.getElementById("exportButton").style.visibility = "hidden"
+                    document.getElementById("goBackButton").style.visibility = "hidden"
+                    document.getElementById("usernameFilter").style.width = "0px"
+                    document.getElementById("usernameFilter").style.height = "0px"
+                    $('#usernameFilter').find('option').remove()
+                    document.getElementById("parallelCoordinatesGraph").style.outline = "none"
+                    document.getElementById("donutGraph").style.outline = "none"
                 }
                 else{
-                    let cgbg = document.getElementById("comparisonGroupedBarGraph")
+                    document.getElementById("exportButton").style.visibility = "hidden"
+                    document.getElementById("goBackButton").style.visibility = "hidden"
+                    let cgbg = document.getElementById("attacksAndAttackers")
                     cgbg.innerHTML = ''
-                    let barGraph = new BarGraph(Table.countriesChosenUsedInAnotherFunction)
-                    barGraph.fetchData()
-    
+                    document.getElementById("attacksAndAttackers").style.outline = "none"
+                    let aAndALineChart = new AttacksAndAttackers(Table.countriesChosenUsedInAnotherFunction)
+                    aAndALineChart.fetchData()
+                    
+                    document.getElementById("usernameFilter").style.width = "0px"
+                    document.getElementById("usernameFilter").style.height = "0px"
+                    $('#usernameFilter').find('option').remove()
                     let pcg = document.getElementById("parallelCoordinatesGraph")
                     pcg.innerHTML = ''
-                    let parallelCoordinate = new ParallelCoordinate(Table.countriesChosenUsedInAnotherFunction)
+                    document.getElementById("parallelCoordinatesGraph").style.outline = "none"
+                    let parallelCoordinate = new ParallelCoordinate(Table.countriesChosenUsedInAnotherFunction, "no")
                     parallelCoordinate.fetchData2()
-    
+
                     let dc = document.getElementById("donutGraph")
                     dc.innerHTML = ''
+                    document.getElementById("donutGraph").style.outline = "none"
                     let donutGraph = new Donut(Table.countriesChosenUsedInAnotherFunction)
                     donutGraph.fetchData3()
                 }
             }
         })
 
+
         let tabularLogic = new TableLogic()
         let forecastSelection = rowSelection.selectAll('td')
             .data(tabularLogic.rowToCellDataTransform)
             .join('td')
             .attr('class', d => d.class)
-
-        //console.log(forecastSelection)
         
-        
-
         forecastSelection.filter(d => d.type === 'text')
-            .text(d => d.class === 'continent' ? '+'+d.value : d.value)
-            .style("font", d => d.class === 'continent' ? "25px times": "20px times")
+            .text(d => d.value)
+            .style("font", "20px times")
 
 
         let vizSelection = forecastSelection.filter(d => d.type === 'viz');
@@ -180,134 +373,18 @@ class Table{
             .data(d => [d])
             .join('svg')
             .attr('width', this.vizWidth)
-            .attr('height', d => d.isForecast ? this.vizHeight : this.smallVizHeight)
+            .attr('height', this.vizHeight)
 
         let grouperSelect = svgSelect.selectAll('g')
         .data(d => [d])
         .join('g')
 
-        this.shapes = new ShapesInCell()
-        this.shapes.setBackgroundOfCell(grouperSelect.filter((d,i) => i === 0))
+        this.shapes = new ShapesAroundTable(this.absoluteAnomVal, this.percentAnomVal, this.percentMaxVal)
         this.shapes.addRectangles(grouperSelect.filter((d,i) => i === 0));
-        this.shapes.addRectangles2(grouperSelect.filter((d,i) => i === 0));
-        // this.shapes.addBlackStars(grouperSelect.filter((d,i) => i === 0))
-        // this.shapes.addBrownStars(grouperSelect.filter((d,i) => i === 0))
-        this.shapes.addYellowStars(grouperSelect.filter((d,i) => i === 0))
-        // this.shapes.addGreenStars(grouperSelect.filter((d,i) => i === 0))
-        this.shapes.addBlueStars(grouperSelect.filter((d,i) => i === 0))
-        this.shapes.setSecondBackgroundOfCell(grouperSelect.filter((d,i) => i === 0))
-        //this.rect.fetchDataForUsername(grouperSelect.filter((d,i) => i === 0))
+        this.shapes.addTrianglesOrConstants(grouperSelect.filter((d,i) => i === 0));
+        this.shapes.addLegend()
+        // this.shapes.setBoundariesOfCell(grouperSelect.filter((d,i) => i === 0))
     }
 
-    toggleRow(rowData, index) {
-        this.tableBody.removeEventListener('click', this.changeStyle, false)
-        if (rowData.isExpanded){
-            //document.getElementById('bgrects').innerHTML = ''
-            let negateRows = rowData.meta
-
-            if (this.neededData.length - negateRows.length === 6){
-                // console.log("I am here")
-                // console.log(Table.countriesChosenUsedInAnotherFunction)
-                this.chosenCountries = []
-                Table.countriesChosenUsedInAnotherFunction = []
-            }
-            let negateCountries = []
-            for (let row of negateRows){
-                negateCountries.push(row.country)
-            }
-            this.neededData = this.neededData.filter(d => d.isForecast || !negateCountries.includes(d.country));
-        }
-        else{
-            //document.getElementById('bgrects').innerHTML = ''
-            let addList = rowData.meta
-            let currentBaseTime = document.getElementById("dataset-select").value
-            let sortTime = document.getElementById("dataset-select-2").value
-
-            if (currentBaseTime === sortTime){
-                addList.sort((rowA, rowB) => rowB[sortTime].attacks - rowA[sortTime].attacks)
-            }
-            else{
-                addList.sort((rowA, rowB) => {
-                    let y = (rowB[sortTime].attacks - rowB[currentBaseTime].attacks)/rowB[currentBaseTime].attacks
-                    let x = (rowA[sortTime].attacks - rowA[currentBaseTime].attacks)/rowA[currentBaseTime].attacks 
-                    let b = isFinite(y) ? y : 0
-                    let a = isFinite(x) ? x : 0
-                    return b - a
-                })
-            }
-            this.neededData.splice(index + 1, 0, ...addList)
-
-            let slider = document.getElementById("myRange");
-            let threshold = Number(slider.value)
-            let finalFilter = this.findValues(threshold, currentBaseTime)
-            this.neededData = this.neededData.filter(function(el) { 
-                if (finalFilter.includes(el.country) || finalFilter.includes(el.region)){
-                    return el
-                }
-            });
-
-            let slider2 = document.getElementById("myRange2");
-            let threshold2 = Number(slider2.value)
-            let finalFilter2 = this.findValues2(threshold2, currentBaseTime)
-            this.neededData = this.neededData.filter(function(el) { 
-                if (finalFilter2.includes(el.country) || finalFilter2.includes(el.region)){
-                    return el
-                }
-            });
-        }
-        d3.selectAll("#blackStar").remove()
-        d3.selectAll("#brownStar").remove()
-        d3.selectAll("#yellowStar").remove()
-        d3.selectAll('#bgrect').remove()
-        rowData.isExpanded = !rowData.isExpanded
-        this.drawTable()
-    }
-
-    findValues(threshold, currentBaseTime){
-        let finalFilter = []
-        for (let i = 0; i < this.neededData.length; i++){
-            let area = this.neededData[i]
-            if (!('region' in area)){
-                let values = []
-                for (let time of this.selectedTimes){
-                    if (time !== currentBaseTime){
-                        let value = ((area[time].attacks - area[currentBaseTime].attacks)/area[currentBaseTime].attacks) * 100
-                        let actualValue = isFinite(value) ? value : 0
-                        values.push(actualValue)
-                    }
-                }
-                if (values.some(el => el >= threshold)){
-                    finalFilter.push(area.country)
-                }
-            }
-            else{
-                finalFilter.push(area.region)
-            }
-        }
-        return finalFilter
-    }
-
-    findValues2(threshold2, currentBaseTime){
-        let finalFilter = []
-        for (let i = 0; i < this.neededData.length; i++){
-            let area = this.neededData[i]
-            if (!('region' in area)){
-                let values = []
-                for (let time of this.selectedTimes){
-                    if (time !== currentBaseTime){
-                        let value = area[time].attacks - area[currentBaseTime].attacks
-                        values.push(value)
-                    }
-                }
-                if (values.some(el => el >= threshold2)){
-                    finalFilter.push(area.country)
-                }
-            }
-            else{
-                finalFilter.push(area.region)
-            }
-        }
-        return finalFilter
-    }
 
 }

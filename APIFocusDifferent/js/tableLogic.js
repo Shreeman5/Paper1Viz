@@ -1,16 +1,27 @@
 class TableLogic{
 
     constructor(){
-
     }
 
     rowToCellDataTransform(d) {
-        
-        let stateInfo = {
-            type: 'text',
-            class: d.isForecast ? 'continent' : 'country',
-            value: d.isForecast ? d.region + '[' + d.totalAttacks + ']' : d.country + '[' + d.totalAttacks + ']'
-        };
+
+        function getFlagEmoji(country, cc){
+            let a = country + '[' + cc + ']'
+            const codePoints = cc
+                .toUpperCase()
+                .split('')
+                .map(char =>  127397 + char.charCodeAt());
+            let b = String.fromCodePoint(...codePoints);
+            // console.log(a)
+            // console.log(b)
+            return a+b
+        }
+
+        let stateInfo = new function(){
+            this.type = 'text';
+            this.class = 'country';
+            this.value = getFlagEmoji(d.country, d.cc);
+        }
 
         let dataList = [stateInfo]
 
@@ -20,21 +31,19 @@ class TableLogic{
             if (time === d.number){
                 let marginInfo = {
                     type: 'viz',
-                    value: d.isForecast ? d['continent_max_attacks_' + i] : d[d.number].attacks,
+                    value: d[d.number].attacks,
                     value2: 0,
-                    value3: 0,
-                    //value4: d.isForecast ? 'yes' : 
+                    value3: 0
                 }
                 dataList.push(marginInfo)
             }
             else{
                 let marginInfo = {
                     type: 'viz',
-                    value: d.isForecast ? d['continent_max_attacks_' + i] : d[time].attacks,
-                    value2: d.isForecast ? d['continent_max_increase_attacks_' + j] : 
-                        isFinite(100 * ((d[time].attacks - d[d.number].attacks)/d[d.number].attacks))?
+                    value: d[time].attacks,
+                    value2: isFinite(100 * ((d[time].attacks - d[d.number].attacks)/d[d.number].attacks))?
                             100 * ((d[time].attacks - d[d.number].attacks)/d[d.number].attacks): 0,
-                    value3: d.isForecast ? 0 : d[time].attacks - d[d.number].attacks
+                    value3: d[time].attacks - d[d.number].attacks
                 }
                 dataList.push(marginInfo)
                 j++
@@ -42,63 +51,24 @@ class TableLogic{
             i++
         }
 
-        for (let i = 1; i < dataList.length; i++){
-            let thisCell = dataList[i]
-            // console.log(thisCell)
-            if (d.isForecast){
-                // console.log('am I ver here?')
-                thisCell['value4'] = 'yes'
-                // thisCell['value5'] = [0,0,0]
-                // thisCell['value5'] = [0,0,0,0,0]
-                thisCell['value6'] = [0,0,0,0,0,0,0,0,0,0]
-                // thisCell['value7'] = [0,0,0,0,0]
-                thisCell['value8'] = [0,0,0,0,0,0,0,0,0,0]
-                thisCell['value9'] = 'no'
-            }
-            else{
-                thisCell['value4'] = d['country_root_admin_top_' + i]
-                // thisCell['value5'] = d['country_username_top_3_differ_' + i]
-                // thisCell['value5'] = d['country_username_top_5_differ_' + i]
-                thisCell['value6'] = d['country_username_top_10_differ_' + i]
-                // thisCell['value7'] = d['country_username_historic_top_5_differ_' + i]
-                thisCell['value8'] = d['country_username_historic_top_10_differ_' + i]
-                thisCell['value9'] = d['root_second_place_ratio_' + i]
-            }
-        }
-
-        //console.log(dataList)
-        for (let point of dataList)
-        {
-            point.isForecast = d.isForecast;
-        }
-        return dataList;
-        // if base was 2023-01-01
-        // let marginInfo = {
-        //     type: 'viz',
-        //     value: d.isForecast ? d.continent_max_attacks_1 : d['2023-01-01'].attacks,
-        //     value2: 0,
-        //     value3: 0
+        // for (let i = 1; i < dataList.length; i++){
+        //     let thisCell = dataList[i]
+        //     thisCell['value4'] = d['country_root_admin_top_' + i]
+        //     thisCell['value5'] = d['country_username_top_10_differ_by_half_' + i]
+        //     thisCell['value6'] = d['country_username_historic_top_10_differ_by_half_' + i]
+        //     thisCell['value7'] = d['country_root_second_place_ratio_' + i]
         // }
 
-        // let margin2Info = {
-        //     type: 'viz',
-        //     value: d.isForecast ? d.continent_max_attacks_2 : d['2023-01-02'].attacks,
-        //     value2: d.isForecast ? d.continent_max_increase_attacks_1 : 
-        //         isFinite(100 * ((d['2023-01-02'].attacks - d['2023-01-01'].attacks)/d['2023-01-01'].attacks))?
-        //             100 * ((d['2023-01-02'].attacks - d['2023-01-01'].attacks)/d['2023-01-01'].attacks): 0,
-        //     value3: d['2023-01-02'].attacks - d['2023-01-01'].attacks
-        // }
+        // console.log(dataList)
 
-        // let margin3Info = {
-        //     type: 'viz',
-        //     value: d.isForecast ? d.continent_max_attacks_3 : d['2023-01-03'].attacks,
-        //     value2: d.isForecast ? d.continent_max_increase_attacks_2 : 
-        //         isFinite(100 * ((d['2023-01-03'].attacks - d['2023-01-01'].attacks)/d['2023-01-01'].attacks))?
-        //             100 * ((d['2023-01-03'].attacks - d['2023-01-01'].attacks)/d['2023-01-01'].attacks): 0,
-        //     value3: d['2023-01-03'].attacks - d['2023-01-01'].attacks
-        // }
-
-        
+        return dataList
     }
 
 }
+
+
+
+
+// http://128.110.217.95/attacker_activity?cluster=utah&cc=US&range=2023-01-01,2023-01-02&period=day&ips=159.108.29.35,128.110.156.4
+
+// https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=5487236
