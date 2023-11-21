@@ -5,12 +5,27 @@ function specifyTimePeriod(){
     let givenValue = document.getElementById("data").value
     if (givenValue !== 'Please Select A Cluster'){
 
-        document.getElementById("dateHeatMap").innerHTML = ""
+        initVariablesBookkeeping()
 
         findMinMaxDate(givenValue).then(function (minMaxDateData){
 
             let allTheDays = findAllDays(minMaxDateData)
             let svg = d3.select("#dateHeatMap")
+
+            svg.append("text")
+                .attr("x", 0)
+                .attr("y", 60)
+                .text("Select at least 2 days/weeks/months by clicking the rectangles. Cross time period selection is blocked.  Time period = [Day, Week, Month].")
+                .attr("font-size", 18)
+                .attr("fill", "red")
+
+            svg.append("text")
+                .attr("x", 0)
+                .attr("y", 80)
+                .text("Once a rectangle of a time period is selected, rectangles of other time periods cannot be chosen unless the existing selection is cleared using the button given.")
+                .attr("font-size", 18)
+                .attr("fill", "red")
+
 
             // fetch required Data 
             fetchSummaryData(givenValue, "day", allTheDays).then(function (summaryData){
@@ -35,10 +50,15 @@ function specifyTimePeriod(){
     }
 }
 
+function initVariablesBookkeeping(){
+    document.getElementById("dateHeatMap").innerHTML = ""
+    clearSelectedTimes()
+}
+
 
 
 async function findMinMaxDate(givenValue){
-    let minMaxDatesAPI = 'http://128.110.217.95/timeframe/range?cluster='+givenValue
+    let minMaxDatesAPI = 'http://128.110.218.18/timeframe/range?cluster='+givenValue
     const minMaxDate = await fetch(minMaxDatesAPI)
     const jsonMinMaxDate = await minMaxDate.json()
     return jsonMinMaxDate
@@ -81,7 +101,7 @@ function formatDate(date) {
 
 
 async function fetchSummaryData(cluster, period, range){
-    let summaryAPI = 'http://128.110.217.95/summary/bycountry?cluster='+cluster+'&period='+period+'&range='+range.join(",")
+    let summaryAPI = 'http://128.110.218.18/summary/bycountry?cluster='+cluster+'&period='+period+'&range='+range.join(",")
     const summaryData = await fetch(summaryAPI)
     const jsonSummaryData = await summaryData.json()
     return jsonSummaryData
@@ -181,7 +201,8 @@ function drawDayHeatMap(myArr, svg, clusterVal){
         value: Number(dv.Attacks)
     }))
 
-    let years = d3.nest().key(d => d.date.getUTCFullYear()).entries(dateValues).reverse()
+    let years_map = d3.group(dateValues, d => d.date.getUTCFullYear())
+    let years = Array.from(years_map).reverse().map(d => ({key: d[0]+'', values: d[1]}))
     // console.log(years)
 
     let neededYears =  years.map(c => c.key)
@@ -201,11 +222,14 @@ function drawDayHeatMap(myArr, svg, clusterVal){
         .data(years)
         .join("g")
         .attr("transform",(d, i) => {
-            divHeight = i*300 + 100
+            divHeight = i*300 + 160
             return `translate(50, ${divHeight})`
         });
 
     document.getElementById("dateHeatMap").style.height = (divHeight+220) + "px"
+
+    
+
 
     year
     .append("text")
@@ -262,7 +286,7 @@ function drawDayHeatMap(myArr, svg, clusterVal){
             }
         })
         .attr("fill", d => colorFn(d.value))
-        .on("click", function(d,i){
+        .on("click", function(e, d){
             let pass = 1
             for (let i = 0; i < selectedTimes.length; i++){
                 let selectedArr = selectedTimes[i]
@@ -297,6 +321,7 @@ function drawDayHeatMap(myArr, svg, clusterVal){
                     }
                     else{
                         //remove existing things on screen
+                        removeThingsOnScreen()
                     }
                 }
                 else{
@@ -312,9 +337,17 @@ function drawDayHeatMap(myArr, svg, clusterVal){
                     }
                     else{
                         //remove existing things on screen
+                        removeThingsOnScreen()
                     }
                 }
             }
+        })
+        .on("mouseover", function(e, d) {
+            d3.select(this).style("cursor", "pointer")
+            d3.select(this).attr("opacity", 0.2)
+        })
+        .on("mouseout", function(e, d) {
+            d3.select(this).attr("opacity", 1)
         })
         .append("title")
         .text(d => `${formatDate(d.date)}: ${fixNumbers(d.value)}`);
@@ -361,6 +394,56 @@ function drawDayHeatMap(myArr, svg, clusterVal){
             return "#"+(Number(`0x1${b}`) ^ 0xFFFFFF).toString(16).substring(1).toUpperCase()
         })
 
+
+
+    
+    let defs = svg.append("defs");
+
+    //Append a linearGradient element to the defs and give it a unique id
+    let linearGradient = defs.append("linearGradient")
+        .attr("id", "linear-gradient");
+
+    linearGradient
+        .attr("x1", "0%")
+        .attr("y1", "0%")
+        .attr("x2", "100%")
+        .attr("y2", "0%")
+
+    //Set the color for the start (0%)
+    linearGradient.append("stop")
+    .attr("offset", "0%")
+    .attr("stop-color", colorFn(Math.floor(minValue))); //light blue
+
+    //Set the color for the end (100%)
+    linearGradient.append("stop")
+    .attr("offset", "100%")
+    .attr("stop-color", colorFn(Math.ceil(maxValue))); //dark blue
+
+    svg.append("rect")
+    .attr("x", 50)
+    .attr("y", 0)
+    .attr("width", 100)
+    .attr("height", 15)
+    .style("fill", "url(#linear-gradient)")
+    .attr('stroke', 'black')
+    .attr('stroke-width', 2)
+
+    svg.append("text")
+    .attr("x", 20)
+    .attr("y", 12)
+    .text("Min")
+
+    svg.append("text")
+    .attr("x", 152)
+    .attr("y", 12)
+    .text("Max")
+
+    svg.append("text")
+    .attr("x", 58)
+    .attr("y", 30)
+    .text("Day Attacks")
+
+
     return neededYears
 
 }
@@ -383,7 +466,7 @@ function findDayRangeVals(selectedDays){
         let formattedDate = myDates[i].toISOString().split('T')[0]
         formattedDates.push(formattedDate)
     }
-    console.log(formattedDates)
+    // console.log(formattedDates)
     return formattedDates
 }
 
@@ -530,7 +613,7 @@ function drawWeekHeatMap(weekArr, svg, clusterVal){
         .join("g")
         .attr("transform",(d, i) => {
             // neededPositions.push(i*150 + 45)
-            return `translate(50, ${i*300 + 80})`
+            return `translate(50, ${i*300 + 140})`
         });
 
     year
@@ -569,7 +652,7 @@ function drawWeekHeatMap(weekArr, svg, clusterVal){
           })
         .attr("y", -10)
         .attr("fill", d => colorFn(d[2]))
-        .on("click", function(d, i){
+        .on("click", function(e, d){
             let pass = 1
             for (let i = 0; i < selectedTimes.length; i++){
                 let selectedArr = selectedTimes[i]
@@ -605,6 +688,7 @@ function drawWeekHeatMap(weekArr, svg, clusterVal){
                     }
                     else{
                         //remove existing things on screen
+                        removeThingsOnScreen()
                     }
                 }
                 else{
@@ -630,11 +714,20 @@ function drawWeekHeatMap(weekArr, svg, clusterVal){
                         }
                         else{
                             //remove existing things on screen
+                            removeThingsOnScreen()
                         }
                     }
                 }
             }
         })
+        .on("mouseover", function(e, d) {
+            d3.select(this).style("cursor", "pointer")
+            d3.select(this).attr("opacity", 0.2)
+        })
+        .on("mouseout", function(e, d) {
+            d3.select(this).attr("opacity", 1)
+        })
+        
         .append("title")
         .text(d => `${d[0]}: ${fixNumbers(d[2])}`);
 
@@ -673,6 +766,53 @@ function drawWeekHeatMap(weekArr, svg, clusterVal){
             
             return "#"+(Number(`0x1${b}`) ^ 0xFFFFFF).toString(16).substring(1).toUpperCase()
         })
+
+
+    let defs = svg.append("defs");
+
+    //Append a linearGradient element to the defs and give it a unique id
+    let linearGradient = defs.append("linearGradient")
+        .attr("id", "linear-gradient-2");
+
+    linearGradient
+        .attr("x1", "0%")
+        .attr("y1", "0%")
+        .attr("x2", "100%")
+        .attr("y2", "0%")
+
+    //Set the color for the start (0%)
+    linearGradient.append("stop")
+    .attr("offset", "0%")
+    .attr("stop-color", colorFn(Math.floor(minValue))); //light blue
+
+    //Set the color for the end (100%)
+    linearGradient.append("stop")
+    .attr("offset", "100%")
+    .attr("stop-color", colorFn(Math.ceil(maxValue))); //dark blue
+
+    svg.append("rect")
+    .attr("x", 220)
+    .attr("y", 0)
+    .attr("width", 100)
+    .attr("height", 15)
+    .style("fill", "url(#linear-gradient-2)")
+    .attr('stroke', 'black')
+    .attr('stroke-width', 2)
+
+    svg.append("text")
+    .attr("x", 190)
+    .attr("y", 12)
+    .text("Min")
+
+    svg.append("text")
+    .attr("x", 322)
+    .attr("y", 12)
+    .text("Max")
+
+    svg.append("text")
+    .attr("x", 225)
+    .attr("y", 30)
+    .text("Week Attacks")
 }
 
 function findWeekRangeVals(selectedWeeks){
@@ -890,9 +1030,11 @@ function drawMonthHeatMap(monthArr, svg, clusterVal){
         .join("g")
         .attr("transform",(d, i) => {
             // neededPositions.push(i*150 + 45)
-            return `translate(50, ${i*300 + 50})`
+            return `translate(50, ${i*300 + 110})`
         });
-
+// lineChart.append('text').text('Time Periods').attr('x', 430).attr('y', 970).attr("class", "axisxattacks").attr("id", "t1")
+        // lineChart.append('text').text('Attacks').attr('x', -550).attr('y', 30).attr('transform', 'rotate(-90)').attr("class", "axisxattacks").attr("id", "t2")
+        // lineChart.append('text').text('Attacks Over The Time Periods').attr('x', 380).attr('y', 20).attr("class", "axisxattacks").attr("id", "t3")
     year
     .append("text")
     .attr("x", 7)
@@ -937,7 +1079,7 @@ function drawMonthHeatMap(monthArr, svg, clusterVal){
           })
         .attr("y", -10)
         .attr("fill", d => colorFn(d[2]))
-        .on("click", function(d, i){
+        .on("click", function(e, d){
             let pass = 1
             for (let i = 0; i < selectedTimes.length; i++){
                 let selectedArr = selectedTimes[i]
@@ -971,6 +1113,7 @@ function drawMonthHeatMap(monthArr, svg, clusterVal){
                     }
                     else{
                         //remove existing things on screen
+                        removeThingsOnScreen()
                     }
                 }
                 else{
@@ -986,10 +1129,19 @@ function drawMonthHeatMap(monthArr, svg, clusterVal){
                     }
                     else{
                         //remove existing things on screen
+                        removeThingsOnScreen()
                     }
                 }
             }
         })
+        .on("mouseover", function(e, d) {
+            d3.select(this).style("cursor", "pointer")
+            d3.select(this).attr("opacity", 0.2)
+        })
+        .on("mouseout", function(e, d) {
+            d3.select(this).attr("opacity", 1)
+        })
+        
         .append("title")
         .text(d => `${d[0]}: ${fixNumbers(d[2])}`);
 
@@ -1063,6 +1215,52 @@ function drawMonthHeatMap(monthArr, svg, clusterVal){
             
             return "#"+(Number(`0x1${b}`) ^ 0xFFFFFF).toString(16).substring(1).toUpperCase()
         })
+
+    let defs = svg.append("defs");
+
+    //Append a linearGradient element to the defs and give it a unique id
+    let linearGradient = defs.append("linearGradient")
+        .attr("id", "linear-gradient-3");
+
+    linearGradient
+        .attr("x1", "0%")
+        .attr("y1", "0%")
+        .attr("x2", "100%")
+        .attr("y2", "0%")
+
+    //Set the color for the start (0%)
+    linearGradient.append("stop")
+    .attr("offset", "0%")
+    .attr("stop-color", colorFn(Math.floor(minValue))); //light blue
+
+    //Set the color for the end (100%)
+    linearGradient.append("stop")
+    .attr("offset", "100%")
+    .attr("stop-color", colorFn(Math.ceil(maxValue))); //dark blue
+
+    svg.append("rect")
+    .attr("x", 390)
+    .attr("y", 0)
+    .attr("width", 100)
+    .attr("height", 15)
+    .style("fill", "url(#linear-gradient-3)")
+    .attr('stroke', 'black')
+    .attr('stroke-width', 2)
+
+    svg.append("text")
+    .attr("x", 360)
+    .attr("y", 12)
+    .text("Min")
+
+    svg.append("text")
+    .attr("x", 492)
+    .attr("y", 12)
+    .text("Max")
+
+    svg.append("text")
+    .attr("x", 395)
+    .attr("y", 30)
+    .text("Month Attacks")
 }
 
 
@@ -1115,6 +1313,20 @@ function clearSelectedTimes(){
         rects[i].removeAttribute('stroke-width')
     }
     selectedTimes = []
+
+    removeThingsOnScreen()
+}
+
+
+function removeThingsOnScreen(){
+    // let linechartElement = document.getElementById("line-chart-aa")
+    // linechartElement.style.height = 0+"px"
+    document.getElementById("resetButton").style.visibility = "hidden"
+    document.getElementById("countryOptions").style.visibility = "hidden"
+    document.getElementById("baseTPDiv").style.visibility = "hidden"
+    document.getElementById("dependentDiv").style.visibility = "hidden"
+    document.getElementById("independentDiv").style.visibility = "hidden"
+    document.getElementById("sortTPDiv").style.visibility = "hidden"
 }
 
 

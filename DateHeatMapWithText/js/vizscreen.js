@@ -4,66 +4,328 @@ class VizScreen{
     static givenTimes
 
     constructor(summaryData, selectedTimes, timePeriod){
-        console.log(summaryData)
-        console.log(selectedTimes)
-        console.log(timePeriod)
+        this.countries = []
+        for (let continent of summaryData){
+            for (let country of continent.meta){
+                this.countries.push(country)
+            }
+        }
 
 
-        // this.countries = []
-        // for (let continent of summaryData){
-        //     for (let country of continent.meta){
-        //         this.countries.push(country)
-        //     }
-        // }
+        this.summaryData = this.countries
+        this.selectedTimes = selectedTimes
+        this.timePeriod = timePeriod
+        this.absoluteAnomVal
+        this.percentAnomVal
+        this.percentMaxVal
 
+        // console.log(this.summaryData)
+        // console.log(this.selectedTimes)
+        // console.log(this.timePeriod)
 
-        // this.summaryData = this.countries
-        // this.selectedTimes = selectedTimes
-        // this.timePeriod = timePeriod
-
-        // VizScreen.givenData = this.countries
-        // VizScreen.givenTimes = selectedTimes
+        VizScreen.givenData = this.countries
+        VizScreen.givenTimes = selectedTimes
 
 
         // console.log(this.getFlagEmoji('US'))
     }
 
 
-    // getFlagEmoji(countryCode) {
-    //     const codePoints = countryCode
-    //       .toUpperCase()
-    //       .split('')
-    //       .map(char =>  127397 + char.charCodeAt());
-    //     return String.fromCodePoint(...codePoints);
-    // }
-
     initializeProgram(){
+         //Fill Gaps in Date in Data, 1st and very crucial step
+        this.fillInDateGapsForData()
+
+        //show reset and country and base and dependent and independent and sort div
+        this.showRCBDISDivs() 
+
+        //add and remove countries
+        this.removeCountries()
+        this.addCountries()
+
+        //add and remove base time period options
+        this.removeBaseOptions()
+        this.optionsForBaseSelections() 
+
+        //add and remove stuff in dependent div
+        this.removeStuffInDependentDiv()
+        this.addStuffForElementsinDependentDiv()
+
+
+        //add and remove stuff in independent div
+        this.removeStuffinIndependentDiv()
+        this.addStuffForElementsinIndependentDiv()
+
+
+        //add and remove sort time period options()
+        this.removeSortStuff()
+        this.optionsForSortSelections()
+
+
+        //removing and adding things for linechart
+        this.removeTextsFromLinechart()
+        this.makeDoubleSidedLineChart()
+
+        //adding and removing things for table and tableLegend
+        this.removeTableTHelements()
+        this.removeTableLegend()
+        this.makeTableTHstructure()
+        this.makeTable()
+
+
+
+
 
         // this.hideIPLineChartButtons()
-        // this.removeFilterSlidersAndTextBoxOptions()
-        // this.removeNonFilterSlidersAndTextBoxOptions()
         // this.removeUserNameFilterOptions2()
         // this.removeIPsAndHideSelects()
 
-        // this.fillInDateGapsForData() //Fill Gaps in Date in Data
+        
         // this.removePathsAndStarsAndRects()
         // this.removelineChartParallelCoordinateDonutChart()
 
-        // this.removePreviousDatestoTPs() 
-        // this.changeDatestoTPs()
 
-        // this.removeBaseOptions()
-        // this.optionsForBaseSelections() 
-
-        // this.removeStuffinFilterAndNonFilterDiv()
-        // this.addStuffForElementsinFilterAndNonFilterDiv()
-        // this.initializeIPDatePicker()
         
         // this.removeRedSpotFromTable()
-        // this.removeTableTHelements()
-        // this.makeTableTHstructure()
-        // this.makeTable()
+        // 
+        
     }
+
+
+    fillInDateGapsForData(){
+        for (let country of this.summaryData){
+            for (let time of this.selectedTimes){
+                if (time in country){
+                    continue
+                }
+                else{
+                    country[time] = {attacks: 0, attackers: 0}
+                }
+            }
+        }
+    }
+
+    showRCBDISDivs(){
+        document.getElementById("resetButton").style.visibility = "visible"
+        document.getElementById("countryOptions").style.visibility = "visible"
+        document.getElementById("baseTPDiv").style.visibility = "visible"
+        document.getElementById("dependentDiv").style.visibility = "visible"
+        document.getElementById("independentDiv").style.visibility = "visible"
+        document.getElementById("sortTPDiv").style.visibility = "visible"
+    }
+
+    removeCountries(){
+        $('#countries').find('option').remove()
+    }
+
+    addCountries(){
+        let countrySelect = document.getElementById("countries")
+        for (let country of this.summaryData){
+            let option = document.createElement("option")
+            option.value = country.country
+            option.text = country.country
+            countrySelect.appendChild(option)
+        }
+    }
+
+
+    removeBaseOptions(){
+        $('#baseTP').find('option').remove()
+    }
+
+
+    optionsForBaseSelections(){
+        document.getElementById("baseTP").style.width = "200px"
+        document.getElementById("baseTP").style.height = "50px"
+        let baseSelect = document.getElementById("baseTP")
+        let x = 1
+        for (let time of this.selectedTimes){
+            let option = document.createElement("option")
+            option.value = time
+            option.text = 'Base -- ' + time//'TP' + x
+            baseSelect.add(option)
+            x += 1
+        }
+    }
+
+    removeStuffInDependentDiv(){
+        //percentage change 
+        if (document.getElementById("svg1")){
+            document.getElementById("svg1").innerHTML = ""
+        }
+        $('#PERCHANGECHOOSE').find('option').not(':first').remove()
+        let perOutput = document.getElementById("PERCHANGEWRITE")
+        perOutput.value = ''
+
+        //absolute change
+        if (document.getElementById("svg2")){
+            document.getElementById("svg2").innerHTML = ""
+        }
+        $('#ABSCHANGECHOOSE').find('option').not(':first').remove()
+        let absOutput = document.getElementById("ABSCHANGEWRITE")
+        absOutput.value = ''
+    }
+
+
+    addStuffForElementsinDependentDiv(){
+        let baseSelect = document.getElementById("baseTP")
+        let dynamicSlider = new DynamicSlider(this.summaryData, baseSelect.value)
+
+        let [percentChangeSliderMin, percentSliderChangeMax, allNumbers] = dynamicSlider.percentChangeSliderValues()
+        let perSlider = document.getElementById("myRange")
+        perSlider.min = percentChangeSliderMin
+        perSlider.max = percentSliderChangeMax
+        perSlider.value = percentChangeSliderMin
+        let svg = d3.select("#svg1")
+        addPercentageChangeHistogram(svg, percentChangeSliderMin, percentSliderChangeMax, allNumbers)
+        addOptionsForPercentageChangeSlider()
+
+        let [absoluteChangeSliderMin, absoluteChangeSliderMax, allNumbers2] = dynamicSlider.absoluteChangeSliderValues()
+        let absSlider = document.getElementById("myRange2")
+        absSlider.min = absoluteChangeSliderMin
+        absSlider.max = absoluteChangeSliderMax
+        absSlider.value = absoluteChangeSliderMin
+        let svg2 = d3.select("#svg2")
+        addAbsoluteChangeHistogram(svg2, absoluteChangeSliderMin, absoluteChangeSliderMax, allNumbers2)
+        addOptionsForAbsoluteChangeSlider()
+    }
+
+    removeStuffinIndependentDiv(){
+        //absolute
+        if (document.getElementById("svg3")){
+            document.getElementById("svg3").innerHTML = ""
+        }
+        $('#ABSCHOOSE').find('option').not(':first').remove()
+        let absAnomOutput = document.getElementById("ABSWRITE")
+        absAnomOutput.value = ''
+    }
+
+    addStuffForElementsinIndependentDiv(){
+        let baseSelect = document.getElementById("baseTP")
+        let dynamicSlider = new DynamicSlider(this.summaryData, baseSelect.value)
+
+        let [absoluteMin, absoluteAnomaly, absoluteMax, allNumbers3] = dynamicSlider.absoluteSliderValues()
+        let absoluteSlider = document.getElementById("myRange3")
+        absoluteSlider.min = absoluteMin
+        absoluteSlider.max = absoluteMax
+        absoluteSlider.value = absoluteMin
+        let svg3 = d3.select("#svg3")
+        addAbsoluteHistogram(svg3, absoluteMin, absoluteMax, allNumbers3)
+        addOptionsForAbsoluteSlider(allNumbers3)
+        this.absoluteAnomVal = absoluteAnomaly
+
+        let [percentAnomaly, percentMax] = dynamicSlider.percentAnomalyValue()
+        this.percentAnomVal = percentAnomaly
+        this.percentMaxVal = percentMax
+    }
+
+    removeSortStuff(){
+        $('#sortTP').find('option').remove()
+    }
+
+    optionsForSortSelections(){
+        let sortSelect = document.getElementById("sortTP")
+        let y = 1
+        for (let time of this.selectedTimes){
+            let option = document.createElement("option")
+            option.value = time
+            option.text = 'Sort By -- ' + time
+            sortSelect.add(option)
+            y += 1
+        }
+    }
+
+
+    removeTextsFromLinechart(){
+        if (document.getElementById("caaText"))
+            document.getElementById("caaText").remove()
+        if (document.getElementById("freq1"))
+            document.getElementById("freq1").remove()
+        if (document.getElementById("freq2"))
+            document.getElementById("freq2").remove()
+        if (document.getElementById("attacks"))
+            document.getElementById("attacks").remove()
+        if (document.getElementById("attackers"))
+            document.getElementById("attackers").remove()
+        if (document.getElementById("overall"))
+            document.getElementById("overall").remove()
+    }
+
+    makeDoubleSidedLineChart(){
+        let lineChart = new LineChartAttacks(this.summaryData, this.selectedTimes, this.timePeriod)
+        lineChart.drawLinechart()
+    }
+
+
+    removeTableTHelements(){
+        $("#predictionTable>thead>tr").find("th").remove()
+    }
+
+    removeTableLegend(){
+        document.getElementById("legend").innerHTML = ""
+    }
+
+
+    makeTableTHstructure(){
+        $("#predictionTable>thead>tr").append("<th class=sortable id=c0 width=380px>Country</th>")
+        let i = 1
+        for (let time of this.selectedTimes){
+            console.log(time)
+            $("#predictionTable>thead>tr").append("<th class=sortable id=c"+i+">"+time+"<input type=checkbox id=TP"+i+" value="+time+" onchange=timeSelection();></th>")
+            let requiredBox = 'c'+i
+            document.getElementById(requiredBox).style.maxWidth = "60px"
+            i++
+        }
+
+    }
+
+    makeTable(){
+        let baseSelect = document.getElementById("baseTP")
+        let table = new Table(this.summaryData, baseSelect.value, this.selectedTimes, this.absoluteAnomVal, this.percentAnomVal, this.percentMaxVal)
+        setTimeout( function() { table.drawTable(); }, 2000)
+    }
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     removeIPsAndHideSelects(){
         $('#ipsClicked option:not(:first)').remove()
@@ -89,85 +351,11 @@ class VizScreen{
         document.getElementById("legendForTreeMap").innerHTML = ""
     }
 
-    initializeIPDatePicker(){
-        let dateValue = document.getElementById("timePeriod").value
-        
-        if (dateValue === "month"){
-            $("#monthPick option").each(function()
-            {
-                let myVal = $(this).val()
-                if (myVal !== 'Please Select Multiple Months'){
-                    let startMonthSelect = document.getElementById("startMonthPick")
-                    let option = document.createElement("option")
-                    option.value = myVal
-                    option.text = myVal
-                    startMonthSelect.add(option)
-
-                    let endMonthSelect = document.getElementById("endMonthPick")
-                    let option2 = document.createElement("option")
-                    option2.value = myVal
-                    option2.text = myVal
-                    endMonthSelect.add(option2)
-                }
-            })
-        }
-        else if (dateValue === "week"){
-            $("#weekPick option").each(function()
-            {
-                let myVal = $(this).val()
-                if (myVal !== 'Please Select Multiple Weeks'){
-                    let startWeekSelect = document.getElementById("startWeekPick")
-                    let option = document.createElement("option")
-                    option.value = myVal
-                    option.text = myVal
-                    startWeekSelect.add(option)
-
-                    let endWeekSelect = document.getElementById("endWeekPick")
-                    let option2 = document.createElement("option")
-                    option2.value = myVal
-                    option2.text = myVal
-                    endWeekSelect.add(option2)
-                }
-            })
-        }
-        else if (dateValue === "day"){
-            let myMinDate = $('#datePick').datepicker("option", "minDate")
-            let myMaxDate = $('#datePick').datepicker("option", "maxDate")
     
-            $(document).ready(function () {
-                $( "#startDatePick" ).datepicker({
-                    minDate: myMinDate,
-                    maxDate: myMaxDate
-                })
-                $( "#endDatePick" ).datepicker({
-                    minDate: myMinDate,
-                    maxDate: myMaxDate
-                })
-            });
-        }
-    }
 
     hideIPLineChartButtons(){
         document.getElementById("exportButton").style.visibility = "hidden"
         document.getElementById("goBackButton").style.visibility = "hidden"
-    }
-
-    removeNonFilterSlidersAndTextBoxOptions(){
-        $('#ANOMPERCHOOSE').find('option').not(':first').remove()
-        $('#ANOMABSCHOOSE').find('option').not(':first').remove()
-        let perAnomOutput = document.getElementById("ANOMPERWRITE")
-        perAnomOutput.value = ''
-        let absAnomOutput = document.getElementById("ANOMABSWRITE")
-        absAnomOutput.value = ''
-    }
-
-    removeFilterSlidersAndTextBoxOptions(){
-        $('#PERCHOOSE').find('option').not(':first').remove()
-        $('#ABSCHOOSE').find('option').not(':first').remove()
-        let perOutput = document.getElementById("PERWRITE")
-        perOutput.value = ''
-        let absOutput = document.getElementById("ABSWRITE")
-        absOutput.value = ''
     }
 
     removeUserNameFilterOptions2(){
@@ -176,20 +364,6 @@ class VizScreen{
         $('#usernameFilter').find('option').remove()
     }
 
-
-
-    fillInDateGapsForData(){
-        for (let country of this.summaryData){
-            for (let time of this.selectedTimes){
-                if (time in country){
-                    continue
-                }
-                else{
-                    country[time] = {attacks: 0, attackers: 0}
-                }
-            }
-        }
-    }
 
     removePathsAndStarsAndRects(){
         if (document.getElementById("rect1")){
@@ -228,482 +402,16 @@ class VizScreen{
     }
     
 
-    
-    removePreviousDatestoTPs(){
-        if (document.getElementById("textsForTP"))
-            document.getElementById("textsForTP").innerHTML = ""
-    }
-
-    changeDatestoTPs(){
-        const svg = d3.select("#textsForTP")
-        svg.append('text').attr("x", 10).attr("y", 30).text("TP = Time Period").style("font-size", "25px")//[Please consult this for all charts][Insert tooltip here]
-        let k = 60
-        for (let i = 0;  i < this.selectedTimes.length; i++){
-            let optionalString = ''
-            if (this.timePeriod === 'weeks'){
-                let stringForMoment = this.selectedTimes[i].substring(0,4) + 'W' + this.selectedTimes[i].substring(5,7)
-                let momentValue = moment(stringForMoment).add(1, 'days').toDate() + ''
-                optionalString = '-' + momentValue.substring(4,7) + '-' + momentValue.substring(8,10)
-            }
-            let text = this.selectedTimes[i] + optionalString + ' --> TP' + (i+1)
-            svg.append('text').attr("x", 10).attr("y", k).text(text)
-                .style("font-size", "25px")
-            k = k + 30
-        }
-        
-        document.getElementById("textsForTP").style.height = (k-20) + "px"
-        document.getElementById("textsForTP").style.outline = "5px dashed black"
-    }
-
-    removeBaseOptions(){
-        $('#baseTP').find('option').remove()
-    }
-
-
-    optionsForBaseSelections(){
-        document.getElementById("baseTP").style.width = "200px"
-        document.getElementById("baseTP").style.height = "50px"
-        let baseSelect = document.getElementById("baseTP")
-        let x = 1
-        for (let time of this.selectedTimes){
-            let option = document.createElement("option")
-            option.value = time
-            option.text = 'Base -- ' + 'TP' + x
-            baseSelect.add(option)
-            x += 1
-        }
-    }
 
     removeStuffinFilterAndNonFilterDiv(){
-        if (document.getElementById("svg1")){
-            document.getElementById("svg1").innerHTML = ""
-        }
-        if (document.getElementById("svg2")){
-            document.getElementById("svg2").innerHTML = ""
-        }
         // $('#countries').find('option').remove()
-        $('#sortTP').find('option').remove()
-
-        if (document.getElementById("svg3")){
-            document.getElementById("svg3").innerHTML = ""
-        }
-        if (document.getElementById("svg4")){
-            document.getElementById("svg4").innerHTML = ""
-        }
-    }
-
-    addPercentageChangeHistogram(svg, percentSliderMin, percentSliderMax, allNumbers){
-        let midNum = (percentSliderMin+percentSliderMax)/2
-        let IQ1 = (percentSliderMin+midNum)/2
-        let IQ3 = (midNum+percentSliderMax)/2
-        let fiveNumbers = [percentSliderMin, IQ1, midNum, IQ3, percentSliderMax]
-        let xAxis = d3.scaleLinear().domain([percentSliderMin, percentSliderMax]).range([50, 450])
-        let that = this
-        svg.append("g")
-            .style("font", "20px times")
-            .attr("transform", "translate(20," + 110 + ")")
-            .call(d3.axisBottom(xAxis).tickValues(fiveNumbers).tickFormat(function(d){
-                return that.fixNumbers(d)
-            }))
-            
-
-        let histogram = d3.histogram()
-                        .value(function(d) { 
-                            return d
-                        })   
-                        .domain(xAxis.domain()) 
-                        .thresholds(d3.range(percentSliderMin, percentSliderMax, (percentSliderMax - percentSliderMin)/50)); 
-
-        let bins = histogram(allNumbers)
-        
-        let minY = 0
-        let maxY = d3.max(bins, function(d) { return d.length; })
-        let avgY = (minY+maxY)/2
-
-        let yAxis = d3.scaleLinear().range([110, 10]);
-        yAxis.domain([0, maxY]);   // d3.hist has to be called before the Y axis obviously
-        
-        svg.append("g")
-        .style("font", "20px times")
-        .attr("transform", "translate(70," + 0 + ")")
-        .call(d3.axisLeft(yAxis).tickValues([minY, avgY, maxY]).tickFormat(function(d){
-            return that.fixNumbers(d)
-        }));
-
-        svg.selectAll("rect")
-        .data(bins)
-        .enter()
-        .append("rect")
-          .attr("x", 1)
-          .attr("transform", function(d) { return "translate(" + (xAxis(d.x0)+20) + "," + yAxis(d.length) + ")"; })
-          .attr("width", function(d) { return xAxis(d.x1) - xAxis(d.x0) - 1 ; })
-          .attr("height", function(d) { return 110 - yAxis(d.length); })
-          .style("fill", "#69b3a2")
-    }
-
-    addOptionsForPercentageSlider(){
-        let baseSelect = document.getElementById("PERCHOOSE")
-        let givenOptions = ["Show all countries from data in Table and the number distribution in Histogram",
-                            "Show all countries with Relative Percent decrease(from base TP) in Table and the number distribution in Histogram",
-                            "Show all countries with Relative Percent increase(from base TP) in Table and the number distribution in Histogram",
-                            "Show countries with Relative Percent increase by at least 100%(from base TP) in Table and the number distribution in Histogram",
-                            "Show countries with Relative Percent increase by at least 1K%(from base TP) in Table and the number distribution in Histogram",
-                            "Show countries with Relative Percent increase by at least 10K%(from base TP) in Table and the number distribution in Histogram",
-                            "Show countries with Relative Percent increase by at least 0.1M%(from base TP) in Table and the number distribution in Histogram",
-                            "Show countries with Relative Percent increase by at least 1M%(from base TP) in Table and the number distribution in Histogram"]
-        for (let i = 0; i < givenOptions.length; i++){
-            let maximumVal = document.getElementById("myRange").max
-            if (maximumVal < 100 && i >= 3){
-                break
-            }
-            if (maximumVal < 1000 && i >= 4){
-                break
-            }
-            if (maximumVal < 10000 && i >= 5){
-                break
-            }
-            if (maximumVal < 100000 && i >= 6){
-                break
-            }
-            if (maximumVal < 1000000 && i >= 7){
-                break
-            }
-
-            let option = document.createElement("option")
-            option.value = i + 'A'
-            option.text = givenOptions[i]
-            baseSelect.add(option)
-        }
-    }
-
-    addAbsoluteChangeHistogram(svg2, absoluteSliderMin, absoluteSliderMax, allNumbers2){
-        let midNum = (absoluteSliderMin+absoluteSliderMax)/2
-        let IQ1 = (absoluteSliderMin+midNum)/2
-        let IQ3 = (midNum+absoluteSliderMax)/2
-        let fiveNumbers = [absoluteSliderMin, IQ1, midNum, IQ3, absoluteSliderMax]
-        let xAxis = d3.scaleLinear().domain([absoluteSliderMin, absoluteSliderMax]).range([50, 450])
-        let that = this
-        svg2.append("g")
-            .style("font", "20px times")
-            .attr("transform", "translate(20," + 110 + ")")
-            .call(d3.axisBottom(xAxis).tickValues(fiveNumbers).tickFormat(function(d){
-                return that.fixNumbers(d)
-            }))
-            
-
-        let histogram = d3.histogram()
-                        .value(function(d) { 
-                            return d
-                        })   
-                        .domain(xAxis.domain()) 
-                        .thresholds(d3.range(absoluteSliderMin, absoluteSliderMax, (absoluteSliderMax - absoluteSliderMin)/50)); 
-
-        let bins = histogram(allNumbers2)
-        
-        let minY = 0
-        let maxY = d3.max(bins, function(d) { return d.length; })
-        let avgY = (minY+maxY)/2
-
-        let yAxis = d3.scaleLinear().range([110, 10]);
-        yAxis.domain([0, maxY]);   // d3.hist has to be called before the Y axis obviously
-        
-        svg2.append("g")
-        .style("font", "20px times")
-        .attr("transform", "translate(70," + 0 + ")")
-        .call(d3.axisLeft(yAxis).tickValues([minY, avgY, maxY]).tickFormat(function(d){
-            return that.fixNumbers(d)
-        }));
-
-        svg2.selectAll("rect")
-        .data(bins)
-        .enter()
-        .append("rect")
-          .attr("x", 1)
-          .attr("transform", function(d) { return "translate(" + (xAxis(d.x0)+20) + "," + yAxis(d.length) + ")"; })
-          .attr("width", function(d) { return xAxis(d.x1) - xAxis(d.x0) - 1 ; })
-          .attr("height", function(d) { return 110 - yAxis(d.length); })
-          .style("fill", "#69b3a2")
-    }
-
-    addOptionsForAbsoluteSlider(){
-        let baseSelect = document.getElementById("ABSCHOOSE")
-        let givenOptions = ["Show all countries from data in Table and the number distribution in Histogram",
-                            "Show all countries with Absolute decrease(from base TP) in Table and the number distribution in Histogram",
-                            "Show all countries with Absolute increase(from base TP) in Table and the number distribution in Histogram",
-                            "Show all countries with Absolute increase by at least 1K(from base TP) in Table and the number distribution in Histogram",
-                            "Show all countries with Absolute increase by at least 10K(from base TP) in Table and the number distribution in Histogram",
-                            "Show all countries with Absolute increase by at least 0.1M(from base TP) in Table and the number distribution in Histogram",
-                            "Show all countries with Absolute increase by at least 1M(from base TP) in Table and the number distribution in Histogram"]
-        for (let i = 0; i < givenOptions.length; i++){
-            let maximumVal = document.getElementById("myRange2").max
-            if (maximumVal < 1000 && i >= 3){
-                break
-            }
-            if (maximumVal < 10000 && i >= 4){
-                break
-            }
-            if (maximumVal < 100000 && i >= 5){
-                break
-            }
-            if (maximumVal < 1000000 && i >= 6){
-                break
-            }
-
-            let option = document.createElement("option")
-            option.value = i + 'B'
-            option.text = givenOptions[i]
-            baseSelect.add(option)
-        }
     }
 
 
-    addAnomalyPercentChangeHistogram(svg3, percentSliderAnomalyMin, percentSliderAnomalyMax, allNumbers3){
-        let midNum = (percentSliderAnomalyMin+percentSliderAnomalyMax)/2
-        let IQ1 = (percentSliderAnomalyMin+midNum)/2
-        let IQ3 = (midNum+percentSliderAnomalyMax)/2
-        let fiveNumbers = [percentSliderAnomalyMin, IQ1, midNum, IQ3, percentSliderAnomalyMax]
-        let xAxis = d3.scaleLinear().domain([percentSliderAnomalyMin, percentSliderAnomalyMax]).range([20, 340])
-        let that = this
-        svg3.append("g")
-            .style("font", "20px times")
-            .attr("transform", "translate(35,215)")//rotate(270)
-            .call(d3.axisBottom(xAxis).tickValues(fiveNumbers).tickFormat(function(d){
-                return that.fixNumbers(d)
-            })).selectAll("text")  
-            .style("text-anchor", "start")
-            .attr("dx", "0.2em")
-            .attr("dy", "-0.5em")
-            .attr("transform", "rotate(90)")
-
-        let histogram = d3.histogram()
-        .value(function(d) { 
-            return d
-        })   
-        .domain(xAxis.domain()) 
-        .thresholds(d3.range(percentSliderAnomalyMin, percentSliderAnomalyMax, (percentSliderAnomalyMax - percentSliderAnomalyMin)/50)); 
-
-        let bins = histogram(allNumbers3)
-
-        let minY = 0
-        let maxY = d3.max(bins, function(d) { return d.length; })
-        let avgY = (minY+maxY)/2
-
-        let yAxis = d3.scaleLinear().range([215, 10]);
-        yAxis.domain([0, maxY]);   // d3.hist has to be called before the Y axis obviously
-
-        svg3.append("g")
-        .style("font", "20px times")
-        .attr("transform", "translate(55,0)")//rotate(270)
-        .call(d3.axisLeft(yAxis).tickValues([minY, avgY, maxY]).tickFormat(function(d){
-            return that.fixNumbers(d)
-        }))
-        .selectAll("text")  
-            .style("text-anchor", "start")
-            .attr("dx", "0em")
-            .attr("dy", "1em")
-            .attr("transform", "rotate(90)")
-
-        svg3.selectAll("rect")
-        .data(bins)
-        .enter()
-        .append("rect")
-          .attr("transform", function(d) { return "translate(" + (xAxis(d.x0)+35) + "," + (yAxis(d.length)) + ")"; })
-          .attr("width", function(d) { return xAxis(d.x1) - xAxis(d.x0) - 1 ; })
-          .attr("height", function(d) { return 215 - yAxis(d.length); })
-          .style("fill", "#69b3a2")
-    }
-
-    addOptionsForAnomalyPercentageSlider(allNumbers3){
-        let tenValues = [allNumbers3[Math.floor(allNumbers3.length * 0.1)],
-                        allNumbers3[Math.floor(allNumbers3.length * 0.3)],
-                        allNumbers3[Math.floor(allNumbers3.length * 0.5)],
-                        allNumbers3[Math.floor(allNumbers3.length * 0.7)],
-                        allNumbers3[Math.floor(allNumbers3.length * 0.9)],
-                        allNumbers3[Math.floor(allNumbers3.length * 0.95)],
-                        allNumbers3[Math.floor(allNumbers3.length * 0.96)],
-                        allNumbers3[Math.floor(allNumbers3.length * 0.97)],
-                        allNumbers3[Math.floor(allNumbers3.length * 0.98)],
-                        allNumbers3[Math.floor(allNumbers3.length * 0.99)]]
-        let totalAnomValues = [allNumbers3.length - Math.floor(allNumbers3.length * 0.1),
-                               allNumbers3.length - Math.floor(allNumbers3.length * 0.3),
-                               allNumbers3.length - Math.floor(allNumbers3.length * 0.5),
-                               allNumbers3.length - Math.floor(allNumbers3.length * 0.7),
-                               allNumbers3.length - Math.floor(allNumbers3.length * 0.9),
-                               allNumbers3.length - Math.floor(allNumbers3.length * 0.95),
-                               allNumbers3.length - Math.floor(allNumbers3.length * 0.96),
-                               allNumbers3.length - Math.floor(allNumbers3.length * 0.97),
-                               allNumbers3.length - Math.floor(allNumbers3.length * 0.98),
-                               allNumbers3.length - Math.floor(allNumbers3.length * 0.99)]
-        let baseSelect = document.getElementById("ANOMPERCHOOSE")
-        let givenOptions = ["Percent Anomaly Threshold = 10%, Threshold Number = "+ this.fixNumbers(tenValues[0]) + ", Total Anomalous Values = "+ totalAnomValues[0],
-                            "Percent Anomaly Threshold = 30%, Threshold Number = "+ this.fixNumbers(tenValues[1]) + ", Total Anomalous Values = "+ totalAnomValues[1],
-                            "Percent Anomaly Threshold = 50%, Threshold Number = "+ this.fixNumbers(tenValues[2]) + ", Total Anomalous Values = "+ totalAnomValues[2],
-                            "Percent Anomaly Threshold = 70%, Threshold Number = "+ this.fixNumbers(tenValues[3]) + ", Total Anomalous Values = "+ totalAnomValues[3],
-                            "Percent Anomaly Threshold = 90%, Threshold Number = "+ this.fixNumbers(tenValues[4]) + ", Total Anomalous Values = "+ totalAnomValues[4],
-                            "Percent Anomaly Threshold = 95%(Default), Threshold Number = "+ this.fixNumbers(tenValues[5]) + ", Total Anomalous Values = "+ totalAnomValues[5],
-                            "Percent Anomaly Threshold = 96%, Threshold Number = "+ this.fixNumbers(tenValues[6]) + ", Total Anomalous Values = "+ totalAnomValues[6],
-                            "Percent Anomaly Threshold = 97%, Threshold Number = "+ this.fixNumbers(tenValues[7]) + ", Total Anomalous Values = "+ totalAnomValues[7],
-                            "Percent Anomaly Threshold = 98%, Threshold Number = "+ this.fixNumbers(tenValues[8]) + ", Total Anomalous Values = "+ totalAnomValues[8],
-                            "Percent Anomaly Threshold = 99%, Threshold Number = "+ this.fixNumbers(tenValues[9]) + ", Total Anomalous Values = "+ totalAnomValues[9]]
 
 
-        for (let i = 0; i < givenOptions.length; i++){
-            let option = document.createElement("option")
-            option.value = tenValues[i]
-            option.text = givenOptions[i]
-            baseSelect.add(option)
-        }
-    }
-
-    addAnomalyAbsoluteHistogram(svg4, absoluteSliderAnomalyMin, absoluteSliderAnomalyMax, allNumbers4){
-        let midNum = (absoluteSliderAnomalyMin+absoluteSliderAnomalyMax)/2
-        let IQ1 = (absoluteSliderAnomalyMin+midNum)/2
-        let IQ3 = (midNum+absoluteSliderAnomalyMax)/2
-        let fiveNumbers = [absoluteSliderAnomalyMin, IQ1, midNum, IQ3, absoluteSliderAnomalyMax]
-        let xAxis = d3.scaleLinear().domain([absoluteSliderAnomalyMin, absoluteSliderAnomalyMax]).range([20, 340])
-        let that = this
-        svg4.append("g")
-            .style("font", "20px times")
-            .attr("transform", "translate(35,215)")//rotate(270)
-            .call(d3.axisBottom(xAxis).tickValues(fiveNumbers).tickFormat(function(d){
-                return that.fixNumbers(d)
-            })).selectAll("text")  
-            .style("text-anchor", "start")
-            .attr("dx", "0.2em")
-            .attr("dy", "-0.5em")
-            .attr("transform", "rotate(90)")
-
-        let histogram = d3.histogram()
-        .value(function(d) { 
-            return d
-        })   
-        .domain(xAxis.domain()) 
-        .thresholds(d3.range(absoluteSliderAnomalyMin, absoluteSliderAnomalyMax, (absoluteSliderAnomalyMax - absoluteSliderAnomalyMin)/50)); 
-
-        let bins = histogram(allNumbers4)
-
-        let minY = 0
-        let maxY = d3.max(bins, function(d) { return d.length; })
-        let avgY = (minY+maxY)/2
-
-        let yAxis = d3.scaleLinear().range([215, 10]);
-        yAxis.domain([0, maxY]);   // d3.hist has to be called before the Y axis obviously
-
-        svg4.append("g")
-        .style("font", "20px times")
-        .attr("transform", "translate(55,0)")//rotate(270)
-        .call(d3.axisLeft(yAxis).tickValues([minY, avgY, maxY]).tickFormat(function(d){
-            return that.fixNumbers(d)
-        }))
-        .selectAll("text")  
-            .style("text-anchor", "start")
-            .attr("dx", "0em")
-            .attr("dy", "1em")
-            .attr("transform", "rotate(90)")
-
-        svg4.selectAll("rect")
-        .data(bins)
-        .enter()
-        .append("rect")
-          .attr("transform", function(d) { return "translate(" + (xAxis(d.x0)+35) + "," + (yAxis(d.length)) + ")"; })
-          .attr("width", function(d) { return xAxis(d.x1) - xAxis(d.x0) - 1 ; })
-          .attr("height", function(d) { return 215 - yAxis(d.length); })
-          .style("fill", "#69b3a2")
-    }
-
-    addOptionsForAnomalyAbsoluteSlider(allNumbers4){
-        let tenValues = [allNumbers4[Math.floor(allNumbers4.length * 0.1)],
-                        allNumbers4[Math.floor(allNumbers4.length * 0.3)],
-                        allNumbers4[Math.floor(allNumbers4.length * 0.5)],
-                        allNumbers4[Math.floor(allNumbers4.length * 0.7)],
-                        allNumbers4[Math.floor(allNumbers4.length * 0.9)],
-                        allNumbers4[Math.floor(allNumbers4.length * 0.95)],
-                        allNumbers4[Math.floor(allNumbers4.length * 0.96)],
-                        allNumbers4[Math.floor(allNumbers4.length * 0.97)],
-                        allNumbers4[Math.floor(allNumbers4.length * 0.98)],
-                        allNumbers4[Math.floor(allNumbers4.length * 0.99)]]
-        let totalAnomValues = [allNumbers4.length - Math.floor(allNumbers4.length * 0.1),
-            allNumbers4.length - Math.floor(allNumbers4.length * 0.3),
-            allNumbers4.length - Math.floor(allNumbers4.length * 0.5),
-            allNumbers4.length - Math.floor(allNumbers4.length * 0.7),
-            allNumbers4.length - Math.floor(allNumbers4.length * 0.9),
-            allNumbers4.length - Math.floor(allNumbers4.length * 0.95),
-            allNumbers4.length - Math.floor(allNumbers4.length * 0.96),
-            allNumbers4.length - Math.floor(allNumbers4.length * 0.97),
-            allNumbers4.length - Math.floor(allNumbers4.length * 0.98),
-            allNumbers4.length - Math.floor(allNumbers4.length * 0.99)]
-        let baseSelect = document.getElementById("ANOMABSCHOOSE")
-        let givenOptions = ["Absolute Anomaly Threshold = 10%, Number = "+ this.fixNumbers(tenValues[0]) + ", Total Anomalous Values = "+ totalAnomValues[0],
-                            "Absolute Anomaly Threshold = 30%, Number = "+ this.fixNumbers(tenValues[1]) + ", Total Anomalous Values = "+ totalAnomValues[1],
-                            "Absolute Anomaly Threshold = 50%, Number = "+ this.fixNumbers(tenValues[2]) + ", Total Anomalous Values = "+ totalAnomValues[2],
-                            "Absolute Anomaly Threshold = 70%, Number = "+ this.fixNumbers(tenValues[3]) + ", Total Anomalous Values = "+ totalAnomValues[3],
-                            "Absolute Anomaly Threshold = 90%, Number = "+ this.fixNumbers(tenValues[4]) + ", Total Anomalous Values = "+ totalAnomValues[4],
-                            "Absolute Anomaly Threshold = 95%(Default), Number = "+ this.fixNumbers(tenValues[5]) + ", Total Anomalous Values = "+ totalAnomValues[5],
-                            "Absolute Anomaly Threshold = 96%, Number = "+ this.fixNumbers(tenValues[6]) + ", Total Anomalous Values = "+ totalAnomValues[6],
-                            "Absolute Anomaly Threshold = 97%, Number = "+ this.fixNumbers(tenValues[7]) + ", Total Anomalous Values = "+ totalAnomValues[7],
-                            "Absolute Anomaly Threshold = 98%, Number = "+ this.fixNumbers(tenValues[8]) + ", Total Anomalous Values = "+ totalAnomValues[8],
-                            "Absolute Anomaly Threshold = 99%, Number = "+ this.fixNumbers(tenValues[9]) + ", Total Anomalous Values = "+ totalAnomValues[9]]
-
-
-        for (let i = 0; i < givenOptions.length; i++){
-            let option = document.createElement("option")
-            option.value = tenValues[i]
-            option.text = givenOptions[i]
-            baseSelect.add(option)
-        }
-    }
-
-    addStuffForElementsinFilterAndNonFilterDiv(){
-        let baseSelect = document.getElementById("baseTP")
-        let dynamicSlider = new DynamicSlider(this.summaryData, baseSelect.value)
-
-        let [percentSliderMin, percentSliderMax, allNumbers] = dynamicSlider.percentChangeSliderValues()
-        let perSlider = document.getElementById("myRange")
-        perSlider.min = percentSliderMin
-        perSlider.max = percentSliderMax
-        perSlider.value = percentSliderMin
-        let svg = d3.select("#svg1")
-        this.addPercentageChangeHistogram(svg, percentSliderMin, percentSliderMax, allNumbers)
-        this.addOptionsForPercentageSlider()
-
-        let [absoluteSliderMin, absoluteSliderMax, allNumbers2] = dynamicSlider.absoluteChangeSliderValues()
-        let absSlider = document.getElementById("myRange2")
-        absSlider.min = absoluteSliderMin
-        absSlider.max = absoluteSliderMax
-        absSlider.value = absoluteSliderMin
-        let svg2 = d3.select("#svg2")
-        this.addAbsoluteChangeHistogram(svg2, absoluteSliderMin, absoluteSliderMax, allNumbers2)
-        this.addOptionsForAbsoluteSlider()
-
-        let sortSelect = document.getElementById("sortTP")
-        let y = 1
-        for (let time of this.selectedTimes){
-            let option = document.createElement("option")
-            option.value = time
-            option.text = 'Sort By -- ' + 'TP' + y
-            sortSelect.add(option)
-            y += 1
-        }
-
-        let [percentSliderAnomalyMin, percentSliderAnomaly95, percentSliderAnomalyMax, allNumbers3] = dynamicSlider.percentAnomalySliderValues()
-        let perAnomSlider = document.getElementById("myRange3")
-        perAnomSlider.min = percentSliderAnomalyMin
-        perAnomSlider.max = percentSliderAnomalyMax
-        perAnomSlider.value = percentSliderAnomaly95
-        let svg3 = d3.select("#svg3")
-        this.addAnomalyPercentChangeHistogram(svg3, percentSliderAnomalyMin, percentSliderAnomalyMax, allNumbers3)
-        this.addOptionsForAnomalyPercentageSlider(allNumbers3)
-        
-        let [absoluteSliderAnomalyMin, absoluteSliderAnomaly95, absoluteSliderAnomalyMax, allNumbers4] = dynamicSlider.absoluteAnomalySliderValues()
-        //console.log(allNumbers4)
-        let absAnomSlider = document.getElementById("myRange4")
-        absAnomSlider.min = absoluteSliderAnomalyMin
-        absAnomSlider.max = absoluteSliderAnomalyMax
-        absAnomSlider.value = absoluteSliderAnomaly95
-        let svg4 = d3.select("#svg4")
-        this.addAnomalyAbsoluteHistogram(svg4, absoluteSliderAnomalyMin, absoluteSliderAnomalyMax, allNumbers4)
-        this.addOptionsForAnomalyAbsoluteSlider(allNumbers4)
-    }
+    
+    
 
     removeRedSpotFromTable(){
         let tableBody = document.getElementById('predictionTableBody');
@@ -719,51 +427,398 @@ class VizScreen{
             }  
         }
     }
+}
 
-    removeTableTHelements(){
-        $("#predictionTable>thead>tr").find("th").remove()
-    }
 
-    makeTableTHstructure(){
-        $("#predictionTable>thead>tr").append("<th class=sortable id=c0 width=270px>Country</th>")
-        let i = 1
-        for (let time of this.selectedTimes){
-            $("#predictionTable>thead>tr").append("<th class=sortable id=c"+i+">TP"+i +"<input type=checkbox id=TP"+i+" value="+time+" onchange=timeSelection();></th>")
-            let requiredBox = 'TP'+i
-            document.getElementById(requiredBox).style.maxWidth = "30px"
-            i++
-        }
 
-    }
 
-    makeTable(){
-        let baseSelect = document.getElementById("baseTP")
-        let table = new Table(this.summaryData, baseSelect.value, this.selectedTimes)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function baseTPFunc(selectedTime){
+    // bookkeeping
+    removePreviousSVGs2()
+    removePathsAndStarsAndRects2()
+
+    // Updating sliders with base
+    let dynamicSlider = new DynamicSlider(VizScreen.givenData, selectedTime)
+
+    let [percentSliderMin, percentSliderMax, allNumbers] = dynamicSlider.percentChangeSliderValues()
+    let perSlider = document.getElementById("myRange")
+    perSlider.min = percentSliderMin
+    perSlider.max = percentSliderMax
+    perSlider.value = percentSliderMin
+    let perOutput = document.getElementById("PERCHANGEWRITE")
+    perOutput.value = ''
+    this.addOptionsForPercentageSlider2()
+    document.getElementById("PERCHANGECHOOSE").selectedIndex = 0
+    let svg = d3.select("#svg1")
+    this.addPercentageChangeHistogram2(svg, percentSliderMin, percentSliderMax, allNumbers)
+
+    let [absoluteSliderMin, absoluteSliderMax, allNumbers2] = dynamicSlider.absoluteChangeSliderValues()
+    // console.log(absoluteSliderMax)
+    let absSlider = document.getElementById("myRange2")
+    absSlider.min = absoluteSliderMin
+    absSlider.max = absoluteSliderMax
+    absSlider.value = absoluteSliderMin
+    let absOutput = document.getElementById("ABSCHANGEWRITE")
+    absOutput.value = ''
+    this.addOptionsForAbsoluteSlider2()
+    document.getElementById("ABSCHANGECHOOSE").selectedIndex = 0
+    let svg2 = d3.select("#svg2")
+    this.addAbsoluteChangeHistogram2(svg2, absoluteSliderMin, absoluteSliderMax, allNumbers2)
+        
+    // reshaping viz
+    let table = new Table(VizScreen.givenData, selectedTime, VizScreen.givenTimes)
+    setTimeout( function() { table.drawTable(); }, 2000)
+    this.removeRedSpotInTable()
+    let things = document.getElementById("attacksAndAttackers")
+    things.innerHTML = ''
+    this.removeUserNameFilterOptions()
+    let things2 = document.getElementById("parallelCoordinatesGraph")
+    things2.innerHTML = ''
+    let things3 = document.getElementById("donutGraph")
+    things3.innerHTML = ''
+    document.getElementById("attacksAndAttackers").style.outline = "none"
+    document.getElementById("parallelCoordinatesGraph").style.outline = "none"
+    document.getElementById("donutGraph").style.outline = "none"
+}
+
+
+
+
+function addPercentageChangeHistogram(svg, percentSliderMin, percentSliderMax, allNumbers){
+    let margin = ({top: 10, right: 0, bottom: 10, left: 80})
+    let height = 110
+    let width = 390
+
+    percentSliderMin = Number(percentSliderMin)
+    percentSliderMax = Number(percentSliderMax)
+    let midNum = (percentSliderMin+percentSliderMax)/2
+    let IQ1 = (percentSliderMin+midNum)/2
+    let IQ3 = (midNum+percentSliderMax)/2
+    let fiveNumbers = [percentSliderMin, IQ1, midNum, IQ3, percentSliderMax]
+    
+    // console.log(fiveNumbers)
+    let xAxis = d3.scaleLinear().domain([percentSliderMin, percentSliderMax]).range([margin.left, width - margin.right])
+    
+    let that = this
+    svg.append("g")
+        .style("font", "20px times")
+        .attr("transform", "translate(0," + (height - margin.bottom) + ")")
+        .call(d3.axisBottom(xAxis).tickValues(fiveNumbers).tickFormat(function(d){
+            return that.fixNumbers2(d)
+        }))
         
 
-        setTimeout( function() { table.drawTable(); }, 2000)
-    }
+    let histogram = d3.histogram()
+                    // .value(function(d) { 
+                    //     return d
+                    // })   
+                    .domain(xAxis.domain()) 
+                    .thresholds(d3.range(percentSliderMin, percentSliderMax, (percentSliderMax - percentSliderMin)/50)); 
+
+    let bins = histogram(allNumbers)
+
+    // console.log(bins)
+    
+    // let minY = 0
+    let maxY = d3.max(bins, function(d) { return d.length; })
+    // let avgY = (minY+maxY)/2
+
+    let yAxis = d3.scaleLog().domain([.1, maxY]).nice().range([height - margin.bottom, margin.top]);
+    yAxis.clamp(true)
+    // //yAxis;   // d3.hist has to be called before the Y axis obviously
+    
+    svg.append("g")
+    .style("font", "20px times")
+    .attr("transform", "translate("+margin.left+"," + 0 + ")")
+    .call(d3.axisLeft(yAxis).tickValues([1, 10, maxY]).tickFormat(function(d){
+        // console.log(d)
+        return that.fixNumbers2(d)
+    }))
+
+    this.rect = svg.selectAll("rect")
+    .data(bins)
+    .enter()
+    .append("rect")
+      .attr("x", d =>  xAxis(d.x0) + 1)
+    //   .attr("transform", function(d) { return "translate(" + (xAxis(d.x0)+20) + "," + yAxis(d.length) + ")"; })
+      .attr("width", function(d) { return xAxis(d.x1) - xAxis(d.x0) - 1 ; })
+      .attr("y", d => yAxis(d.length))
+      .attr("height", function(d) { 
+        // console.log(d)
+        // console.log(yAxis(d.length))
+        return yAxis.range()[0] - yAxis(d.length); 
+    })
+    .style("fill", "#69b3a2")
 
 
-    fixNumbers(value){
-        if (Math.abs(value) >= 1000000){
-            return (value/1000000).toFixed(1) + 'M'
+    this.rect.on("mouseover", function(e, d) {
+        d3.select(this).attr('stroke-width', 3).attr("stroke", "black")
+            .append("title")
+            .text(d => "Bin size: "+d.length+ "\u000d"+"Bin LowerLimit : " + fixNumbers2(d.x0) + "\u000d" +"Bin UpperLimit : "+ fixNumbers2(d.x1));
+    })
+    .on("mouseout", function(e, d) {
+        d3.select(this).attr('stroke-width', 0)
+    })
+}
+
+
+
+
+function addOptionsForPercentageChangeSlider(){
+    // $('#PERCHANGECHOOSE').find('option').remove()
+    let baseSelect = document.getElementById("PERCHANGECHOOSE")
+    let givenOptions = ["Show all countries from data in Table and the number distribution in Histogram",
+                        "Show all countries with Relative Percent decrease(from base TP) in Table and the number distribution in Histogram",
+                        "Show all countries with Relative Percent increase(from base TP) in Table and the number distribution in Histogram",
+                        "Show countries with Relative Percent increase by at least 100%(from base TP) in Table and the number distribution in Histogram",
+                        "Show countries with Relative Percent increase by at least 1K%(from base TP) in Table and the number distribution in Histogram",
+                        "Show countries with Relative Percent increase by at least 10K%(from base TP) in Table and the number distribution in Histogram",
+                        "Show countries with Relative Percent increase by at least 0.1M%(from base TP) in Table and the number distribution in Histogram",
+                        "Show countries with Relative Percent increase by at least 1M%(from base TP) in Table and the number distribution in Histogram"]
+    for (let i = 0; i < givenOptions.length; i++){
+        let maximumVal = document.getElementById("myRange").max
+        if (maximumVal < 100 && i >= 3){
+            break
         }
-        else if (Math.abs(value) >= 100000){
-            return (value/1000000).toFixed(2) + 'M'
+        if (maximumVal < 1000 && i >= 4){
+            break
         }
-        else if (Math.abs(value) >= 10000){
-            return (value/1000).toFixed(1) + 'K'
+        if (maximumVal < 10000 && i >= 5){
+            break
         }
-        else if (Math.abs(value) >= 1000){
-            return (value/1000).toFixed(2) + 'K'
+        if (maximumVal < 100000 && i >= 6){
+            break
         }
-        else{
-            return value.toFixed(1) + ''
+        if (maximumVal < 1000000 && i >= 7){
+            break
         }
+
+        let option = document.createElement("option")
+        option.value = i + 'A'
+        option.text = givenOptions[i]
+        baseSelect.add(option)
     }
+}
+
+function addAbsoluteChangeHistogram(svg2, absoluteSliderMin, absoluteSliderMax, allNumbers2){
+    let margin = ({top: 10, right: 0, bottom: 10, left: 70})
+    let height = 110
+    let width = 390
+
+    let midNum = (absoluteSliderMin+absoluteSliderMax)/2
+    let IQ1 = (absoluteSliderMin+midNum)/2
+    let IQ3 = (midNum+absoluteSliderMax)/2
+    let fiveNumbers = [absoluteSliderMin, IQ1, midNum, IQ3, absoluteSliderMax]
+    let xAxis = d3.scaleLinear().domain([absoluteSliderMin, absoluteSliderMax]).range([margin.left, width - margin.right])
+    let that = this
+    svg2.append("g")
+        .style("font", "20px times")
+        .attr("transform", "translate(0," + (height - margin.bottom) + ")")
+        .call(d3.axisBottom(xAxis).tickValues(fiveNumbers).tickFormat(function(d){
+            return that.fixNumbers2(d)
+        }))
+        
+
+    let histogram = d3.histogram()
+                    // .value(function(d) { 
+                    //     return d
+                    // })   
+                    .domain(xAxis.domain()) 
+                    .thresholds(d3.range(absoluteSliderMin, absoluteSliderMax, (absoluteSliderMax - absoluteSliderMin)/50)); 
+
+    let bins = histogram(allNumbers2)
+    
+    // let minY = 0
+    let maxY = d3.max(bins, function(d) { return d.length; })
+    // let avgY = (minY+maxY)/2
+
+    let yAxis = d3.scaleLog().domain([.1, maxY]).nice().range([height - margin.bottom, margin.top]);
+    yAxis.clamp(true) // d3.hist has to be called before the Y axis obviously
+    
+    svg2.append("g")
+    .style("font", "20px times")
+    .attr("transform", "translate("+margin.left+"," + 0 + ")")
+    .call(d3.axisLeft(yAxis).tickValues([1, 10, maxY]).tickFormat(function(d){
+        return that.fixNumbers2(d)
+    }))
+
+    this.rect = svg2.selectAll("rect")
+    .data(bins)
+    .enter()
+    .append("rect")
+      .attr("x", d =>  xAxis(d.x0) + 1)
+      //.attr("transform", function(d) { return "translate(" + (xAxis(d.x0)+20) + "," + yAxis(d.length) + ")"; })
+      .attr("width", function(d) { return xAxis(d.x1) - xAxis(d.x0) - 1 ; })
+      .attr("y", d => yAxis(d.length))
+      .attr("height", function(d) { return yAxis.range()[0] - yAxis(d.length);  })
+      .style("fill", "#69b3a2")
+
+    this.rect.on("mouseover", function(e, d) {
+        d3.select(this).attr('stroke-width', 3).attr("stroke", "black")
+            .append("title")
+            .text(d => "Bin size: "+d.length+ "\u000d"+"Bin LowerLimit : " + fixNumbers2(d.x0) + "\u000d" +"Bin UpperLimit : "+ fixNumbers2(d.x1));
+    })
+    .on("mouseout", function(e, d) {
+        d3.select(this).attr('stroke-width', 0)
+    })
+}
+
+
+
+function addOptionsForAbsoluteChangeSlider(){
+    // $('#ABSCHANGECHOOSE').find('option').remove()
+    let baseSelect = document.getElementById("ABSCHANGECHOOSE")
+    let givenOptions = ["Show all countries from data in Table and the number distribution in Histogram",
+                        "Show all countries with Absolute decrease(from base TP) in Table and the number distribution in Histogram",
+                        "Show all countries with Absolute increase(from base TP) in Table and the number distribution in Histogram",
+                        "Show all countries with Absolute increase by at least 1K(from base TP) in Table and the number distribution in Histogram",
+                        "Show all countries with Absolute increase by at least 10K(from base TP) in Table and the number distribution in Histogram",
+                        "Show all countries with Absolute increase by at least 0.1M(from base TP) in Table and the number distribution in Histogram",
+                        "Show all countries with Absolute increase by at least 1M(from base TP) in Table and the number distribution in Histogram"]
+    for (let i = 0; i < givenOptions.length; i++){
+        let maximumVal = document.getElementById("myRange2").max
+        if (maximumVal < 1000 && i >= 3){
+            break
+        }
+        if (maximumVal < 10000 && i >= 4){
+            break
+        }
+        if (maximumVal < 100000 && i >= 5){
+            break
+        }
+        if (maximumVal < 1000000 && i >= 6){
+            break
+        }
+
+        let option = document.createElement("option")
+        option.value = i + 'B'
+        option.text = givenOptions[i]
+        baseSelect.add(option)
+    }
+}
+
+
+function addAbsoluteHistogram(svg3, absoluteSliderMin, absoluteSliderMax, allNumbers3){
+    let margin = ({top: 10, right: 0, bottom: 10, left: 70})
+    let height = 110
+    let width = 390
+
+    let midNum = (absoluteSliderMin+absoluteSliderMax)/2
+    let IQ1 = (absoluteSliderMin+midNum)/2
+    let IQ3 = (midNum+absoluteSliderMax)/2
+    let fiveNumbers = [absoluteSliderMin, IQ1, midNum, IQ3, absoluteSliderMax]
+    let xAxis = d3.scaleLinear().domain([absoluteSliderMin, absoluteSliderMax]).range([margin.left, width - margin.right])
+    let that = this
+    svg3.append("g")
+        .style("font", "20px times")
+        .attr("transform", "translate(0," + (height - margin.bottom) + ")")
+        .call(d3.axisBottom(xAxis).tickValues(fiveNumbers).tickFormat(function(d){
+            return that.fixNumbers2(d)
+        })).selectAll("text")  
+
+    let histogram = d3.histogram()
+    // .value(function(d) { 
+    //     return d
+    // })   
+    .domain(xAxis.domain()) 
+    .thresholds(d3.range(absoluteSliderMin, absoluteSliderMax, (absoluteSliderMax - absoluteSliderMin)/50)); 
+
+    let bins = histogram(allNumbers3)
+
+   // let minY = 0
+    let maxY = d3.max(bins, function(d) { return d.length; })
+    //let avgY = (minY+maxY)/2
+
+    let yAxis = d3.scaleLog().domain([.1, maxY]).nice().range([height - margin.bottom, margin.top]);
+    yAxis.clamp(true)  // d3.hist has to be called before the Y axis obviously
+
+    svg3.append("g")
+    .style("font", "20px times")
+    .attr("transform", "translate("+margin.left+",0)")//rotate(270)
+    .call(d3.axisLeft(yAxis).tickValues([1, 10, maxY]).tickFormat(function(d){
+        return that.fixNumbers2(d)
+    }))
+    
+
+    this.rect = svg3.selectAll("rect")
+    .data(bins)
+    .enter()
+    .append("rect")
+    .attr("x", d =>  xAxis(d.x0) + 1)
+    //   .attr("transform", function(d) { return "translate(" + (xAxis(d.x0)+20) + "," + (yAxis(d.length)) + ")"; })
+      .attr("width", function(d) { return xAxis(d.x1) - xAxis(d.x0) - 1 ; })
+      .attr("y", d => yAxis(d.length))
+      .attr("height", function(d) { return yAxis.range()[0] - yAxis(d.length); })
+      .style("fill", "#69b3a2")
+
+    this.rect.on("mouseover", function(e, d) {
+        d3.select(this).attr('stroke-width', 3).attr("stroke", "black")
+            .append("title")
+            .text(d => "Bin size: "+d.length+ "\u000d"+"Bin LowerLimit : " + fixNumbers2(d.x0) + "\u000d" +"Bin UpperLimit : "+ fixNumbers2(d.x1));
+    })
+    .on("mouseout", function(e, d) {
+        d3.select(this).attr('stroke-width', 0)
+    })
 
 }
+
+
+function addOptionsForAbsoluteSlider(){
+    let baseSelect = document.getElementById("ABSCHOOSE")
+    let givenOptions = ["Show all countries from data in Table and the number distribution in Histogram",
+                        "Show all countries with at least 100 attacks in any time period",
+                        "Show all countries with at least 1K attacks in any time period",
+                        "Show all countries with at least 10K attacks in any time period",
+                        "Show all countries with at least 100K attacks in any time period",
+                        "Show all countries with at least 1M attacks in any time period",
+                        "Show all countries with at least 10M attacks in any time period"]
+    for (let i = 0; i < givenOptions.length; i++){
+        let maximumVal = document.getElementById("myRange3").max
+        if (maximumVal < 1000 && i >= 2){
+            break
+        }
+        if (maximumVal < 10000 && i >= 3){
+            break
+        }
+        if (maximumVal < 100000 && i >= 4){
+            break
+        }
+        if (maximumVal < 1000000 && i >= 5){
+            break
+        }
+        if (maximumVal < 10000000 && i >= 6){
+            break
+        }
+
+        let option = document.createElement("option")
+        option.value = i + 'B'
+        option.text = givenOptions[i]
+        baseSelect.add(option)
+    }
+}
+
+
+
+
+
+
+
+
 
 function removePreviousSVGs2(){
     // console.log('here')
@@ -816,340 +871,10 @@ function removePathsAndStarsAndRects2(){
 }
 
 
-function addOptionsForPercentageSlider2(){
-    $('#PERCHOOSE').find('option').remove()
-    let baseSelect = document.getElementById("PERCHOOSE")
-    let givenOptions = ["Show all countries from data in Table and the number distribution in Histogram",
-                        "Show all countries with Relative Percent decrease(from base TP) in Table and the number distribution in Histogram",
-                        "Show all countries with Relative Percent increase(from base TP) in Table and the number distribution in Histogram",
-                        "Show countries with Relative Percent increase by at least 100%(from base TP) in Table and the number distribution in Histogram",
-                        "Show countries with Relative Percent increase by at least 1K%(from base TP) in Table and the number distribution in Histogram",
-                        "Show countries with Relative Percent increase by at least 10K%(from base TP) in Table and the number distribution in Histogram",
-                        "Show countries with Relative Percent increase by at least 0.1M%(from base TP) in Table and the number distribution in Histogram",
-                        "Show countries with Relative Percent increase by at least 1M%(from base TP) in Table and the number distribution in Histogram"]
-    for (let i = 0; i < givenOptions.length; i++){
-        let maximumVal = document.getElementById("myRange").max
-        if (maximumVal < 100 && i >= 3){
-            break
-        }
-        if (maximumVal < 1000 && i >= 4){
-            break
-        }
-        if (maximumVal < 10000 && i >= 5){
-            break
-        }
-        if (maximumVal < 100000 && i >= 6){
-            break
-        }
-        if (maximumVal < 1000000 && i >= 7){
-            break
-        }
-
-        let option = document.createElement("option")
-        option.value = i + 'A'
-        option.text = givenOptions[i]
-        baseSelect.add(option)
-    }
-}
 
 
-function addPercentageChangeHistogram2(svg, percentSliderMin, percentSliderMax, allNumbers){
-    percentSliderMin = Number(percentSliderMin)
-    percentSliderMax = Number(percentSliderMax)
-    let midNum = (percentSliderMin+percentSliderMax)/2
-    let IQ1 = (percentSliderMin+midNum)/2
-    let IQ3 = (midNum+percentSliderMax)/2
-    let fiveNumbers = [percentSliderMin, IQ1, midNum, IQ3, percentSliderMax]
-    
-    // console.log(fiveNumbers)
-    let xAxis = d3.scaleLinear().domain([percentSliderMin, percentSliderMax]).range([50, 450])
-    let that = this
-    svg.append("g")
-        .style("font", "20px times")
-        .attr("transform", "translate(20," + 110 + ")")
-        .call(d3.axisBottom(xAxis).tickValues(fiveNumbers).tickFormat(function(d){
-            return that.fixNumbers2(d)
-        }))
-        
-
-    let histogram = d3.histogram()
-                    .value(function(d) { 
-                        return d
-                    })   
-                    .domain(xAxis.domain()) 
-                    .thresholds(d3.range(percentSliderMin, percentSliderMax, (percentSliderMax - percentSliderMin)/50)); 
-
-    let bins = histogram(allNumbers)
-    
-    let minY = 0
-    let maxY = d3.max(bins, function(d) { return d.length; })
-    let avgY = (minY+maxY)/2
-
-    let yAxis = d3.scaleLinear().range([110, 10]);
-    yAxis.domain([0, maxY]);   // d3.hist has to be called before the Y axis obviously
-    
-    svg.append("g")
-    .style("font", "20px times")
-    .attr("transform", "translate(70," + 0 + ")")
-    .call(d3.axisLeft(yAxis).tickValues([minY, avgY, maxY]).tickFormat(function(d){
-        return that.fixNumbers2(d)
-    }))
-
-    svg.selectAll("rect")
-    .data(bins)
-    .enter()
-    .append("rect")
-      .attr("x", 1)
-      .attr("transform", function(d) { return "translate(" + (xAxis(d.x0)+20) + "," + yAxis(d.length) + ")"; })
-      .attr("width", function(d) { return xAxis(d.x1) - xAxis(d.x0) - 1 ; })
-      .attr("height", function(d) { return 110 - yAxis(d.length); })
-      .style("fill", "#69b3a2")
-}
-
-function addOptionsForAbsoluteSlider2(){
-    $('#ABSCHOOSE').find('option').remove()
-    let baseSelect = document.getElementById("ABSCHOOSE")
-    let givenOptions = ["Show all countries from data in Table and the number distribution in Histogram",
-                        "Show all countries with Absolute decrease(from base TP) in Table and the number distribution in Histogram",
-                        "Show all countries with Absolute increase(from base TP) in Table and the number distribution in Histogram",
-                        "Show all countries with Absolute increase by at least 1K(from base TP) in Table and the number distribution in Histogram",
-                        "Show all countries with Absolute increase by at least 10K(from base TP) in Table and the number distribution in Histogram",
-                        "Show all countries with Absolute increase by at least 0.1M(from base TP) in Table and the number distribution in Histogram",
-                        "Show all countries with Absolute increase by at least 1M(from base TP) in Table and the number distribution in Histogram"]
-    for (let i = 0; i < givenOptions.length; i++){
-        let maximumVal = document.getElementById("myRange2").max
-        if (maximumVal < 1000 && i >= 3){
-            break
-        }
-        if (maximumVal < 10000 && i >= 4){
-            break
-        }
-        if (maximumVal < 100000 && i >= 5){
-            break
-        }
-        if (maximumVal < 1000000 && i >= 6){
-            break
-        }
-
-        let option = document.createElement("option")
-        option.value = i + 'B'
-        option.text = givenOptions[i]
-        baseSelect.add(option)
-    }
-}
-
-function addAbsoluteChangeHistogram2(svg2, absoluteSliderMin, absoluteSliderMax, allNumbers2){
-    let midNum = (absoluteSliderMin+absoluteSliderMax)/2
-    let IQ1 = (absoluteSliderMin+midNum)/2
-    let IQ3 = (midNum+absoluteSliderMax)/2
-    let fiveNumbers = [absoluteSliderMin, IQ1, midNum, IQ3, absoluteSliderMax]
-    let xAxis = d3.scaleLinear().domain([absoluteSliderMin, absoluteSliderMax]).range([50, 450])
-    let that = this
-    svg2.append("g")
-        .style("font", "20px times")
-        .attr("transform", "translate(20," + 110 + ")")
-        .call(d3.axisBottom(xAxis).tickValues(fiveNumbers).tickFormat(function(d){
-            return that.fixNumbers2(d)
-        }))
-        
-
-    let histogram = d3.histogram()
-                    .value(function(d) { 
-                        return d
-                    })   
-                    .domain(xAxis.domain()) 
-                    .thresholds(d3.range(absoluteSliderMin, absoluteSliderMax, (absoluteSliderMax - absoluteSliderMin)/50)); 
-
-    let bins = histogram(allNumbers2)
-    
-    let minY = 0
-    let maxY = d3.max(bins, function(d) { return d.length; })
-    let avgY = (minY+maxY)/2
-
-    let yAxis = d3.scaleLinear().range([110, 10]);
-    yAxis.domain([0, maxY]);   // d3.hist has to be called before the Y axis obviously
-    
-    svg2.append("g")
-    .style("font", "20px times")
-    .attr("transform", "translate(70," + 0 + ")")
-    .call(d3.axisLeft(yAxis).tickValues([minY, avgY, maxY]).tickFormat(function(d){
-        return that.fixNumbers2(d)
-    }))
-
-    svg2.selectAll("rect")
-    .data(bins)
-    .enter()
-    .append("rect")
-      .attr("x", 1)
-      .attr("transform", function(d) { return "translate(" + (xAxis(d.x0)+20) + "," + yAxis(d.length) + ")"; })
-      .attr("width", function(d) { return xAxis(d.x1) - xAxis(d.x0) - 1 ; })
-      .attr("height", function(d) { return 110 - yAxis(d.length); })
-      .style("fill", "#69b3a2")
-}
-
-function addAnomalyPercentChangeHistogram2(svg3, percentSliderAnomalyMin, percentSliderAnomalyMax, allNumbers3){
-    // console.log(allNumbers3)
-    let midNum = (percentSliderAnomalyMin+percentSliderAnomalyMax)/2
-    let IQ1 = (percentSliderAnomalyMin+midNum)/2
-    let IQ3 = (midNum+percentSliderAnomalyMax)/2
-    let fiveNumbers = [percentSliderAnomalyMin, IQ1, midNum, IQ3, percentSliderAnomalyMax]
-    let xAxis = d3.scaleLinear().domain([percentSliderAnomalyMin, percentSliderAnomalyMax]).range([20, 340])
-    let that = this
-    svg3.append("g")
-        .style("font", "20px times")
-        .attr("transform", "translate(35,215)")//rotate(270)
-        .call(d3.axisBottom(xAxis).tickValues(fiveNumbers).tickFormat(function(d){
-            return that.fixNumbers2(d)
-        })).selectAll("text")  
-        .style("text-anchor", "start")
-        .attr("dx", "0.2em")
-        .attr("dy", "-0.5em")
-        .attr("transform", "rotate(90)")
-
-    let histogram = d3.histogram()
-    .value(function(d) { 
-        return d
-    })   
-    .domain(xAxis.domain()) 
-    .thresholds(d3.range(percentSliderAnomalyMin, percentSliderAnomalyMax, (percentSliderAnomalyMax - percentSliderAnomalyMin)/50)); 
-
-    let bins = histogram(allNumbers3)
-
-    let minY = 0
-    let maxY = d3.max(bins, function(d) { return d.length; })
-    let avgY = (minY+maxY)/2
-
-    let yAxis = d3.scaleLinear().range([215, 10]);
-    yAxis.domain([0, maxY]);   // d3.hist has to be called before the Y axis obviously
-
-    svg3.append("g")
-    .style("font", "20px times")
-    .attr("transform", "translate(55,0)")//rotate(270)
-    .call(d3.axisLeft(yAxis).tickValues([minY, avgY, maxY]).tickFormat(function(d){
-        return that.fixNumbers2(d)
-    }))
-    .selectAll("text")  
-        .style("text-anchor", "start")
-        .attr("dx", "0em")
-        .attr("dy", "1em")
-        .attr("transform", "rotate(90)")
-
-    svg3.selectAll("rect")
-    .data(bins)
-    .enter()
-    .append("rect")
-      .attr("transform", function(d) { return "translate(" + (xAxis(d.x0)+35) + "," + (yAxis(d.length)) + ")"; })
-      .attr("width", function(d) { return xAxis(d.x1) - xAxis(d.x0) - 1 ; })
-      .attr("height", function(d) { return 215 - yAxis(d.length); })
-      .style("fill", "#69b3a2")
-}
 
 
-function addAnomalyAbsoluteHistogram2(svg4, absoluteSliderAnomalyMin, absoluteSliderAnomalyMax, allNumbers4){
-    let midNum = (absoluteSliderAnomalyMin+absoluteSliderAnomalyMax)/2
-    let IQ1 = (absoluteSliderAnomalyMin+midNum)/2
-    let IQ3 = (midNum+absoluteSliderAnomalyMax)/2
-    let fiveNumbers = [absoluteSliderAnomalyMin, IQ1, midNum, IQ3, absoluteSliderAnomalyMax]
-    let xAxis = d3.scaleLinear().domain([absoluteSliderAnomalyMin, absoluteSliderAnomalyMax]).range([20, 340])
-    let that = this
-    svg4.append("g")
-        .style("font", "20px times")
-        .attr("transform", "translate(35,215)")//rotate(270)
-        .call(d3.axisBottom(xAxis).tickValues(fiveNumbers).tickFormat(function(d){
-            return that.fixNumbers2(d)
-        })).selectAll("text")  
-        .style("text-anchor", "start")
-        .attr("dx", "0.2em")
-        .attr("dy", "-0.5em")
-        .attr("transform", "rotate(90)")
-
-    let histogram = d3.histogram()
-    .value(function(d) { 
-        return d
-    })   
-    .domain(xAxis.domain()) 
-    .thresholds(d3.range(absoluteSliderAnomalyMin, absoluteSliderAnomalyMax, (absoluteSliderAnomalyMax - absoluteSliderAnomalyMin)/50)); 
-
-    let bins = histogram(allNumbers4)
-
-    let minY = 0
-    let maxY = d3.max(bins, function(d) { return d.length; })
-    let avgY = (minY+maxY)/2
-
-    let yAxis = d3.scaleLinear().range([215, 10]);
-    yAxis.domain([0, maxY]);   // d3.hist has to be called before the Y axis obviously
-
-    svg4.append("g")
-    .style("font", "20px times")
-    .attr("transform", "translate(55,0)")//rotate(270)
-    .call(d3.axisLeft(yAxis).tickValues([minY, avgY, maxY]).tickFormat(function(d){
-        return that.fixNumbers2(d)
-    }))
-    .selectAll("text")  
-        .style("text-anchor", "start")
-        .attr("dx", "0em")
-        .attr("dy", "1em")
-        .attr("transform", "rotate(90)")
-
-    svg4.selectAll("rect")
-    .data(bins)
-    .enter()
-    .append("rect")
-      .attr("transform", function(d) { return "translate(" + (xAxis(d.x0)+35) + "," + (yAxis(d.length)) + ")"; })
-      .attr("width", function(d) { return xAxis(d.x1) - xAxis(d.x0) - 1 ; })
-      .attr("height", function(d) { return 215 - yAxis(d.length); })
-      .style("fill", "#69b3a2")
-}
-
-
-function baseTPFunc(selectedTime){
-    // bookkeeping
-    removePreviousSVGs2()
-    removePathsAndStarsAndRects2()
-
-    // Updating sliders with base
-    let dynamicSlider = new DynamicSlider(VizScreen.givenData, selectedTime)
-
-    let [percentSliderMin, percentSliderMax, allNumbers] = dynamicSlider.percentChangeSliderValues()
-    let perSlider = document.getElementById("myRange")
-    perSlider.min = percentSliderMin
-    perSlider.max = percentSliderMax
-    perSlider.value = percentSliderMin
-    let perOutput = document.getElementById("PERWRITE")
-    perOutput.value = ''
-    this.addOptionsForPercentageSlider2()
-    document.getElementById("PERCHOOSE").selectedIndex = 0
-    let svg = d3.select("#svg1")
-    this.addPercentageChangeHistogram2(svg, percentSliderMin, percentSliderMax, allNumbers)
-
-    let [absoluteSliderMin, absoluteSliderMax, allNumbers2] = dynamicSlider.absoluteChangeSliderValues()
-    // console.log(absoluteSliderMax)
-    let absSlider = document.getElementById("myRange2")
-    absSlider.min = absoluteSliderMin
-    absSlider.max = absoluteSliderMax
-    absSlider.value = absoluteSliderMin
-    let absOutput = document.getElementById("ABSWRITE")
-    absOutput.value = ''
-    this.addOptionsForAbsoluteSlider2()
-    document.getElementById("ABSCHOOSE").selectedIndex = 0
-    let svg2 = d3.select("#svg2")
-    this.addAbsoluteChangeHistogram2(svg2, absoluteSliderMin, absoluteSliderMax, allNumbers2)
-        
-    // reshaping viz
-    let table = new Table(VizScreen.givenData, selectedTime, VizScreen.givenTimes)
-    setTimeout( function() { table.drawTable(); }, 2000)
-    this.removeRedSpotInTable()
-    let things = document.getElementById("attacksAndAttackers")
-    things.innerHTML = ''
-    this.removeUserNameFilterOptions()
-    let things2 = document.getElementById("parallelCoordinatesGraph")
-    things2.innerHTML = ''
-    let things3 = document.getElementById("donutGraph")
-    things3.innerHTML = ''
-    document.getElementById("attacksAndAttackers").style.outline = "none"
-    document.getElementById("parallelCoordinatesGraph").style.outline = "none"
-    document.getElementById("donutGraph").style.outline = "none"
-}
 
 
 function helperForFilterSlidersAndSortButton(){
@@ -1176,11 +901,11 @@ function threshold1(){
 
     //keeping slider and textbox aligned
     let slider1 = document.getElementById("myRange")
-    let textBox1 = document.getElementById("PERWRITE")
+    let textBox1 = document.getElementById("PERCHANGEWRITE")
     textBox1.value = slider1.value 
 
     let range = document.getElementById("myRange2")
-    let textBox2 = document.getElementById("ABSWRITE")
+    let textBox2 = document.getElementById("ABSCHANGEWRITE")
     range.value = range.min
     textBox2.value = range.min
 
@@ -1211,13 +936,13 @@ function threshold1(){
 function chooseBox1(selectedOption){
     // console.log('here')
     removePathsAndStarsAndRects2()
-    let textBox1 = document.getElementById("PERWRITE")
+    let textBox1 = document.getElementById("PERCHANGEWRITE")
     textBox1.value = '' 
     let slider1 = document.getElementById("myRange")
     slider1.value = slider1.min
 
     let range = document.getElementById("myRange2")
-    let textBox2 = document.getElementById("ABSWRITE")
+    let textBox2 = document.getElementById("ABSCHANGEWRITE")
     range.value = range.min
     textBox2.value = range.min
 
@@ -1287,7 +1012,7 @@ function textBox1(typedNumber){
             slider.value = typedNumber
         
             let slider2 = document.getElementById("myRange2");
-            let textBox2 = document.getElementById("ABSWRITE")
+            let textBox2 = document.getElementById("ABSCHANGEWRITE")
             slider2.value = slider2.min
             textBox2.value = slider2.min
         
@@ -1324,11 +1049,11 @@ function threshold2(){
 
     //keeping slider and textbox aligned
     let slider2 = document.getElementById("myRange2")
-    let textBox2 = document.getElementById("ABSWRITE")
+    let textBox2 = document.getElementById("ABSCHANGEWRITE")
     textBox2.value = slider2.value 
 
     let range = document.getElementById("myRange")    
-    let textBox1 = document.getElementById("PERWRITE")
+    let textBox1 = document.getElementById("PERCHANGEWRITE")
     range.value = range.min
     textBox1.value = range.min
 
@@ -1358,13 +1083,13 @@ function threshold2(){
 function chooseBox2(selectedOption){
     // console.log('here')
     removePathsAndStarsAndRects2()
-    let textBox1 = document.getElementById("ABSWRITE")
+    let textBox1 = document.getElementById("ABSCHANGEWRITE")
     textBox1.value = '' 
     let slider1 = document.getElementById("myRange2")
     slider1.value = slider1.min
 
     let range = document.getElementById("myRange")
-    let textBox2 = document.getElementById("PERWRITE")
+    let textBox2 = document.getElementById("PERCHANGEWRITE")
     range.value = range.min
     textBox2.value = range.min
 
@@ -1427,7 +1152,7 @@ function textBox2(typedNumber){
             slider.value = typedNumber
         
             let slider2 = document.getElementById("myRange");
-            let textBox1 = document.getElementById("PERWRITE")
+            let textBox1 = document.getElementById("PERCHANGEWRITE")
             slider2.value = slider2.min
             textBox1.value = slider2.min
         
@@ -1603,7 +1328,7 @@ function threshold4(){
 
     //keeping slider and textbox aligned
     let slider1 = document.getElementById("myRange4")
-    let textBox1 = document.getElementById("ANOMABSWRITE")
+    let textBox1 = document.getElementById("ABSWRITE")
     textBox1.value = slider1.value 
 
     // reshaping viz
@@ -1643,7 +1368,7 @@ function threshold4(){
 function chooseBox4(selectedOption){
     removePathsAndStarsAndRects2()
 
-    let textBox1 = document.getElementById("ANOMABSWRITE")
+    let textBox1 = document.getElementById("ABSWRITE")
     textBox1.value = (Number(selectedOption)).toFixed(2)
     let slider1 = document.getElementById("myRange4")
     slider1.value = (Number(selectedOption)).toFixed(2)
@@ -1831,7 +1556,7 @@ function fixNumbers2(value){
         return (value/1000).toFixed(2) + 'K'
     }
     else{
-        return value.toFixed(1) + ''
+        return value.toFixed(0) + ''
     }
 }
 

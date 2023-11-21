@@ -5,11 +5,23 @@ class TableLogic{
 
     rowToCellDataTransform(d) {
 
-        let stateInfo = {
-            type: 'text',
-            class: 'country',
-            value: d.country + '[' + d.cc + ']'
-        };
+        function getFlagEmoji(country, cc){
+            let a = country + '[' + cc + ']'
+            const codePoints = cc
+                .toUpperCase()
+                .split('')
+                .map(char =>  127397 + char.charCodeAt());
+            let b = String.fromCodePoint(...codePoints);
+            // console.log(a)
+            // console.log(b)
+            return a+b
+        }
+
+        let stateInfo = new function(){
+            this.type = 'text';
+            this.class = 'country';
+            this.value = getFlagEmoji(d.country, d.cc);
+        }
 
         let dataList = [stateInfo]
 
@@ -46,6 +58,8 @@ class TableLogic{
         //     thisCell['value6'] = d['country_username_historic_top_10_differ_by_half_' + i]
         //     thisCell['value7'] = d['country_root_second_place_ratio_' + i]
         // }
+
+        // console.log(dataList)
 
         return dataList
     }

@@ -1,10 +1,13 @@
 class Table{
     static countriesChosenUsedInAnotherFunction
 
-    constructor(neededData, baseTime, selectedTimes){
+    constructor(neededData, baseTime, selectedTimes, absoluteAnomVal, percentAnomVal, percentMaxVal){
         this.neededData = neededData
         this.baseTime = baseTime
         this.selectedTimes = selectedTimes
+        this.absoluteAnomVal = absoluteAnomVal
+        this.percentAnomVal = percentAnomVal
+        this.percentMaxVal = percentMaxVal
 
         let variables = new VariablesForTable(this.neededData, this.baseTime, this.selectedTimes)
         variables.countrySpecificInfo()
@@ -15,8 +18,8 @@ class Table{
         Table.countriesChosenUsedInAnotherFunction = []
         
 
-        this.vizWidth = 90;
-        this.vizHeight = 70; //originally 30
+        this.vizWidth = 60;
+        this.vizHeight = 30; //originally 30
     }
 
     drawLegend(){
@@ -59,17 +62,17 @@ class Table{
 
     filterCountries(){
         // console.log(document.getElementById("myRange").value)
-        // console.log(document.getElementById("PERCHOOSE").value)
-        // console.log(document.getElementById("PERWRITE").value)
-        // console.log(document.getElementById("ABSCHOOSE").value)
-        // console.log(document.getElementById("ABSWRITE").value)
+        // console.log(document.getElementById("PERCHANGECHOOSE").value)
+        // console.log(document.getElementById("PERCHANGEWRITE").value)
+        // console.log(document.getElementById("ABSCHANGECHOOSE").value)
+        // console.log(document.getElementById("ABSCHANGEWRITE").value)
 
-        let writtenPvalue = document.getElementById("PERWRITE").value
+        let writtenPvalue = document.getElementById("PERCHANGEWRITE").value
         let minVal 
         let maxVal
         if (writtenPvalue === ''){
             // console.log('here')
-            let turningPointValue = document.getElementById("PERCHOOSE").value
+            let turningPointValue = document.getElementById("PERCHANGECHOOSE").value
             if (turningPointValue === '0A'){
                 minVal = document.getElementById("myRange").min
                 maxVal = document.getElementById("myRange").max
@@ -127,12 +130,12 @@ class Table{
         });
         // console.log('A:', this.neededData)
 
-        let writtenAvalue = document.getElementById("ABSWRITE").value
+        let writtenAvalue = document.getElementById("ABSCHANGEWRITE").value
         let minVal2 
         let maxVal2
         if (writtenAvalue === ''){
             // console.log('here2')
-            let turningPointValue = document.getElementById("ABSCHOOSE").value
+            let turningPointValue = document.getElementById("ABSCHANGECHOOSE").value
             if (turningPointValue === '0B'){
                 minVal2 = document.getElementById("myRange2").min
                 maxVal2 = document.getElementById("myRange2").max
@@ -182,15 +185,15 @@ class Table{
         });
         // console.log('B:', this.neededData)
 
-        $('#countries').find('option').remove()
+        //$('#countries').find('option').remove()
 
-        let countrySelect = document.getElementById("countries")
-        for (let country of this.neededData){
-            let option = document.createElement("option")
-            option.value = country.country
-            option.text = country.country
-            countrySelect.appendChild(option)
-        }
+        // let countrySelect = document.getElementById("countries")
+        // for (let country of this.neededData){
+        //     let option = document.createElement("option")
+        //     option.value = country.country
+        //     option.text = country.country
+        //     countrySelect.appendChild(option)
+        // }
     }
 
     
@@ -251,7 +254,7 @@ class Table{
 
     drawTable(){     
           
-        this.drawLegend() 
+        //this.drawLegend() 
         this.sortData()
         this.filterCountries()
 
@@ -352,6 +355,7 @@ class Table{
             }
         })
 
+
         let tabularLogic = new TableLogic()
         let forecastSelection = rowSelection.selectAll('td')
             .data(tabularLogic.rowToCellDataTransform)
@@ -375,9 +379,10 @@ class Table{
         .data(d => [d])
         .join('g')
 
-        this.shapes = new ShapesInCell()
+        this.shapes = new ShapesAroundTable(this.absoluteAnomVal, this.percentAnomVal, this.percentMaxVal)
         this.shapes.addRectangles(grouperSelect.filter((d,i) => i === 0));
         this.shapes.addTrianglesOrConstants(grouperSelect.filter((d,i) => i === 0));
+        this.shapes.addLegend()
         // this.shapes.setBoundariesOfCell(grouperSelect.filter((d,i) => i === 0))
     }
 

@@ -6,7 +6,7 @@ body {
 div#initialVariablesDiv {
     left:5px;
     top:5px;
-    height: 680px;
+    height: 730px;
     width:1700px;
     background-color: white;
     overflow-y: scroll;
@@ -27,10 +27,9 @@ svg#dateHeatMap{
     width: 1660px; 
 }
 
-
 .button-64 {
     position: relative;
-    top: -650px;
+    top: -705px;
     left:1400px;
     align-items: center;
     background-image: linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB);
@@ -81,536 +80,458 @@ svg#dateHeatMap{
 /* div for initial variables */
 
 
-    /* #timePeriod {
-        position: absolute;
-        font-size: 40px;
-        top: 30%;
-        left: 1510px;
-        width: 550px;
-        height: 50px ; 
-        border-radius: 1em; 
-    }
 
-    #datePick {
-        position: absolute;
-        font-size: 40px;
-        top: 15%;
-        left: 460px;
-        width: 720px; 
-        height: 100px ;
-        border-radius: 1em; 
-    }
+/* reset button starts */
 
-    div.ui-datepicker, .ui-datepicker td, .ui-datepicker th{
-        font-size:39px;
-    }
+#resetButton {
+    position: absolute;
+    font-size: 40px;
+    top: 750px;
+    left: 10px;
+    border-radius: 1em; 
+    visibility: hidden;
+}
 
-    #weekPick {
-        position: absolute;
-        font-size: 40px;
-        top: 0%;
-        left: 535px;
-        width: 570px; 
-        border-radius: 1em; 
-        height:150px;
-        overflow:auto;
-    }
-
-    #monthPick {
-        position: absolute; 
-        font-size: 40px;
-        top: 0%;
-        left: 550px;
-        width:580px;
-        height: 150px ;
-        border-radius: 1em; 
-    }
+/* reset button ends */
 
 
-    #launchPad {
-        position: absolute;
-        font-size: 40px;
-        top: 30%;
-        left: 1200px;
-        width: 300px; 
-        height: 50px ;
-        border-radius: 1em; 
-    } */
+/* Country datalist filter */
 
-/* div for initial variables ends*/
+#countryOptions{
+    left:10px;
+    top:850px;
+    width: 360px;
+    height: 100px;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    visibility: hidden;
+}
 
-/* svg for textual chart */
+#labelText{
+    position: absolute;
+    top:-10px;
+    left:0px;
+}
 
-    /* #textsForTP{
-        left:5px;
-        top:170px;
-        height: 0px;
-        width:300px;
-        background-color: white;
-        position: absolute; 
-    } */
+#labelText2{
+    position: absolute;
+    top:15px;
+    left:0px;
+}
 
-/* svg for textual chart ends */
+#labelText3{
+    position: absolute;
+    top:40px;
+    left:0px;
+}
+
+
+
+#countries-from-data{
+    position: absolute;
+    top:70px;
+    left:0px;
+    font-size: 25px;
+}
+
+/* Country datalist filter ends*/
+
 
 /* div for base button */
 
-    /* #baseTPDiv{
-        position: absolute;
-        left:320px;
-        top:285px;
-        width: 300px;
-        height: 50px;
-    }
+#baseTPDiv{
+    position: absolute;
+    left:10px;
+    top:1000px;
+    width: 300px;
+    height: 50px;
+    visibility: hidden;
+}
 
 
-    #baseTP{
-        position: absolute;
-        font-size: 30px;
-        top: 0px;
-        left: 0px;
-        min-width: 300px; 
-        height: 50px;
-        border-radius: 1em; 
-    } */
+#baseTP{
+    position: absolute;
+    font-size: 30px;
+    top: 0px;
+    left: 0px;
+    min-width: 300px; 
+    height: 50px;
+    border-radius: 1em; 
+}
 
 /* div for base button ends */
 
 
-
 /* Below Used By sliders */
 
-    /* .tooltipForSidebarButtonAndSliders {
-        position: relative;
-        display: inline-block;
-        font-size: 20px;
-        font-weight: bold;
-    }
+.tooltipForSliders {
+    position: relative;
+    display: inline-block;
+    font-size: 20px;
+    font-weight: bold;
+}
 
-    .tooltipForSidebarButtonAndSliders .tooltiptext {
-        left:10px;
-        visibility: hidden;
-        width: 240px;
-        background-color: black;
-        color: white;
-        text-align: center;
-        border-radius: 6px;
-        padding: 5px 0;
-    
-        
-        position: absolute;
-        z-index: 1;
-    }
-    
-    .tooltipForSidebarButtonAndSliders:hover .tooltiptext {
-        visibility: visible;
-    }
+.tooltipForSliders .tooltiptext {
+    left:10px;
+    visibility: hidden;
+    width: 240px;
+    background-color: black;
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
 
     
-    input[type="range"][orient=vertical]{
-        position: absolute;
-        transform: rotate(270deg);
-        -webkit-appearance: none;
-        appearance: none;
-        background: black;
-        cursor: pointer;
-        width: 15rem;
-        background: grey;
-    } */
+    position: absolute;
+    z-index: 1;
+}
 
-    /* input[type="range"]::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        background: blue;
-        cursor: pointer  
-    } */
+.tooltipForSliders:hover .tooltiptext {
+    visibility: visible;
+}
 
 /* Above Used By sidebar button AND sliders from div */
 
-/* div for filtering things */
 
-    /* #filterDiv{
-        position: absolute;
-        left:660px;
-        top:170px;
-        height: 270px;
-        width: 1410px;
-        outline: 5px dashed black
-    } */
+/* div for dependent things */
 
-    /* sliders start */
-        /* #slidecontainer{
-            position: absolute;
-            top: 20px;
-            left: 0px;
-            width: 520px; 
-            height:240px;
-        }
+#dependentDiv{
+    position: absolute;
+    left:380px;
+    top:750px;
+    height: 300px;
+    width: 875px;
+    outline: 2px dashed black;
+    visibility: hidden;
+} 
 
-        #slidecontainer2{
-            position: absolute;
-            top: 20px;
-            left: 530px;
-            width: 500px; 
-            height:240px;
-        }
+#baseText{
+    position: absolute;
+    top: 250px;
+    left: 300px;
+    width: 430px; 
+    height:30px;
+    font-weight: 900;
+    font-size: 30px;
+}
 
-        #Text1{
-            position: absolute;
-            top: 0px;
-            left: 50px;
-            width: 600px; 
-            height:35px;
-        }
-
-        #Text2{
-            position: absolute;
-            top: 0px;
-            left: 80px;
-            width: 600px; 
-            height:35px;
-        }
-
-        #svg1, #svg2{
-            position: absolute;
-            top: 30px;
-            left: 0px;
-            width: 500px; 
-            height:140px;
-            font-size:18pt;
-        }
-
-        #myRange, #myRange2{
-            position: absolute;
-            top: 180px;
-            left: 50px;
-            width: 430px; 
-            height:1px;
-        }
-
-        #combobox1, #combobox2{
-            position: absolute;
-            top: 200px; 
-            left: 50px;
-        }
-
-        .select-editable {
-            position:absolute; 
-            background-color:white; 
-            border:solid grey 1px;  
-            height:30px;
-            width:430px; 
-        }
-
-        .select-editable select {
-            position:absolute; 
-            top:0px; 
-            left:0px; 
-            font-size:14px; 
-            border:none; 
-            width:430px; 
-            margin:0;
-            font-size: 25px;
-        }
-
-        .select-editable input {
-            position:absolute; 
-            top:0px; 
-            left:0px; 
-            width:400px; 
-            padding:1px; 
-            font-size:12px; 
-            border:none;
-            font-size: 25px;
-        }
-
-        .select-editable select:focus, .select-editable input:focus {
-            outline:none;
-        } */
-    /* sliders end */
+/* sliders start */
 
 
-    /* Country datalist filter */
+#slidecontainer1{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 430px; 
+    height:240px;
+}
 
-        /* #countryOptions{
-            left:1050px;
-            top:175px;
-            width: 360px;
-            height: 100px;
-            flex-direction: column;
-            align-items: center;
-            position: absolute;
-        }
+#slidecontainer2{
+    position: absolute;
+    top: 0px;
+    left: 440px;
+    width: 430px; 
+    height:270px;
+}
 
-        #labelText{
-            position: absolute;
-            top:-10px;
-            left:0px;
-        }
+#Text1{
+    position: absolute;
+    top: 0px;
+    left: 10px;
+    width: 430px; 
+    height:35px;
+}
 
-        #labelText2{
-            position: absolute;
-            top:15px;
-            left:0px;
-        }
+#Text2{
+    position: absolute;
+    top: 0px;
+    left: 20px;
+    width: 430px; 
+    height:35px;
+}
 
+#svg1, #svg2{
+    position: absolute;
+    top: 30px;
+    left: -15px;
+    width: 420px; 
+    height:140px;
+    font-size:18pt;
+}
 
-        #countries-from-data{
-            position: absolute;
-            top:45px;
-            left:0px;
-            font-size: 25px;
-        } */
+#myRange, #myRange2{
+    position: absolute;
+    top: 180px;
+    left: 10px;
+    width: 400px; 
+    height:1px;
+}
 
-    /* Country datalist filter ends*/
+#combobox1, #combobox2{
+    position: absolute;
+    top: 200px; 
+    left: 10px;
+    width: 400px;
+}
 
+.select-editable {
+    position:absolute; 
+    background-color:white; 
+    border:solid grey 1px;  
+    height:31px;
+    width:400px; 
+}
 
-    /* #resetButton {
-        position: absolute;
-        font-size: 40px;
-        top: 10px;
-        left: 1050px;
-        border-radius: 1em; 
-    } */
+.select-editable select {
+    position:absolute; 
+    top:0px; 
+    left:0px; 
+    font-size:14px; 
+    border:none; 
+    width:400px; 
+    margin:0;
+    font-size: 25px;
+    height:31px;
+}
 
-/* div for filtering things ends */
+.select-editable input {
+    position:absolute; 
+    top:0px; 
+    left:0px; 
+    width:381px; 
+    padding:1px; 
+    font-size:12px; 
+    border:none;
+    font-size: 25px;
+}
 
-/* div for non filtering things */
+.select-editable select:focus, .select-editable input:focus {
+    outline:none;
+}
 
-    /* #nonFilterDiv{
-        position: absolute;
-        left:320px;
-        top:350px;
-        height: 1050px;
-        width: 320px;
-        outline: 5px dashed black
-    }
-
-    #sortTPDiv{
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        font-size: 25px;
-    }
-
-    #sortTP{
-        position: absolute;
-        top: 0px;
-        left: 0px;
-        height: 50px;
-        min-width:280px;
-        font-size: 25px;
-    } */
-
-    /* sliders start */
-        /* #slidecontainer3{
-            position: absolute;
-            top: 80px;
-            left: 0px;
-            width: 320px; 
-            height:475px;
-        }
-
-        #slidecontainer4{
-            position: absolute;
-            top: 570px;
-            left: 0px;
-            width: 320px; 
-            height:475px;
-        }
-
-        #svg3, #svg4{
-            position: absolute;
-            top: 50px;
-            left: -60px;
-            width: 400px; 
-            height:270px;
-            font-size:18pt;
-            transform: rotate(270deg)
-        }
-
-        #myRange3, #myRange4{
-            position: absolute;
-            top: 180px;
-            left: 125px;
-            width: 350px; 
-            height:1px;
-        }
-
-        #Text3{
-            position: absolute;
-            top: 390px;
-            left: 10px;
-            width: 330px; 
-            height:35px;
-        }
-
-        #Text4{
-            position: absolute;
-            top: 390px;
-            left: 20px;
-            width: 330px; 
-            height:35px;
-        }
-
-        #combobox3, #combobox4{
-            position: absolute;
-            top: 420px;
-            left: 5px;
-        }
-
-        .select-editable-2 {
-            position:absolute; 
-            background-color:white; 
-            border:solid grey 1px;  
-            height:35px;
-            width:300px; 
-        }
-
-        .select-editable-2 select {
-            position:absolute; 
-            top:0px; 
-            left:0px; 
-            font-size:14px; 
-            border:none; 
-            width:300px; 
-            margin:0;
-            font-size: 25px;
-        }
-
-        .select-editable-2 input {
-            position:absolute; 
-            top:0px; 
-            left:0px; 
-            width:270px; 
-            padding:1px; 
-            font-size:12px; 
-            border:none;
-            font-size: 25px;
-        }
-        
-        .select-editable-2 select:focus, .select-editable-2 input:focus {
-            outline:none;
-        } */
-    /* sliders end */
-
-    /* svgs*/
-
-    /* svgs end */
-
-/* div for non filtering things ends*/
+/* div for dependent things ends */
 
 
-/* div for table legend */
+/* div for independent things starts */
 
-    /* #tableLegend{
-        position: absolute;
-        top: 450px;
-        left: 655px;
-        width: 660px;
-        height: 90px;
-    }
+#independentDiv{
+    position: absolute;
+    left:1265px;
+    top:750px;
+    height: 300px;
+    width: 440px;
+    outline: 2px dashed black;
+    visibility: hidden;
+} 
 
-    #colorForLegend{
-        position: absolute;
-        top: 0px;
-        left: 0px;
-        width: 175px;
-        height: 90px;
-    }
+#slidecontainer3{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 430px; 
+    height:240px;
+}
 
-    #legend{
-        position: absolute;
-        top: 0px;
-        left: 110px;
-        width: 585px;
-        height: 90px;
-    } */
+#Text3{
+    position: absolute;
+    top: 0px;
+    left: 90px;
+    width: 430px; 
+    height:35px;
+}
 
-/* div for table legend ends*/
+#svg3{
+    position: absolute;
+    top: 30px;
+    left: -10px;
+    width: 420px; 
+    height:140px;
+    font-size:18pt;
+}
+
+#myRange3{
+    position: absolute;
+    top: 180px;
+    left: 10px;
+    width: 400px; 
+    height:1px;
+}
+
+#combobox3{
+    position: absolute;
+    top: 200px; 
+    left: 10px;
+    width: 400px;
+}
+
+#nonbaseText{
+    position: absolute;
+    top: 250px;
+    left: 60px;
+    width: 430px; 
+    height:30px;
+    font-weight: 900;
+    font-size: 30px;
+}
+
+
+/* div for independent things ends */
+
+
+/* div for sorting things starts */
+
+#sortTPDiv{
+    position: absolute;
+    top: 1060px;
+    left: 720px;
+    font-size: 25px;
+    visibility: hidden;
+}
+
+#sortTP{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 50px;
+    min-width:280px;
+    font-size: 25px;
+    border-radius: 1em; 
+}
+
+/* div for sorting things ends */
+
+
+
+/* Line chart attacks below */
+.linechartView {
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 1080px;
+    left: 0px;
+}
+/* Line chart attacks above*/
+
 
 /* table starts */
 
-    /* #view {
-        flex-direction: column;
-        align-items: center;
-        position: absolute;
-        top: 535px;
-        left: 660px;
-        outline: 5px dashed black;
-    }
+#view {
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 1170px;
+    left: 720px;
+    /* outline: 5px dashed black; */
+}
 
-    table, th, td{
-        border: 0px solid black;
-        border-collapse: collapse;
-        font: 14px sans-serif;
-    }
+table, th, td{
+    border: 0px solid black;
+    border-collapse: collapse;
+    font: 14px sans-serif;
+}
 
-    .sortable {
-        user-select: none;
-        border-radius: 3px;
-        cursor: pointer;
-        padding: 6px;
-        font: 25px times;
-    }
+.sortable {
+    user-select: none;
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 6px;
+    font: 25px times;
+}
 
-    th:first-of-type {
-        text-align: left;
-    }
 
-    th {
-        font-weight: normal;
-        text-align: center;
-    }
 
-    th:last-of-type
-    {
-        text-align: center;
-    }
+th {
+    font-weight: normal;
+    text-align: center;
+    transform: translate(0px, 50px)
+    /* 45 is really 360 - 45 */
+    rotate(315deg);
+}
 
-    #predictionTable td {
-        line-height: 0;
-    }
+th:first-of-type {
+    text-align: left;
+    transform: translate(-6px, 80px)
+    /* 45 is really 360 - 45 */
+    rotate(0deg);
+}
 
-    #predictionTable tbody tr {
-        cursor: pointer;
-    }
+th:last-of-type
+{
+    text-align: center;
+}
 
-    tbody tr:hover {
-        background-color: pink;
-    }
 
-    td:first-of-type {
-        text-align: left;
-    }
 
-    td {
-        text-align: center;
-    }
+#predictionTable td {
+    line-height: 0;
+}
 
-    td:last-of-type
-    {
-        text-align: center;
-    }
+#predictionTable tbody tr {
+    cursor: pointer;
+}
 
-    .tooltip {
-        position: absolute;
-        pointer-events: none;
-        background-color: white;
-        color: black;
-        border: solid;
-        border-width: 1px;
-        border-radius: 5px;
-        padding: 10px;
-    } */
+tbody{
+    transform: translate(0px, 50px)
+}
+
+tbody tr:hover {
+    background-color: pink;
+}
+
+td:first-of-type {
+    text-align: left;
+}
+
+td {
+    text-align: center;
+}
+
+td:last-of-type
+{
+    text-align: center;
+}
+
+.tooltip {
+    position: absolute;
+    pointer-events: none;
+    background-color: white;
+    color: black;
+    border: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    padding: 10px;
+}
 
 /* table ends */
 
 
+/* div for table legend */
 
-/* #attacksAndAttackers{
+#tableLegend{
+    position: absolute;
+    top: 1050px;
+    left: 1005px;
+    width: 760px;
+    height: 180px;
+    /* visibility: hidden; */
+}
+
+#legend{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 760px;
+    height: 180px;
+}
+
+/* div for table legend ends*/
+
+
+
+
+
+#attacksAndAttackers{
     position: absolute;
 }
 
@@ -798,7 +719,7 @@ svg#dateHeatMap{
 
 #donutGraph{
     position: absolute;
-} */
+}
 
 
 

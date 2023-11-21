@@ -82,9 +82,29 @@ class DynamicSlider{
         return [firstIndexNumber, lastIndexNumber, arr]
     }
 
+    //gathers all absolute numbers, irrespective of base date, seprates out 95% anomalies
+    absoluteSliderValues(){
+        let arr = []
+        for (let country of this.neededData){
+            for (const [key, numbers] of Object.entries(country)) {
+                if (key !== 'country'){
+                    for (const [key2, value] of Object.entries(numbers)) {
+                        if (key2 === 'attacks'){
+                            arr.push(value)
+                        }
+                    }
+                }
+            }
+        }
+        arr.sort(function(a, b){return a-b;})
+        let firstIndexNumber = arr[0]
+        let anomalyThreshold = arr[Math.floor(arr.length * 0.95)]
+        let lastIndexNumber = arr[arr.length - 1]
+        return [firstIndexNumber, anomalyThreshold, lastIndexNumber, arr]
+    }
 
     //gathers all percentage numbers, irrespective of base date, seprates out 95% anomalies
-    percentAnomalySliderValues(){
+    percentAnomalyValue(){
         let arr = []
         for (let country of this.neededData){
             for (const [key, numbers] of Object.entries(country)) {
@@ -113,30 +133,11 @@ class DynamicSlider{
         }
 
         arr.sort(function(a, b){return a-b;})
-        let firstIndexNumber = arr[0]
+        // let firstIndexNumber = arr[0]
         let anomalyThreshold = arr[Math.floor(arr.length * 0.95)]
         let lastIndexNumber = arr[arr.length - 1]
-        return [firstIndexNumber, anomalyThreshold, lastIndexNumber, arr]
+        // return [firstIndexNumber, anomalyThreshold, lastIndexNumber, arr]
+        return [anomalyThreshold, lastIndexNumber]
     }
 
-    //gathers all absolute numbers, irrespective of base date, seprates out 95% anomalies
-    absoluteAnomalySliderValues(){
-        let arr = []
-        for (let country of this.neededData){
-            for (const [key, numbers] of Object.entries(country)) {
-                if (key !== 'country'){
-                    for (const [key2, value] of Object.entries(numbers)) {
-                        if (key2 === 'attacks'){
-                            arr.push(value)
-                        }
-                    }
-                }
-            }
-        }
-        arr.sort(function(a, b){return a-b;})
-        let firstIndexNumber = arr[0]
-        let anomalyThreshold = arr[Math.floor(arr.length * 0.95)]
-        let lastIndexNumber = arr[arr.length - 1]
-        return [firstIndexNumber, anomalyThreshold, lastIndexNumber, arr]
-    }
 }

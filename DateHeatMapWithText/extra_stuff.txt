@@ -609,3 +609,49 @@ initial Variables Stuff
     <!-- <button id="launchPad" onclick="finalCheck()">
         Launch Tool
     </button> -->
+
+
+
+// for cell shapes
+
+
+    // addBlackStars(containerSelect){
+    //     for (let j = 0; j < 3; j++){
+    //         containerSelect
+    //         .append("path")
+    //         .attr("id", "blackStar")
+    //         .attr("d",  d3.symbol().type(d3.symbolStar)
+    //         .size(d => {
+    //             //console.log(d.value5)
+    //             let givenArray = d.value5
+    //             if (givenArray[0] === 0 && givenArray[1] === 0 && givenArray[2] === 0){
+    //                 return 0
+    //             }
+    //             else{
+    //                 return 200
+    //             }
+    //         })
+    //         )
+    //         .style("stroke", "black")
+    //         .attr("fill", d => {
+    //             // console.log(d.value5)
+    //             let a = d.value5
+    //             // if (a == undefined){
+    //             //     console.log('here')
+    //             //     //console.log('here')
+    //             //     // return "white"
+    //             // }
+    //             // else{
+    //             let b = a[j]
+    //             // console.log(b)
+    //             if (b === 1){
+    //                 return "black"
+    //             }
+    //             else{
+    //                 return "white"
+    //             }
+    //             // }
+    //         })
+    //         .attr("transform", "translate("+(20 +(j*30))+", 70)")
+    //     }
+    // }
