@@ -876,6 +876,27 @@ function helperFunction3(dynamicSlider){
     addAbsoluteHistogram(svg3, absoluteMin, absoluteMax, allNumbers3)
 }
 
+function helperFunction10(){
+    document.getElementById("PERCHANGECHOOSE").selectedIndex = 0
+    document.getElementById("ABSCHANGECHOOSE").selectedIndex = 0
+    document.getElementById("ABSCHOOSE").selectedIndex = 0
+}
+
+function helperFunction11(){
+    document.getElementById("ABSCHANGECHOOSE").selectedIndex = 0
+    document.getElementById("ABSCHOOSE").selectedIndex = 0
+}
+
+function helperFunction12(){
+    document.getElementById("PERCHANGECHOOSE").selectedIndex = 0
+    document.getElementById("ABSCHOOSE").selectedIndex = 0
+}
+
+function helperFunction13(){
+    document.getElementById("PERCHANGECHOOSE").selectedIndex = 0
+    document.getElementById("ABSCHANGECHOOSE").selectedIndex = 0
+}
+
 
 function PCS(){
     //THIS IS FOR THE SLIDERS AND TEXTBOXES
@@ -887,6 +908,9 @@ function PCS(){
 
     //setting the other 2 sliders and texboxes to minimum
     helperFunction2()
+
+    //resetting all choose boxes to default
+    helperFunction10()
 
     //THIS IS FOR THE HISTOGRAMS
     let selectedTime = document.getElementById("baseTP").value
@@ -928,6 +952,9 @@ function PCC(selectedOption){
 
     //setting the other 2 sliders and texboxes to minimum
     helperFunction2()
+
+    //resetting the other 2 choose boxes to default
+    helperFunction11()
 
     //THIS IS FOR THE HISTOGRAMS
     let selectedTime = document.getElementById("baseTP").value
@@ -998,6 +1025,9 @@ function PCT(typedNumber){
         
             //setting the other 2 sliders and texboxes to minimum
             helperFunction2()
+
+            //resetting all choose boxes to default
+            helperFunction10()
         
             //THIS IS FOR THE HISTOGRAMS
             let selectedTime = document.getElementById("baseTP").value
@@ -1065,6 +1095,9 @@ function ACS(){
     //setting the other 2 sliders and texboxes to minimum
     helperFunction4()
 
+    //resetting all choose boxes to default
+    helperFunction10()
+
     //THIS IS FOR THE HISTOGRAMS
     let selectedTime = document.getElementById("baseTP").value
     let dynamicSlider = new DynamicSlider(VizScreen.givenData, selectedTime)
@@ -1105,6 +1138,9 @@ function ACC(selectedOption){
 
     //setting the other 2 sliders and texboxes to minimum
     helperFunction4()
+
+    //resetting the other 2 choose boxes to default
+    helperFunction12()
 
     //THIS IS FOR THE HISTOGRAMS
     let selectedTime = document.getElementById("baseTP").value
@@ -1171,6 +1207,9 @@ function ACT(typedNumber){
         
             //setting the other 2 sliders and texboxes to minimum
             helperFunction4()
+
+            //resetting all choose boxes to default
+            helperFunction10()
         
             //THIS IS FOR THE HISTOGRAMS
             let selectedTime = document.getElementById("baseTP").value
@@ -1238,6 +1277,9 @@ function AS(){
     //setting the other 2 sliders and texboxes to minimum
     helperFunction6()
 
+    //resetting all choose boxes to default
+    helperFunction10()
+
     //THIS IS FOR THE HISTOGRAMS
     let selectedTime = document.getElementById("baseTP").value
     let dynamicSlider = new DynamicSlider(VizScreen.givenData, selectedTime)
@@ -1278,6 +1320,9 @@ function AC(selectedOption){
 
     //setting the other 2 sliders and texboxes to minimum
     helperFunction6()
+
+    //resetting the other 2 choose boxes to default
+    helperFunction13()
 
     //THIS IS FOR THE HISTOGRAMS
     let selectedTime = document.getElementById("baseTP").value
@@ -1346,6 +1391,9 @@ function AT(typedNumber){
         
             //setting the other 2 sliders and texboxes to minimum
             helperFunction6()
+
+            //resetting all choose boxes to default
+            helperFunction10()
         
             //THIS IS FOR THE HISTOGRAMS
             let selectedTime = document.getElementById("baseTP").value
