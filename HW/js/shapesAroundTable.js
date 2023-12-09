@@ -13,6 +13,23 @@ class ShapesAroundTable{
         .interpolator(d3.interpolateBlues)
         .domain([this.slider3ValueMin,absoluteAnomVal])
         this.slider3ValueMax = document.getElementById("myRange3").max
+
+
+        this.periodValue = VizScreen.givenTimePeriod
+        this.periodText
+        this.periodText2
+        if (this.periodValue === "month"){
+            this.periodText = "months"
+            this.periodText2 = "Months"
+        }
+        else if(this.periodValue === "week"){
+            this.periodText = "weeks"
+            this.periodText2 = "Weeks"
+        }
+        else if (this.periodValue === "day"){
+            this.periodText = "days"
+            this.periodText2 = "Days"
+        }
     }
 
 
@@ -37,8 +54,14 @@ class ShapesAroundTable{
         let that = this
         let tip = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 10).style("font-size", "30px")
         this.rectangles.on("mouseover", function(e, d) {
-            //console.log(d)
-            let tiptext = "This country had a total of "+that.better(d.value)+ " attacks for this time period."
+            let thisText
+            if (d.value === 1){
+                thisText = "attack"
+            }
+            else{
+                thisText = "attacks"
+            }
+            let tiptext = "This country experienced "+that.better(d.value)+ " "+thisText+" on this "+that.periodValue+"."
             tip.style("opacity", 5)
                 .html(tiptext)
                 .style("left", (e.pageX) + "px")
@@ -117,15 +140,14 @@ class ShapesAroundTable{
         let that = this
         let tip = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 10).style("font-size", "30px")
         this.triangles.on("mouseover", function(e, d) {
-            //console.log(d)
             let text 
             if (d.value2 < 0){
-                text = 'decrease'
+                text = 'decreased'
             }
             else{
-                text = 'increase'
+                text = 'increased'
             }
-            let tiptext = "This country had attacks "+ text +" by "+that.better(d.value2)+ "% for this time period compared to the base time period. Absolute change was "+that.better(d.value3)+"."
+            let tiptext = "This country's attacks "+ text +" by "+that.better(d.value2)+ "% from base "+that.periodValue+" to this "+that.periodValue+". Absolute change was "+that.better(d.value3)+"."
             tip.style("opacity", 5)
                 .html(tiptext)
                 .style("left", (e.pageX) + "px")
@@ -137,7 +159,7 @@ class ShapesAroundTable{
         })
 
         this.rectangles2.on("mouseover", function(e, d) {
-            let tiptext = "This country had no change in attacks(assuming that base period number != 0) for this time period compared to the base time period."
+            let tiptext = "EITHER, this "+that.periodValue+" is base "+that.periodValue+" and therefore. there is no percentage or absolute change. \n OR, base "+that.periodValue+" is 0 and therefore, percentage change is incalculable. Absolute change is "+that.better(d.value3)+"."
             tip.style("opacity", 5)
                 .html(tiptext)
                 .style("left", (e.pageX) + "px")
@@ -346,10 +368,10 @@ class ShapesAroundTable{
         svg.append("text").attr("x", 483).attr("y", 100).text("(95 percentile value): " +this.better(this.percentAnomVal)).style("font", "18px times")
         svg.append("text").attr("x", 655).attr("y", 80).text("Max: " +this.better(this.percentMaxVal)).style("font", "18px times")
 
-        svg.append("text").attr("x", 0).attr("y", 130).text("Select EITHER 1 Country && Multiple Time Periods").style("font", "18px times").attr("fill", "red")
-        svg.append("text").attr("x", 50).attr("y", 150).text("OR 1 Time Period && Multiple Countries").style("font", "18px times").attr("fill", "red")
-
-        svg.append("text").attr("x", 0).attr("y", 170).text("Select a Country by clicking it").style("font", "18px times").attr("fill", "red")
+        svg.append("text").attr("x", 0).attr("y", 130).text("Select EITHER 1 Country && Multiple "+this.periodText+" OR 1 "+this.periodValue+" && Multiple Countries.").style("font", "18px times").attr("fill", "red")
+        svg.append("text").attr("x", 0).attr("y", 150).text("SELECT a Country by clicking it. SELECT a "+this.periodValue+" by clicking its accompanying checkbox.").style("font", "18px times").attr("fill", "red")
+        svg.append("text").attr("x", 0).attr("y", 170).text("Upon APPROPRIATE SELECTION, 2 or 3 Visualizations will appear on the right.").style("font", "18px times").attr("fill", "red")
+        svg.append("text").attr("x", 0).attr("y", 190).text("HOVER on the shapes in the table for more details.").style("font", "18px times").attr("fill", "red")
     }
 
 
@@ -375,99 +397,5 @@ class ShapesAroundTable{
             return 0 + ''
         }
     }
-
-
-
-
-
-
-    // setBoundariesOfCell(containerSelect){
-    //     containerSelect
-    //         .append('rect')
-    //         .attr("id", "bgrect")
-    //         .attr('x', 0)
-    //         .attr('y', 0)
-    //         .attr('width', 10)
-    //         .attr('height', d => {
-    //             //console.log(d.value4)
-    //             if (d.value4 === 'yes'){
-    //                 return 0
-    //             }
-    //             else{
-    //                 return 50
-    //             }
-    //         })     
-    //         .attr('fill', d => {
-    //             if (d.value4 === 'no'){
-    //                 return 'red'
-    //             }
-    //         })
-
-        
-    //     containerSelect
-    //         .append('rect')
-    //         .attr("id", "bgrect2")
-    //         .attr('x', 60)
-    //         .attr('y', 0)
-    //         .attr('width', 10)
-    //         .attr('height', d => {
-    //             //console.log(d.value7)
-    //             if (d.value7 === 'yes'){
-    //                 return 50
-    //             }
-    //             else{
-    //                 return 0
-    //             }
-    //         })     
-    //         .attr('fill', d => {
-    //             if (d.value7 === 'yes'){
-    //                 return 'black'
-    //             }
-    //         })
-
-        
-    //     containerSelect
-    //         .append('rect')
-    //         .attr("id", "bgrect3")
-    //         .attr('x', 10)
-    //         .attr('y', 0)
-    //         .attr('width', d => {
-    //             //console.log(d.value7)
-    //             if (d.value5 === 'yes'){
-    //                 return 50
-    //             }
-    //             else{
-    //                 return 0
-    //             }
-    //         })   
-    //         .attr('height', 10)
-    //         .attr('fill', d => {
-    //             if (d.value5 === 'yes'){
-    //                 return 'brown'
-    //             }
-    //         })
-
-        
-    //     containerSelect
-    //         .append('rect')
-    //         .attr("id", "bgrect4")
-    //         .attr('x', 10)
-    //         .attr('y', 40)
-    //         .attr('width', d => {
-    //             //console.log(d.value7)
-    //             if (d.value6 === 'yes'){
-    //                 return 50
-    //             }
-    //             else{
-    //                 return 0
-    //             }
-    //         })   
-    //         .attr('height', 10)
-    //         .attr('fill', d => {
-    //             if (d.value6 === 'yes'){
-    //                 return 'grey'
-    //             }
-    //         })
-    // }
 
 }

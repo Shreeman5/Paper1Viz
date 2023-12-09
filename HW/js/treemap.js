@@ -4,7 +4,8 @@ class Treemap{
         this.givenDate = givenDate
         // console.log(this.givenDate)
         this.givenIP = givenIP
-        // console.log(this.givenIP)
+        console.log(this.givenDate)
+        console.log(this.givenIP)
     }
 
     buildTreeMap(){
@@ -30,7 +31,7 @@ class Treemap{
             }
         }
 
-        console.log(neededData)
+        // console.log(neededData)
         let holder = []
         for (let j = 0; j < neededData.length; j++){
             let currentBatch = neededData[j]
@@ -132,7 +133,7 @@ class Treemap{
         //         csvData.push({'id': desiredString, 'value': relevantArr[1], 'value2': relevantArr[2], 'value3': relevantString})
         //     }
         // }
-        console.log(csvData)
+        // console.log(csvData)
 
         this.constructTree(csvData)
     }
@@ -181,8 +182,8 @@ class Treemap{
                 }
                 return returnString; 
             })
-            .style("left", function(d) { return d.x0 + 3010 + "px"; })
-            .style("top", function(d) { return d.y0 + 200 + "px"; })
+            .style("left", function(d) { return d.x0 + 2960 + "px"; })
+            .style("top", function(d) { return d.y0 + 190 + "px"; })
             .style("width", function(d) { return d.x1 - d.x0 + "px"; })
             .style("height", function(d) { return d.y1 - d.y0 + "px"; })
             .style("background", function(d) { while (d.depth > 1) d = d.parent; return color(d.id); })
@@ -207,18 +208,21 @@ class Treemap{
 
         let svg2 = d3.select("#legendForTreeMap")
         .append("svg")
-            .attr("width", 370)
-            .attr("height", 30)
+            .attr("width", 460)
+            .attr("height", 180)
         
-        svg2.append('text')
-        .attr("transform", "translate(0,20)")
-        .text("IP(s): "+this.givenIP).style("font-size", "20px")
-        .style("fill", "red")
-        
-        svg2.append('text')
-        .attr("transform", "translate(210,20)")
-        .text("Date: "+this.givenDate).style("font-size", "20px")
-        .style("fill", "red")
+        svg2.append('text').attr("transform", "translate(30,160)").text("IP(s): "+this.givenIP).style("font-size", "20px").style("fill", "red")
+        svg2.append('text').attr("transform", "translate(30,180)").text("Date: "+this.givenDate).style("font-size", "20px").style("fill", "red")
+
+
+        svg2.append('text').attr("transform", "translate(260,120)").text("Square Layout: ").style("font-size", "20px").style("fill", "red")
+        svg2.append('text').attr("transform", "translate(300,140)").text("Destination Node").style("font-size", "20px").style("fill", "red")
+        svg2.append('text').attr("transform", "translate(300,160)").text("Total Attacks").style("font-size", "20px").style("fill", "red")
+        svg2.append('text').attr("transform", "translate(300,180)").text("Total Attackers").style("font-size", "20px").style("fill", "red")
+
+
+        svg2.append('text').attr("transform", "translate(30,20)").text("Hover on the squares to see the breakdown of").style("font-size", "20px").style("fill", "red")
+        svg2.append('text').attr("transform", "translate(30,40)").text("total attacks divided by total attackers.").style("font-size", "20px").style("fill", "red")
     }
 
     // convertNumberToLetter(characterReceived){

@@ -22,6 +22,7 @@ class TableLogic{
             this.class = 'country';
             this.value = getFlagEmoji(d.country, d.cc);
         }
+        // console.log(stateInfo)
 
         let dataList = [stateInfo]
 

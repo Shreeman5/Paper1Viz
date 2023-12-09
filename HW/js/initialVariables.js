@@ -9,22 +9,31 @@ function specifyTimePeriod(){
 
         findMinMaxDate(givenValue).then(function (minMaxDateData){
 
+            // console.log(minMaxDateData)
             let allTheDays = findAllDays(minMaxDateData)
             let svg = d3.select("#dateHeatMap")
 
             svg.append("text")
                 .attr("x", 0)
-                .attr("y", 60)
-                .text("Select at least 2 days/weeks/months by clicking the rectangles. Cross time period selection is blocked.  Time period = [Day, Week, Month].")
+                .attr("y", 65)
+                .text("Select at least 2 days/weeks/months by clicking the rectangles. Cross time period selection is blocked.  Time period = [Day, Week, Month]. Hover on a rectangle to know the exact attack number.")
                 .attr("font-size", 18)
                 .attr("fill", "red")
 
             svg.append("text")
                 .attr("x", 0)
-                .attr("y", 80)
+                .attr("y", 85)
                 .text("Once a rectangle of a time period is selected, rectangles of other time periods cannot be chosen unless the existing selection is cleared using the button given.")
                 .attr("font-size", 18)
                 .attr("fill", "red")
+                     
+            svg.append("text")
+                .attr("x", 590)
+                .attr("y", 40)
+                .text("Current time Period: None")
+                .attr("font-size", 30)
+                .attr("fill", "red")
+                .attr("id", "initialDivText")
 
 
             // fetch required Data 
@@ -58,11 +67,16 @@ function initVariablesBookkeeping(){
 
 
 async function findMinMaxDate(givenValue){
-    let minMaxDatesAPI = 'http://128.110.218.18/timeframe/range?cluster='+givenValue
+    let minMaxDatesAPI = 'https://kibana.emulab.net/timeframe/range?cluster='+givenValue
+    // console.log(minMaxDatesAPI)
     const minMaxDate = await fetch(minMaxDatesAPI)
+    // console.log(minMaxDate)
     const jsonMinMaxDate = await minMaxDate.json()
+
+    // console.log(jsonMinMaxDate)
     return jsonMinMaxDate
 }
+
 
 function findAllDays(minMaxDateData){
     let start = minMaxDateData['min']['date']
@@ -71,9 +85,27 @@ function findAllDays(minMaxDateData){
     let end = minMaxDateData['max']['date']
     end = new Date(end)
     end.setUTCDate(end.getUTCDate()+1)
+
+    fillAllDays(start, end)
+
     const dates = dateRange(start, end);
     return dates
 }
+
+function fillAllDays(start, end){
+    $(document).ready(function () {
+        $( "#startDayPick" ).datepicker({
+            minDate: start,
+            maxDate: end
+        })
+        $( "#endDayPick" ).datepicker({
+            minDate: start,
+            maxDate: end
+        })
+    });
+}
+
+
 
 function dateRange(startDate, endDate, steps = 1) {
     const dateArray = [];
@@ -101,7 +133,8 @@ function formatDate(date) {
 
 
 async function fetchSummaryData(cluster, period, range){
-    let summaryAPI = 'http://128.110.218.18/summary/bycountry?cluster='+cluster+'&period='+period+'&range='+range.join(",")
+    //kibana.emulab.net
+    let summaryAPI = 'https://kibana.emulab.net/summary/bycountry?cluster='+cluster+'&period='+period+'&range='+range.join(",")
     const summaryData = await fetch(summaryAPI)
     const jsonSummaryData = await summaryData.json()
     return jsonSummaryData
@@ -137,6 +170,13 @@ function getDayData(allTheDates, summaryData){
     // myArr.push({'Date':"2021-12-02", 'Attacks': 4000000})
     // myArr.push({'Date':"2021-12-03", 'Attacks': 4000000})
     // myArr.push({'Date':"2021-12-04", 'Attacks': 4000000})
+
+
+    // myArr.push({'Date':"2020-11-30", 'Attacks': 4000000})
+    // myArr.push({'Date':"2020-12-01", 'Attacks': 4000000})
+    // myArr.push({'Date':"2020-12-02", 'Attacks': 4000000})
+    // myArr.push({'Date':"2020-12-03", 'Attacks': 4000000})
+    // myArr.push({'Date':"2020-12-04", 'Attacks': 4000000})
 
     // myArr.push({'Date':"2019-12-04", 'Attacks': 4000000})
     // myArr.push({'Date':"2022-01-08", 'Attacks': 4000000})
@@ -200,6 +240,7 @@ function drawDayHeatMap(myArr, svg, clusterVal){
         date: d3.timeDay(new Date(dv.Date.replace(/-/g, '\/'))),
         value: Number(dv.Attacks)
     }))
+    // console.log(dateValues)
 
     let years_map = d3.group(dateValues, d => d.date.getUTCFullYear())
     let years = Array.from(years_map).reverse().map(d => ({key: d[0]+'', values: d[1]}))
@@ -228,8 +269,8 @@ function drawDayHeatMap(myArr, svg, clusterVal){
 
     document.getElementById("dateHeatMap").style.height = (divHeight+220) + "px"
 
-    
 
+    // console.log(selectedTimes)
 
     year
     .append("text")
@@ -253,6 +294,10 @@ function drawDayHeatMap(myArr, svg, clusterVal){
         .scaleSequential(d3.interpolateBuGn)
         .domain([Math.floor(minValue), Math.ceil(maxValue)]);
     const format = d3.format("+.2%");
+
+
+
+    
 
     year
         .append("g")
@@ -312,10 +357,11 @@ function drawDayHeatMap(myArr, svg, clusterVal){
                     }
                     selectedTimes = newArr
                     if (selectedTimes.length >= 2){
+
                         let range = findDayRangeVals(selectedTimes)
                         // console.log(range)
                         fetchSummaryData(clusterVal, "day", range).then(function (summaryData){
-                            let vizScreen = new VizScreen(summaryData, range, "days")
+                            let vizScreen = new VizScreen(summaryData, range, "day", dateValues[0], dateValues[dateValues.length - 1])
                             vizScreen.initializeProgram()
                         })
                     }
@@ -331,7 +377,7 @@ function drawDayHeatMap(myArr, svg, clusterVal){
                         let range = findDayRangeVals(selectedTimes)
                         // console.log(range)
                         fetchSummaryData(clusterVal, "day", range).then(function (summaryData){
-                            let vizScreen = new VizScreen(summaryData, range, "days")
+                            let vizScreen = new VizScreen(summaryData, range, "day", dateValues[0], dateValues[dateValues.length - 1])
                             vizScreen.initializeProgram()
                         })
                     }
@@ -421,7 +467,7 @@ function drawDayHeatMap(myArr, svg, clusterVal){
 
     svg.append("rect")
     .attr("x", 50)
-    .attr("y", 0)
+    .attr("y", 15)
     .attr("width", 100)
     .attr("height", 15)
     .style("fill", "url(#linear-gradient)")
@@ -429,18 +475,18 @@ function drawDayHeatMap(myArr, svg, clusterVal){
     .attr('stroke-width', 2)
 
     svg.append("text")
-    .attr("x", 20)
+    .attr("x", 0)
     .attr("y", 12)
-    .text("Min")
+    .text("Min:"+fixNumbers(minValue))
 
     svg.append("text")
-    .attr("x", 152)
+    .attr("x", 122)
     .attr("y", 12)
-    .text("Max")
+    .text("Max:"+fixNumbers(maxValue))
 
     svg.append("text")
     .attr("x", 58)
-    .attr("y", 30)
+    .attr("y", 45)
     .text("Day Attacks")
 
 
@@ -475,6 +521,7 @@ function getWeekData(years, myArrForWeeks){
     for (let i = 0; i < years.length; i++){
         years[i] = Number(years[i])
     }
+    // console.log(myArrForWeeks)
 
 
     years.sort(function(a,b){return a-b})
@@ -567,6 +614,7 @@ function getWeekData(years, myArrForWeeks){
     return [myMap, xPositions]
 }
 
+
 function getWeek(dt){
     var tdt = new Date(dt.valueOf());
     var dayn = (dt.getDay() + 6) % 7;
@@ -632,6 +680,8 @@ function drawWeekHeatMap(weekArr, svg, clusterVal){
     .scaleSequential(d3.interpolateOranges)
     .domain([Math.floor(minValue), Math.ceil(maxValue)]);
 
+    fillAllWeeks(weekArr)
+
 
     year
         .append("g")
@@ -682,7 +732,7 @@ function drawWeekHeatMap(weekArr, svg, clusterVal){
                         let range = findWeekRangeVals(selectedTimes)
                         // console.log(range)
                         fetchSummaryData(clusterVal, "week", range).then(function (summaryData){
-                            let vizScreen = new VizScreen(summaryData, range, "weeks")
+                            let vizScreen = new VizScreen(summaryData, range, "week")
                             vizScreen.initializeProgram()
                         })
                     }
@@ -708,7 +758,7 @@ function drawWeekHeatMap(weekArr, svg, clusterVal){
                             let range = findWeekRangeVals(selectedTimes)
                             // console.log(range)
                             fetchSummaryData(clusterVal, "week", range).then(function (summaryData){
-                                let vizScreen = new VizScreen(summaryData, range, "weeks")
+                                let vizScreen = new VizScreen(summaryData, range, "week")
                                 vizScreen.initializeProgram()
                             })
                         }
@@ -791,8 +841,8 @@ function drawWeekHeatMap(weekArr, svg, clusterVal){
     .attr("stop-color", colorFn(Math.ceil(maxValue))); //dark blue
 
     svg.append("rect")
-    .attr("x", 220)
-    .attr("y", 0)
+    .attr("x", 240)
+    .attr("y", 15)
     .attr("width", 100)
     .attr("height", 15)
     .style("fill", "url(#linear-gradient-2)")
@@ -800,19 +850,52 @@ function drawWeekHeatMap(weekArr, svg, clusterVal){
     .attr('stroke-width', 2)
 
     svg.append("text")
-    .attr("x", 190)
+    .attr("x", 210)
     .attr("y", 12)
-    .text("Min")
+    .text("Min:"+fixNumbers(minValue))
 
     svg.append("text")
     .attr("x", 322)
     .attr("y", 12)
-    .text("Max")
+    .text("Max:"+fixNumbers(maxValue))
 
     svg.append("text")
-    .attr("x", 225)
-    .attr("y", 30)
+    .attr("x", 240)
+    .attr("y", 45)
     .text("Week Attacks")
+}
+
+
+function fillAllWeeks(weekArr){
+    let myWeeks = []
+    for (let i = weekArr.length - 1; i >= 0 ; i--){
+        let a = weekArr[i]
+        let b = a[1]
+        for (let j = 0; j < b.length; j++){
+            let c = b[j]
+            if (c[2] > 0){
+                if (!myWeeks.includes(c[5])){
+                    myWeeks.push(c[5])
+                }
+            }
+        }
+    }
+    
+    for (let i = 0; i < myWeeks.length; i++){
+        myVal = myWeeks[i]
+        let startMonthSelect = document.getElementById("startWeekPick")
+        let option = document.createElement("option")
+        option.value = myVal
+        option.text = myVal
+        startMonthSelect.add(option)
+
+        let endMonthSelect = document.getElementById("endWeekPick")
+        let option2 = document.createElement("option")
+        option2.value = myVal
+        option2.text = myVal
+        endMonthSelect.add(option2)
+    }
+
 }
 
 function findWeekRangeVals(selectedWeeks){
@@ -1051,6 +1134,9 @@ function drawMonthHeatMap(monthArr, svg, clusterVal){
     .scaleSequential(d3.interpolatePurples)
     .domain([Math.floor(minValue), Math.ceil(maxValue)]);
 
+    fillAllMonths(monthArr)
+
+
 
     year
         .append("g")
@@ -1107,7 +1193,7 @@ function drawMonthHeatMap(monthArr, svg, clusterVal){
                         let range = findMonthRangeVals(selectedTimes)
                         //console.log(range)
                         fetchSummaryData(clusterVal, "month", range).then(function (summaryData){
-                            let vizScreen = new VizScreen(summaryData, range, "months")
+                            let vizScreen = new VizScreen(summaryData, range, "month")
                             vizScreen.initializeProgram()
                         })
                     }
@@ -1123,7 +1209,7 @@ function drawMonthHeatMap(monthArr, svg, clusterVal){
                         let range = findMonthRangeVals(selectedTimes)
                         //console.log(range)
                         fetchSummaryData(clusterVal, "month", range).then(function (summaryData){
-                            let vizScreen = new VizScreen(summaryData, range, "months")
+                            let vizScreen = new VizScreen(summaryData, range, "month")
                             vizScreen.initializeProgram()
                         })
                     }
@@ -1239,8 +1325,8 @@ function drawMonthHeatMap(monthArr, svg, clusterVal){
     .attr("stop-color", colorFn(Math.ceil(maxValue))); //dark blue
 
     svg.append("rect")
-    .attr("x", 390)
-    .attr("y", 0)
+    .attr("x", 460)
+    .attr("y", 15)
     .attr("width", 100)
     .attr("height", 15)
     .style("fill", "url(#linear-gradient-3)")
@@ -1248,20 +1334,54 @@ function drawMonthHeatMap(monthArr, svg, clusterVal){
     .attr('stroke-width', 2)
 
     svg.append("text")
-    .attr("x", 360)
+    .attr("x", 415)
     .attr("y", 12)
-    .text("Min")
+    .text("Min:"+fixNumbers(minValue))
 
     svg.append("text")
-    .attr("x", 492)
+    .attr("x", 542)
     .attr("y", 12)
-    .text("Max")
+    .text("Max:"+fixNumbers(maxValue))
 
     svg.append("text")
-    .attr("x", 395)
-    .attr("y", 30)
+    .attr("x", 460)
+    .attr("y", 45)
     .text("Month Attacks")
 }
+
+
+function fillAllMonths(monthArr){
+    let myMonths = []
+    for (let i = monthArr.length - 1; i >= 0 ; i--){
+        let a = monthArr[i]
+        let b = a[1]
+        for (let j = 0; j < b.length; j++){
+            let c = b[j]
+            if (c[2] > 0){
+                if (!myMonths.includes(c[5])){
+                    myMonths.push(c[5])
+                }
+            }
+        }
+    }
+    
+    for (let i = 0; i < myMonths.length; i++){
+        myVal = myMonths[i]
+        let startMonthSelect = document.getElementById("startMonthPick")
+        let option = document.createElement("option")
+        option.value = myVal
+        option.text = myVal
+        startMonthSelect.add(option)
+
+        let endMonthSelect = document.getElementById("endMonthPick")
+        let option2 = document.createElement("option")
+        option2.value = myVal
+        option2.text = myVal
+        endMonthSelect.add(option2)
+    }
+
+}
+
 
 
 function findMonthRangeVals(selectedMonths){
@@ -1319,14 +1439,155 @@ function clearSelectedTimes(){
 
 
 function removeThingsOnScreen(){
+    //console.log('here')
     // let linechartElement = document.getElementById("line-chart-aa")
-    // linechartElement.style.height = 0+"px"
+    // linechartElement.style.height = 0+"px"Q1`
+    // console.log(selectedTimes)
+    if (document.getElementById("initialDivText")){
+
+        if (selectedTimes.length === 0){
+            document.getElementById('initialDivText').innerHTML = "Current Time Period: None"
+        }
+        else{
+            let val = selectedTimes[0]
+            let val2 = val[1]
+            if (val2 === 'day'){
+                val2 = 'Day'
+            }
+            else if (val2 === 'week'){
+                val2 = 'Week'
+            }
+            else if (val2 === 'month'){
+                val2 = 'Month'
+            }
+            document.getElementById('initialDivText').innerHTML = "Current Time Period: "+val2
+        }
+    }
+
+    document.getElementById("infoLegend").style.visibility = "hidden"
     document.getElementById("resetButton").style.visibility = "hidden"
     document.getElementById("countryOptions").style.visibility = "hidden"
     document.getElementById("baseTPDiv").style.visibility = "hidden"
     document.getElementById("dependentDiv").style.visibility = "hidden"
     document.getElementById("independentDiv").style.visibility = "hidden"
     document.getElementById("sortTPDiv").style.visibility = "hidden"
+    // console.log('here')
+    document.getElementById("PERCHANGEWRITE").placeholder = ''
+    document.getElementById("ABSCHANGEWRITE").placeholder = ''
+    document.getElementById("ABSWRITE").placeholder = ''
+    let lineChartDiv = document.getElementsByClassName("linechartView");
+    for(let i = 0; i < lineChartDiv.length; i++)
+    {
+        lineChartDiv[i].style.visibility="hidden";
+    }
+    document.getElementById("view").style.visibility = "hidden"
+    document.getElementById("tableLegend").style.visibility = "hidden"
+    document.getElementById("attacksAndAttackers").style.visibility = "hidden"
+    document.getElementById("exportButton").style.visibility = "hidden"
+    document.getElementById("goBackButton").style.visibility = "hidden"   
+
+
+    if (document.getElementById("crTextArea")){
+        document.getElementById("crTextArea").innerHTML = ""
+    }
+
+    if (document.getElementById("ipsClicked")){
+        $('#ipsClicked option:not(:first)').remove()
+        document.getElementById("ipsClicked").style.visibility = "hidden"
+    }
+
+    if (document.getElementById("removeIPButton")){
+        document.getElementById("removeIPButton").style.visibility = "hidden"
+    }
+
+    if (document.getElementById("startMonthPick")){
+        document.getElementById("startMonthPick").style.visibility = "hidden"
+        document.getElementById("endMonthPick").style.visibility = "hidden"
+        // $('#startMonthPick option:not(:first)').remove()
+        // $('#endMonthPick option:not(:first)').remove()
+    }
+
+    if (document.getElementById("startWeekPick")){
+        document.getElementById("startWeekPick").style.visibility = "hidden"
+        document.getElementById("endWeekPick").style.visibility = "hidden"
+        // $('#startWeekPick option:not(:first)').remove()
+        // $('#endWeekPick option:not(:first)').remove()
+    }
+
+    if (document.getElementById("startDayPick")){
+        document.getElementById("startDayPick").style.visibility = "hidden"
+        document.getElementById("endDayPick").style.visibility = "hidden"
+        document.getElementById("startDayPick").value = ""
+        document.getElementById("endDayPick").value = ""
+    }
+
+    if (document.getElementById("crButton")){
+        document.getElementById("crButton").style.visibility = "hidden"
+    }
+
+    if (document.getElementById("exportIPButton")){
+        document.getElementById("exportIPButton").style.visibility = "hidden"
+    }
+        
+    if (document.getElementById("crossReferenceIPGraphs")){
+        document.getElementById("crossReferenceIPGraphs").innerHTML = ""
+        document.getElementById("crossReferenceIPGraphs").style.outline = "none"
+    }
+
+    if (document.getElementById("legendForIPGraph")){
+        document.getElementById("legendForIPGraph").innerHTML = ""
+    }
+
+    if (document.getElementById("crossReferencePointer")){
+        document.getElementById("crossReferencePointer").innerHTML = ""
+    }
+
+    if (document.getElementById("legendForTreeMap")){
+        $(".node").remove()
+        document.getElementById("legendForTreeMap").innerHTML = ""
+    }
+
+    if (document.getElementById("usernameTextArea")){
+        document.getElementById("usernameTextArea").innerHTML= ""
+    }
+
+    if (document.getElementById("usernameFilter")){
+        document.getElementById("usernameFilter").style.visibility= "hidden"
+    }
+
+    if (document.getElementById("allUsernames")){
+        document.getElementById("allUsernames").style.visibility= "hidden"
+    }
+
+    if (document.getElementById("noRoot")){
+        document.getElementById("noRoot").style.visibility= "hidden"
+    }
+    
+    if (document.getElementById("noAdmin")){
+        document.getElementById("noAdmin").style.visibility= "hidden"
+    }
+
+    if (document.getElementById("noRootAndAdmin")){
+        document.getElementById("noRootAndAdmin").style.visibility= "hidden"
+    }
+
+
+    if (document.getElementById("parallelCoordinatesGraph")){
+        document.getElementById("parallelCoordinatesGraph").innerHTML = ""
+        document.getElementById("parallelCoordinatesGraph").style.outline = "none"
+    }
+
+    if (document.getElementById("shbgTextArea")){
+        document.getElementById("shbgTextArea").innerHTML= ""
+    }
+
+    if (document.getElementById("stackedHorizontalBarGraph")){
+        document.getElementById("stackedHorizontalBarGraph").innerHTML = ""
+        document.getElementById("stackedHorizontalBarGraph").style.outline = "none"
+
+    }
+
+    
 }
 
 

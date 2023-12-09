@@ -655,3 +655,158 @@ initial Variables Stuff
     //         .attr("transform", "translate("+(20 +(j*30))+", 70)")
     //     }
     // }
+
+
+
+
+
+    // setBoundariesOfCell(containerSelect){
+    //     containerSelect
+    //         .append('rect')
+    //         .attr("id", "bgrect")
+    //         .attr('x', 0)
+    //         .attr('y', 0)
+    //         .attr('width', 10)
+    //         .attr('height', d => {
+    //             //console.log(d.value4)
+    //             if (d.value4 === 'yes'){
+    //                 return 0
+    //             }
+    //             else{
+    //                 return 50
+    //             }
+    //         })     
+    //         .attr('fill', d => {
+    //             if (d.value4 === 'no'){
+    //                 return 'red'
+    //             }
+    //         })
+
+        
+    //     containerSelect
+    //         .append('rect')
+    //         .attr("id", "bgrect2")
+    //         .attr('x', 60)
+    //         .attr('y', 0)
+    //         .attr('width', 10)
+    //         .attr('height', d => {
+    //             //console.log(d.value7)
+    //             if (d.value7 === 'yes'){
+    //                 return 50
+    //             }
+    //             else{
+    //                 return 0
+    //             }
+    //         })     
+    //         .attr('fill', d => {
+    //             if (d.value7 === 'yes'){
+    //                 return 'black'
+    //             }
+    //         })
+
+        
+    //     containerSelect
+    //         .append('rect')
+    //         .attr("id", "bgrect3")
+    //         .attr('x', 10)
+    //         .attr('y', 0)
+    //         .attr('width', d => {
+    //             //console.log(d.value7)
+    //             if (d.value5 === 'yes'){
+    //                 return 50
+    //             }
+    //             else{
+    //                 return 0
+    //             }
+    //         })   
+    //         .attr('height', 10)
+    //         .attr('fill', d => {
+    //             if (d.value5 === 'yes'){
+    //                 return 'brown'
+    //             }
+    //         })
+
+        
+    //     containerSelect
+    //         .append('rect')
+    //         .attr("id", "bgrect4")
+    //         .attr('x', 10)
+    //         .attr('y', 40)
+    //         .attr('width', d => {
+    //             //console.log(d.value7)
+    //             if (d.value6 === 'yes'){
+    //                 return 50
+    //             }
+    //             else{
+    //                 return 0
+    //             }
+    //         })   
+    //         .attr('height', 10)
+    //         .attr('fill', d => {
+    //             if (d.value6 === 'yes'){
+    //                 return 'grey'
+    //             }
+    //         })
+    // }
+
+
+
+        // console.log('B:', this.neededData)
+
+        //$('#countries').find('option').remove()
+
+        // let countrySelect = document.getElementById("countries")
+        // for (let country of this.neededData){
+        //     let option = document.createElement("option")
+        //     option.value = country.country
+        //     option.text = country.country
+        //     countrySelect.appendChild(option)
+        // }
+
+
+
+
+
+        // let exists2 = $("#usernameFilter option").filter(function (i, o) { return o.text === '-- SEE ALL USERNAMES --'; }).length > 0
+        // if (exists2 == false){
+        //     let option2 = document.createElement("option")
+        //     option2.value = allUsernames
+        //     option2.text = '-- SEE ALL USERNAMES --'
+        //     usernameSelect.add(option2)
+        // }
+
+        // // console.log(allUsernames)
+        // if (allUsernames.includes('root')){
+        //     let exceptRoot = allUsernames.filter(d => d !== 'root')
+        //     let exists3 = $("#usernameFilter option").filter(function (i, o) { return o.text === '-- SEE W/OUT ROOT --'; }).length > 0
+        //     if (exists3 == false){
+        //         let option3 = document.createElement("option")
+        //         option3.value = exceptRoot
+        //         option3.text = '-- SEE W/OUT ROOT --'
+        //         usernameSelect.add(option3)
+        //     }
+        // }
+
+        // if (allUsernames.includes('admin')){
+        //     let exceptAdmin = allUsernames.filter(d => d !== 'admin')
+        //     let exists4 = $("#usernameFilter option").filter(function (i, o) { return o.text === '-- SEE W/OUT ADMIN --'; }).length > 0
+        //     if (exists4 == false){
+        //         let option4 = document.createElement("option")
+        //         option4.value = exceptAdmin
+        //         option4.text = '-- SEE W/OUT ADMIN --'
+        //         usernameSelect.add(option4)
+        //     }
+        // }
+
+        // if (allUsernames.includes('admin') && allUsernames.includes('root')){
+        //     let exceptRootAndAdmin = allUsernames.filter(d => d !== 'admin')
+        //     exceptRootAndAdmin =  exceptRootAndAdmin.filter(d => d !== 'root')
+        //     let exists5 = $("#usernameFilter option").filter(function (i, o) { return o.text === '-- SEE W/OUT ROOT AND ADMIN --'; }).length > 0
+        //     if (exists5 == false){
+        //         let option5 = document.createElement("option")
+        //         option5.value = exceptRootAndAdmin
+        //         option5.text = '-- SEE W/OUT ROOT AND ADMIN --'
+        //         usernameSelect.add(option5)
+        //     }
+        // }
+        

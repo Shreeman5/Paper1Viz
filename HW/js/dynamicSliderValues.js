@@ -83,7 +83,7 @@ class DynamicSlider{
     }
 
     //gathers all absolute numbers, irrespective of base date, seprates out 95% anomalies
-    absoluteSliderValues(){
+    absoluteAnomalySliderValues(){
         let arr = []
         for (let country of this.neededData){
             for (const [key, numbers] of Object.entries(country)) {

@@ -17,7 +17,7 @@ div#initialVariablesDiv {
     position: relative;
     font-size: 40px;
     top: 30px;
-    left: 570px;
+    left: 970px;
     width: 450px; 
     height: 50px;
     border-radius: 1em; 
@@ -28,9 +28,9 @@ svg#dateHeatMap{
 }
 
 .button-64 {
-    position: relative;
-    top: -705px;
-    left:1400px;
+    position: absolute;
+    top: 30px;
+    left:1460px;
     align-items: center;
     background-image: linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB);
     border: 0;
@@ -79,14 +79,33 @@ svg#dateHeatMap{
 }
 /* div for initial variables */
 
+/* div for table legend */
 
+#infoLegend{
+    position: absolute;
+    top: 750px;
+    left: 0px;
+    width: 1705px;
+    height: 130px;
+    /* visibility: hidden; */
+}
+
+#textArea{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 1705px;
+    height: 130px;
+}
+
+/* div for table legend ends*/
 
 /* reset button starts */
 
 #resetButton {
     position: absolute;
     font-size: 40px;
-    top: 750px;
+    top: 880px;
     left: 10px;
     border-radius: 1em; 
     visibility: hidden;
@@ -99,9 +118,9 @@ svg#dateHeatMap{
 
 #countryOptions{
     left:10px;
-    top:850px;
+    top:948px;
     width: 360px;
-    height: 100px;
+    height: 235px;
     flex-direction: column;
     align-items: center;
     position: absolute;
@@ -110,19 +129,19 @@ svg#dateHeatMap{
 
 #labelText{
     position: absolute;
-    top:-10px;
+    top:125px;
     left:0px;
 }
 
 #labelText2{
     position: absolute;
-    top:15px;
+    top:150px;
     left:0px;
 }
 
 #labelText3{
     position: absolute;
-    top:40px;
+    top:175px;
     left:0px;
 }
 
@@ -130,37 +149,12 @@ svg#dateHeatMap{
 
 #countries-from-data{
     position: absolute;
-    top:70px;
+    top:205px;
     left:0px;
     font-size: 25px;
 }
 
 /* Country datalist filter ends*/
-
-
-/* div for base button */
-
-#baseTPDiv{
-    position: absolute;
-    left:10px;
-    top:1000px;
-    width: 300px;
-    height: 50px;
-    visibility: hidden;
-}
-
-
-#baseTP{
-    position: absolute;
-    font-size: 30px;
-    top: 0px;
-    left: 0px;
-    min-width: 300px; 
-    height: 50px;
-    border-radius: 1em; 
-}
-
-/* div for base button ends */
 
 
 /* Below Used By sliders */
@@ -199,7 +193,7 @@ svg#dateHeatMap{
 #dependentDiv{
     position: absolute;
     left:380px;
-    top:750px;
+    top:880px;
     height: 300px;
     width: 875px;
     outline: 2px dashed black;
@@ -209,12 +203,38 @@ svg#dateHeatMap{
 #baseText{
     position: absolute;
     top: 250px;
-    left: 300px;
+    left: 400px;
     width: 430px; 
     height:30px;
     font-weight: 900;
     font-size: 30px;
 }
+
+
+
+/* div for base button */
+
+#baseTPDiv{
+    position: absolute;
+    left:10px;
+    top:240px;
+    width: 300px;
+    height: 50px;
+    visibility: hidden;
+}
+
+
+#baseTP{
+    position: absolute;
+    font-size: 30px;
+    top: 0px;
+    left: 0px;
+    min-width: 300px; 
+    height: 50px;
+    border-radius: 1em; 
+}
+
+/* div for base button ends */
 
 /* sliders start */
 
@@ -260,7 +280,7 @@ svg#dateHeatMap{
     font-size:18pt;
 }
 
-#myRange, #myRange2{
+#myRange1, #myRange2{
     position: absolute;
     top: 180px;
     left: 10px;
@@ -318,7 +338,7 @@ svg#dateHeatMap{
 #independentDiv{
     position: absolute;
     left:1265px;
-    top:750px;
+    top:880px;
     height: 300px;
     width: 440px;
     outline: 2px dashed black;
@@ -368,7 +388,7 @@ svg#dateHeatMap{
 #nonbaseText{
     position: absolute;
     top: 250px;
-    left: 60px;
+    left: 10px;
     width: 430px; 
     height:30px;
     font-weight: 900;
@@ -383,8 +403,8 @@ svg#dateHeatMap{
 
 #sortTPDiv{
     position: absolute;
-    top: 1060px;
-    left: 720px;
+    top: 1190px;
+    left: 705px;
     font-size: 25px;
     visibility: hidden;
 }
@@ -394,8 +414,8 @@ svg#dateHeatMap{
     top: 0px;
     left: 0px;
     height: 50px;
-    min-width:280px;
-    font-size: 25px;
+    min-width:220px;
+    font-size: 23px;
     border-radius: 1em; 
 }
 
@@ -408,7 +428,7 @@ svg#dateHeatMap{
     flex-direction: column;
     align-items: center;
     position: absolute;
-    top: 1080px;
+    top: 1210px;
     left: 0px;
 }
 /* Line chart attacks above*/
@@ -420,7 +440,7 @@ svg#dateHeatMap{
     flex-direction: column;
     align-items: center;
     position: absolute;
-    top: 1170px;
+    top: 1330px;
     left: 720px;
     /* outline: 5px dashed black; */
 }
@@ -441,7 +461,7 @@ table, th, td{
 
 
 
-th {
+#columnHeaders th {
     font-weight: normal;
     text-align: center;
     transform: translate(0px, 50px)
@@ -449,7 +469,7 @@ th {
     rotate(315deg);
 }
 
-th:first-of-type {
+#columnHeaders th:first-of-type {
     text-align: left;
     transform: translate(-6px, 80px)
     /* 45 is really 360 - 45 */
@@ -471,7 +491,7 @@ th:last-of-type
     cursor: pointer;
 }
 
-tbody{
+#predictionTable tbody{
     transform: translate(0px, 50px)
 }
 
@@ -510,10 +530,10 @@ td:last-of-type
 
 #tableLegend{
     position: absolute;
-    top: 1050px;
-    left: 1005px;
+    top: 1180px;
+    left: 950px;
     width: 760px;
-    height: 180px;
+    height: 200px;
     /* visibility: hidden; */
 }
 
@@ -522,15 +542,13 @@ td:last-of-type
     top: 0px;
     left: 0px;
     width: 760px;
-    height: 180px;
+    height: 200px;
 }
 
 /* div for table legend ends*/
 
 
-
-
-
+/* for bar graph and line chart */
 #attacksAndAttackers{
     position: absolute;
 }
@@ -538,7 +556,7 @@ td:last-of-type
 #exportButton {
     position: absolute;
     font-size: 20px;
-    top: 530px;
+    top: 600px;
     border-radius: 1em; 
     visibility: hidden;
 }
@@ -546,34 +564,64 @@ td:last-of-type
 #goBackButton {
     position: absolute;
     font-size: 20px;
-    top: 530px;
+    top: 600px;
+    border-radius: 1em; 
+    visibility: hidden;
+}
+/* for bar graph and line chart */
+
+
+
+/* for cross reference graph and associated items*/
+#crossReferenceTools{
+    position: absolute;
+    top:0px;
+    left:1710px;
+    height:180px;
+    width:1250px;
+}
+
+#crTextArea{
+    position: absolute;
+    font-size: 20px;
+    top: 0px;
+    left:0px;
+    height:150px;
+    width:1555px;
     border-radius: 1em; 
     visibility: hidden;
 }
 
+
 #ipsClicked{
     position: absolute;
     font-size: 20px;
-    top: 165px;
-    left:2080px;
+    top: 155px;
+    left:0px;
     border-radius: 1em; 
+    visibility: hidden;
 }
 
 #removeIPButton{
     position: absolute;
     font-size: 20px;
-    top: 165px;
-    left: 2315px;
-    width: 190px; 
+    top: 155px;
+    left: 215px;
+    width: 185px; 
     height: 25px ;
     border-radius: 1em; 
+    visibility: hidden;
 }
 
-#startDatePick {
+div.ui-datepicker, .ui-datepicker td, .ui-datepicker th{
+    font-size:39px;
+}
+
+#startDayPick {
     position: absolute;
     font-size: 20px;
-    top: 165px;
-    left: 2515px;
+    top: 155px;
+    left: 410px;
     width: 180px; 
     height: 20px ;
     border-radius: 1em; 
@@ -583,8 +631,8 @@ td:last-of-type
 #startWeekPick {
     position: absolute;
     font-size: 20px;
-    top: 165px;
-    left: 2520px;
+    top: 155px;
+    left: 410px;
     width: 190px; 
     height: 25px ;
     border-radius: 1em; 
@@ -594,8 +642,8 @@ td:last-of-type
 #startMonthPick {
     position: absolute;
     font-size: 20px;
-    top: 165px;
-    left: 2520px;
+    top: 155px;
+    left: 410px;
     width: 190px; 
     height: 25px ;
     border-radius: 1em; 
@@ -603,11 +651,11 @@ td:last-of-type
 }
 
 
-#endDatePick{
+#endDayPick{
     position: absolute;
     font-size: 20px;
-    top: 165px;
-    left: 2715px;
+    top: 155px;
+    left: 610px;
     width: 180px; 
     height: 20px ;
     border-radius: 1em; 
@@ -617,8 +665,8 @@ td:last-of-type
 #endWeekPick{
     position: absolute;
     font-size: 20px;
-    top: 165px;
-    left: 2715px;
+    top: 155px;
+    left: 610px;
     width: 190px; 
     height: 25px ;
     border-radius: 1em; 
@@ -628,8 +676,8 @@ td:last-of-type
 #endMonthPick{
     position: absolute;
     font-size: 20px;
-    top: 165px;
-    left: 2715px;
+    top: 155px;
+    left: 610px;
     width: 190px; 
     height: 25px ;
     border-radius: 1em; 
@@ -640,8 +688,8 @@ td:last-of-type
 #crButton{
     position: absolute;
     font-size: 20px;
-    top: 165px;
-    left: 2915px;
+    top: 155px;
+    left: 810px;
     width: 190px; 
     height: 25px ;
     border-radius: 1em; 
@@ -651,10 +699,10 @@ td:last-of-type
 #exportIPButton{
     position: absolute;
     font-size: 20px;
-    top: 164px;
-    left: 3115px;
+    top: 155px;
+    left: 1010px;
     width: 230px; 
-    height: 28px ;
+    height: 25px ;
     border-radius: 1em; 
     visibility: hidden;
 }
@@ -664,18 +712,30 @@ td:last-of-type
     position: absolute;
 }
 
+#crossReferencePointer{
+    position: absolute;
+    font-size: 20px;
+    top: 190px;
+    left: 1710px;
+}
+
+
 #legendForIPGraph{
     position: absolute;
     font-size: 20px;
-    top: 5px;
-    left: 2085px;
+    top: 520px;
+    left: 2030px;
 }
 
+/* for cross reference graph */
+
+
+/* for treemap */
 #legendForTreeMap{
     position: absolute;
     font-size: 20px;
-    top: 170px;
-    left: 3360px;
+    top: 0px;
+    left: 3250px;
 }
 
 .node {
@@ -696,31 +756,119 @@ td:last-of-type
     font-size: 18px;
     margin-top: 1px;
 }
+/* for treemap */
 
+/* for parallel coordinates */
 #parallelCoordinatesGraph{
     position: absolute;
 }
 
 #usernameFilterDiv{
     position: absolute;
-    width: 300px;
-    height: 50px;
+    width: 1150px;
+    height: 110px;
+    top: 1400px;
+    left:5020px;
+}
+
+#usernameTextArea{
+    position: absolute;
+    font-size: 25px;
+    top: 0px;
+    left: 0px;
+    width: 1150px; 
+    height: 60px;
+    visibility: hidden;
 }
 
 #usernameFilter{
     position: absolute;
-    font-size: 30px;
-    top: 0px;
+    font-size: 25px;
+    top: 60px;
     left: 0px;
-    width: 0px; 
-    height: 0px;
+    width: 300px; 
+    height: 50px;
     border-radius: 1em; 
+    visibility: hidden;
 }
 
-#donutGraph{
+
+#allUsernames{
+    position: absolute;
+    font-size: 25px;
+    top: 60px;
+    left: 310px;
+    width: 180px; 
+    height: 50px;
+    border-radius: 1em; 
+    visibility: hidden;
+
+}
+
+#noRoot{
+    position: absolute;
+    font-size: 25px;
+    top: 60px;
+    left: 500px;
+    width: 180px; 
+    height: 50px;
+    border-radius: 1em; 
+    visibility: hidden;
+}
+
+#noAdmin{
+    position: absolute;
+    font-size: 25px;
+    top: 60px;
+    left: 690px;
+    width: 180px; 
+    height: 50px;
+    border-radius: 1em; 
+    visibility: hidden;
+}
+
+#noRootAndAdmin{
+    position: absolute;
+    font-size: 25px;
+    top: 60px;
+    left: 880px;
+    width: 260px; 
+    height: 50px;
+    border-radius: 1em; 
+    visibility: hidden;
+}
+
+
+
+/* for parallel coordinates */
+
+/* #donutGraph{
+    position: absolute;
+} */
+
+/* for shbg */
+
+#stackedHorizontalDiv{
+    position: absolute;
+    width: 760px;
+    height: 110px;
+    top: 1400px;
+    left:5060px;
+}
+
+#shbgTextArea{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 760px; 
+    height: 110px;
+}
+
+#stackedHorizontalBarGraph{
     position: absolute;
 }
 
+/* for shbg */
 
 
 
