@@ -53,9 +53,9 @@ class IPLineChart{
 
         // console.log(widthNumber)
 
-        let margin = {top: 50, right: 55, bottom: 60, left: 275},
+        let margin = {top: 50, right: 55, bottom: 60, left: 295},
                     width = widthNumber - margin.left - margin.right,
-                    height = 400 - margin.top - margin.bottom;
+                    height = 740 - margin.top - margin.bottom;
 
         let svg = d3.select("#attacksAndAttackers")
         .append("svg")
@@ -108,52 +108,325 @@ class IPLineChart{
                     }
                 }
             }
-            dataset1.push(requiredArray)
+            dataset1.push([requiredArray, givenIPs[i]])
         }
         // console.log(dataset1)
+
+        let periodValue = VizScreen.givenTimePeriod
+        let periodText
+        let periodText2
+        let xPos
+        if (periodValue === "month"){
+            periodText = "months"
+            periodText2 = "Months"
+            xPos = 200
+        }
+        else if(periodValue === "week"){
+            periodText = "weeks"
+            periodText2 = "Weeks"
+            xPos = 180
+        }
+        else if (periodValue === "day"){
+            periodText = "days"
+            periodText2 = "Days"
+            xPos = 190
+        }
+        
+
+
         let that2 = this
-        let starterY = -35
+        let starterY = 311
         for (let i = 0; i < givenIPs.length; i++){
-            svg.append('circle').style("fill", d3.schemeTableau10[i]).attr("r", 10).attr("cx", -260).attr("cy", starterY)
-            let myTexts = svg.append('text').attr("transform", "translate(-245,"+(starterY+8)+")")
+            svg.append('circle').style("fill", d3.schemeTableau10[i]).attr("r", 10).attr("cx", -280).attr("cy", starterY)
+            let myTexts = svg.append('text').attr("transform", "translate(-265,"+(starterY+8)+")")
                 .text(givenIPs[i]).style("font-size", "20px")
                 .style("fill", d3.schemeTableau10[i])
-            starterY +=  41
+            starterY +=  40
 
             let tip = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 10).style("font-size", "30px")
             myTexts.on("mouseover", function(e) {
+                d3.select(this).style("cursor", "pointer")
                 let tiptext = "Click to add "+e.srcElement.innerHTML+ " to the 'Selected IPs' list."
                 tip.style("opacity", 5)
                 .html(tiptext)
                 .style("left", (e.pageX) + "px")
                 .style("top", (e.pageY) + "px")
+
+                
+                $(".lineForIP").remove()
+                $(".circForIP").remove()
+
+                for (let i = 0; i < dataset1.length; i++){
+                    let givenObj = dataset1[i]
+                    let myData = givenObj[0]
+                    let myData2 = givenObj[1]
+
+                    let bool 
+                    if (myData2 === this.innerHTML){
+                        bool = 1
+                    }
+                    else{
+                        bool = 0
+                    }
+
+
+                    this.circles = svg.append('g')
+                    .selectAll("dot")
+                    .data(myData)
+                    .enter()
+                    .append("circle")
+                    .attr("class", "circForIP") 
+                    .attr("cx", function (d) { 
+                        return xScale(d[0]); 
+                    } )
+                    .attr("cy", function (d) { return yScale(d[1]); } )
+                    .attr("r", 10)
+                    .attr("transform", "translate(" + 0 + "," + 0 + ")")
+                    .style("fill", d3.schemeTableau10[i])
+                    .attr('stroke-width', function(){
+                        if (bool === 0){
+                            return 0
+                        }
+                        else{
+                            return 7
+                        }
+                    })
+                    .style("stroke", function(){
+                        if (bool === 0){
+                            return "blue"
+                        }
+                        else{
+                            return "red"
+                        }
+                    })
+        
+                          
+                    let line = d3.line()
+                    .x(function(d) { return xScale(d[0]); }) 
+                    .y(function(d) { return yScale(d[1]); }) 
+                    .curve(d3.curveMonotoneX)
+                    
+                    svg.append("path")
+                    .datum(myData) 
+                    .attr("class", "lineForIP") 
+                    .attr("transform", "translate(" + 0 + "," + 0 + ")")
+                    .attr("d", line)
+                    .style("fill", "none")
+                    .style("stroke", function(){
+                        if (bool === 0){
+                            return "black"
+                        }
+                        else{
+                            return "red"
+                        }
+                    })
+                    .attr('stroke-width', function(){
+                        if (bool === 0){
+                            return 2
+                        }
+                        else{
+                            return 7
+                        }
+                    })
+                }
+
             })
             .on("mouseout", function() {
                 tip.style("opacity", 0)
+                $(".lineForIP").remove()
+                $(".circForIP").remove()
+
+                for (let i = 0; i < dataset1.length; i++){
+                    let givenObj = dataset1[i]
+                    let myData = givenObj[0]
+        
+                    this.circles = svg.append('g')
+                    .selectAll("dot")
+                    .data(myData)
+                    .enter()
+                    .append("circle")
+                    .attr("class", "circForIP") 
+                    .attr("cx", function (d) { 
+                        return xScale(d[0]); 
+                    } )
+                    .attr("cy", function (d) { return yScale(d[1]); } )
+                    .attr("r", 10)
+                    .attr("transform", "translate(" + 0 + "," + 0 + ")")
+                    .style("fill", d3.schemeTableau10[i])
+        
+                          
+                    let line = d3.line()
+                    .x(function(d) { return xScale(d[0]); }) 
+                    .y(function(d) { return yScale(d[1]); }) 
+                    .curve(d3.curveMonotoneX)
+                    
+                    svg.append("path")
+                    .datum(myData) 
+                    .attr("class", "lineForIP") 
+                    .attr("transform", "translate(" + 0 + "," + 0 + ")")
+                    .attr("d", line)
+                    .style("fill", "none")
+                    .style("stroke", "black")
+                    .style("stroke-width", "2")
+                }
+
             })
 
             myTexts.on("click", function(e) {
                 //console.log(e.srcElement.innerHTML)
+                document.getElementById("crTextArea").style.visibility = "visible"
+
+                if (document.getElementById("text1CR")){
+                    document.getElementById("text1CR").remove()
+                    document.getElementById("text2CR").remove()
+                    document.getElementById("text3CR").remove()
+                    document.getElementById("text4CR").remove()
+                    document.getElementById("text5CR").remove()
+                    document.getElementById("text6CR").remove()
+                    document.getElementById("text7CR").remove()
+                    document.getElementById("line1CR").remove()
+                }
+
+                if (document.getElementById("text8CR")){
+                    document.getElementById("text8CR").remove()
+                    document.getElementById("text9CR").remove()
+                    document.getElementById("text10CR").remove()
+                    document.getElementById("text11CR").remove()
+                    document.getElementById("line2CR").remove()
+
+                    document.getElementById("text12CR").remove()
+                    document.getElementById("text13CR").remove()
+                    document.getElementById("text14CR").remove()
+                    document.getElementById("text15CR").remove()
+                    document.getElementById("text16CR").remove()
+                    document.getElementById("text17CR").remove()
+                    document.getElementById("text18CR").remove()
+                    document.getElementById("line3CR").remove()
+           
+                    document.getElementById("text19CR").remove()
+                    document.getElementById("text20CR").remove()
+                    document.getElementById("text21CR").remove()
+                    document.getElementById("text22CR").remove()
+                    document.getElementById("line4CR").remove()
+
+                    document.getElementById("text23CR").remove()
+                    document.getElementById("text24CR").remove()
+                    document.getElementById("text25CR").remove()
+                    document.getElementById("text26CR").remove()
+                    document.getElementById("text27CR").remove()
+                    document.getElementById("text28CR").remove()
+                    document.getElementById("text29CR").remove()
+                    document.getElementById("text30CR").remove()
+                    document.getElementById("line5CR").remove()
+                }
+
+                let svg2 = d3.select('#crTextArea')
+
+                svg2.append("text").attr("transform", "translate(5, 20)")
+                .text("Selection of at least 2 IPs will make 2 text-").style("font-size", "20px").style("fill", "red").attr("id", "text1CR")
+                svg2.append("text").attr("transform", "translate(5, 40)")
+                .text("boxes and 2 buttons appear on the right.").style("font-size", "20px").style("fill", "red").attr("id", "text2CR")
+                svg2.append("text").attr("transform", "translate(5, 60)")
+                .text("The button below can be used to remove").style("font-size", "20px").style("fill", "red").attr("id", "text3CR")
+                svg2.append("text").attr("transform", "translate(5, 80)")
+                .text("IPs from 'selected IPs'. If 'selected IPs' has").style("font-size", "20px").style("fill", "red").attr("id", "text4CR")
+                svg2.append("text").attr("transform", "translate(5, 100)")
+                .text("no IP, it, along with the button, will").style("font-size", "20px").style("fill", "red").attr("id", "text5CR")
+                svg2.append("text").attr("transform", "translate(5, 120)")
+                .text("disappear. If 'selected IPs' has 1 IP, things").style("font-size", "20px").style("fill", "red").attr("id", "text6CR")
+                svg2.append("text").attr("transform", "translate(5, 140)")
+                .text("on the right will disappear.").style("font-size", "20px").style("fill", "red").attr("id", "text7CR")
+                svg2.append("line").style("stroke", "black").style("stroke-width", 5).attr('x1', 405).attr('y1', 0).attr('x2', 405).attr('y2', 150).attr("id", "line1CR")
+             
                 let optionValue = e.srcElement.innerHTML
+
+                // console.log('B:', optionValue)
                 let exists = false; 
                 $('#ipsClicked  option').each(function(){
-                    if (this.value == optionValue) {
+                    // console.log('C:', this.value)
+                    let thisValHere = this.value
+                    if (thisValHere.substring(0, thisValHere.length - 4) == optionValue) {
                         exists = true;
                     }
                 });
+                // console.log('A:', exists)
                 
                 if (exists === false){
                     let ipsClicked = document.getElementById("ipsClicked")
                     let option = document.createElement("option")
-                    option.text = optionValue + '--' + that2.givenCountries
-                    option.value = optionValue
+                    // console.log(that2.givenCountries)
+                    option.text = optionValue + '--' + that2.getFlagEmoji(that2.givenCountries[0])
+                    option.value = optionValue + '--' + that2.givenCountries[0]
                     ipsClicked.add(option)
                 }
 
-                console.log()
-                if ($('#ipsClicked').children('option').length > 1){
+                document.getElementById("ipsClicked").style.visibility = "visible"
+                document.getElementById("removeIPButton").style.visibility = "visible"
 
-                    let dateValue = document.getElementById("timePeriod").value
+
+
+                if ($('#ipsClicked').children('option').length > 2){
+                    svg2.append("text").attr("transform", "translate(415, 20)")
+                    .text("The difference between start and end").style("font-size", "20px").style("fill", "red").attr("id", "text8CR")
+                    svg2.append("text").attr("transform", "translate(415, 40)")
+                    .text(periodValue + " is restricted to no more than 30").style("font-size", "20px").style("fill", "red").attr("id", "text9CR")
+                    svg2.append("text").attr("transform", "translate(415, 60)")
+                    .text(periodText + '. End ' + periodValue + " has to be greater than").style("font-size", "20px").style("fill", "red").attr("id", "text10CR")
+                    svg2.append("text").attr("transform", "translate(415, 80)")
+                    .text("start " + periodValue + '.').style("font-size", "20px").style("fill", "red").attr("id", "text11CR")
+                    svg2.append("line").style("stroke", "black").style("stroke-width", 5).attr('x1', 805).attr('y1', 0).attr('x2', 805).attr('y2', 150).attr("id", "line2CR")
+                    
+                    svg2.append("text").attr("transform", "translate(810, 20)")
+                    .text("After 2 IPs have been").style("font-size", "20px").style("fill", "red").attr("id", "text12CR")
+                    svg2.append("text").attr("transform", "translate(810, 40)")
+                    .text("selected and start").style("font-size", "20px").style("fill", "red").attr("id", "text13CR")
+                    svg2.append("text").attr("transform", "translate(810, 60)")
+                    .text("and end "+periodValue+" are").style("font-size", "20px").style("fill", "red").attr("id", "text14CR")
+                    svg2.append("text").attr("transform", "translate(810, 80)")
+                    .text("specified, hit this").style("font-size", "20px").style("fill", "red").attr("id", "text15CR")
+                    svg2.append("text").attr("transform", "translate(810, 100)")
+                    .text("button to make a").style("font-size", "20px").style("fill", "red").attr("id", "text16CR")
+                    svg2.append("text").attr("transform", "translate(810, 120)")
+                    .text("visualization appear").style("font-size", "20px").style("fill", "red").attr("id", "text17CR")
+                    svg2.append("text").attr("transform", "translate(810, 140)")
+                    .text("below.").style("font-size", "20px").style("fill", "red").attr("id", "text18CR")
+                    svg2.append("line").style("stroke", "black").style("stroke-width", 5).attr('x1', 1005).attr('y1', 0).attr('x2', 1005).attr('y2', 150).attr("id", "line3CR")
+
+                    svg2.append("text").attr("transform", "translate(1010, 20)")
+                    .text("Export the below").style("font-size", "20px").style("fill", "red").attr("id", "text19CR")
+                    svg2.append("text").attr("transform", "translate(1010, 40)")
+                    .text("visualization's(if it exists)").style("font-size", "20px").style("fill", "red").attr("id", "text20CR")
+                    svg2.append("text").attr("transform", "translate(1010, 60)")
+                    .text("IP attack data pattern").style("font-size", "20px").style("fill", "red").attr("id", "text21CR")
+                    svg2.append("text").attr("transform", "translate(1010, 80)")
+                    .text("into a CSV file.").style("font-size", "20px").style("fill", "red").attr("id", "text22CR")
+                    svg2.append("line").style("stroke", "black").style("stroke-width", 5).attr('x1', 1235).attr('y1', 0).attr('x2', 1235).attr('y2', 150).attr("id", "line4CR")
+
+
+                    svg2.append("text").attr("transform", "translate(1240, 20)")
+                    .text("'EXCEPTION'").style("font-size", "20px").style("fill", "purple").attr("id", "text23CR")
+                    svg2.append("text").attr("transform", "translate(1370, 20)")
+                    .text("= The two").style("font-size", "20px").style("fill", "red").attr("id", "text24CR")
+                    svg2.append("text").attr("transform", "translate(1240, 40)")
+                    .text("visualizations below(above the").style("font-size", "20px").style("fill", "red").attr("id", "text25CR")
+                    svg2.append("text").attr("transform", "translate(1240, 60)")
+                    .text("Go Back button and if they are").style("font-size", "20px").style("fill", "red").attr("id", "text26CR")
+                    svg2.append("text").attr("transform", "translate(1240, 80)")
+                    .text("on screen) will disappear if time").style("font-size", "20px").style("fill", "red").attr("id", "text27CR")
+                    svg2.append("text").attr("transform", "translate(1240, 100)")
+                    .text("periods are switched during").style("font-size", "20px").style("fill", "red").attr("id", "text28CR")
+                    svg2.append("text").attr("transform", "translate(1240, 120)")
+                    .text("analysis or there is only one item").style("font-size", "20px").style("fill", "red").attr("id", "text29CR")
+                    svg2.append("text").attr("transform", "translate(1240, 140)")
+                    .text("left for the current time period.").style("font-size", "20px").style("fill", "red").attr("id", "text30CR")
+
+
+                    svg2.append("line").style("stroke", "black").style("stroke-width", 5).attr('x1', 1535).attr('y1', 0).attr('x2', 1535).attr('y2', 150).attr("id", "line5CR")
+
+
+
+                    let dateValue = VizScreen.givenTimePeriod
+
                     if (dateValue === "month"){
                         document.getElementById("startMonthPick").style.visibility = "visible"
                         document.getElementById("endMonthPick").style.visibility = "visible"
@@ -163,12 +436,15 @@ class IPLineChart{
                         document.getElementById("endWeekPick").style.visibility = "visible"
                     }
                     else if (dateValue === "day"){
-                        document.getElementById("startDatePick").style.visibility = "visible"
-                        document.getElementById("endDatePick").style.visibility = "visible"
+                        document.getElementById("startDayPick").style.visibility = "visible"
+                        document.getElementById("endDayPick").style.visibility = "visible"
                     }
                     document.getElementById("crButton").style.visibility = "visible"
                     document.getElementById("exportIPButton").style.visibility = "visible"
                 }
+
+
+
                 
             })
         }
@@ -177,18 +453,22 @@ class IPLineChart{
 
         
         for (let i = 0; i < dataset1.length; i++){
+            let givenObj = dataset1[i]
+            let myData = givenObj[0]
+
             this.circles = svg.append('g')
             .selectAll("dot")
-            .data(dataset1[i])
+            .data(myData)
             .enter()
             .append("circle")
+            .attr("class", "circForIP") 
             .attr("cx", function (d) { 
                 return xScale(d[0]); 
             } )
             .attr("cy", function (d) { return yScale(d[1]); } )
             .attr("r", 10)
             .attr("transform", "translate(" + 0 + "," + 0 + ")")
-            .style("fill", d3.schemeTableau10[i]);
+            .style("fill", d3.schemeTableau10[i])
 
                   
             let line = d3.line()
@@ -197,36 +477,21 @@ class IPLineChart{
             .curve(d3.curveMonotoneX)
             
             svg.append("path")
-            .datum(dataset1[i]) 
-            .attr("class", "line") 
+            .datum(myData) 
+            .attr("class", "lineForIP") 
             .attr("transform", "translate(" + 0 + "," + 0 + ")")
             .attr("d", line)
             .style("fill", "none")
             .style("stroke", "black")
-            .style("stroke-width", "2");
+            .style("stroke-width", "2")
         }
 
-        let periodValue = document.getElementById("timePeriod").value
-        let periodText
-        let xPos
-        if (periodValue === "month"){
-            periodText = "Months"
-            xPos = 200
-        }
-        else if(periodValue === "week"){
-            periodText = "Weeks"
-            xPos = 180
-        }
-        else if (periodValue === "day"){
-            periodText = "Days"
-            xPos = 190
-        }
         
-        svg.append('text').attr("transform", "translate("+(widthNumber/2 - 500)+",-20)").text(this.givenCountries[0]+"[Top 10 IPs of "+this.givenDate+" at most 7 TPs before and after]").style("font-size", "25px")
-        svg.append('text').attr("transform", "translate("+(widthNumber/2 - xPos)+",335)").text(periodText).style("font-size", "25px")
-        svg.append('text').attr("transform", "translate(-70,190)rotate(270)").text("Frequency").style("font-size", "25px")
+        svg.append('text').attr("transform", "translate("+(widthNumber/2 - 500)+",-20)").text(this.getFlagEmoji(this.givenCountries[0])+"[Top 10 IPs of "+this.givenDate+" at most 7 "+periodText+" before and after]").style("font-size", "25px")
+        svg.append('text').attr("transform", "translate("+(widthNumber/2 - xPos)+",675)").text(periodText2).style("font-size", "25px")
+        svg.append('text').attr("transform", "translate(-70,350)rotate(270)").text("Attacks").style("font-size", "25px")
 
-        let starterValue = document.getElementById('predictionTable').offsetWidth + 680
+        let starterValue = 1720
         let barGraphStarter = starterValue + "px" 
         let barGraphStarter2 = starterValue+190 + "px"
         document.getElementById("exportButton").style.visibility = "visible"
@@ -234,6 +499,39 @@ class IPLineChart{
 
         document.getElementById("goBackButton").style.visibility = "visible"
         document.getElementById("goBackButton").style.left = barGraphStarter2
+
+
+        svg.append('text').attr("transform", "translate(-292,-30)").text("Click the below IPs to").style("font-size", "20px").style("fill", "red")
+        svg.append('text').attr("transform", "translate(-292,-10)").text("add them to the 'selected").style("font-size", "20px").style("fill", "red")
+        svg.append('text').attr("transform", "translate(-292,10)").text("IPs' list. If you can't see").style("font-size", "20px").style("fill", "red")
+        svg.append('text').attr("transform", "translate(-292,30)").text("the list right now, ").style("font-size", "20px").style("fill", "red")
+        svg.append('text').attr("transform", "translate(-292,50)").text("clicking 1 IP will make").style("font-size", "20px").style("fill", "red")
+        svg.append('text').attr("transform", "translate(-292,70)").text("it appear above. This is").style("font-size", "20px").style("fill", "red")
+        svg.append('text').attr("transform", "translate(-292,90)").text("useful for cross-").style("font-size", "20px").style("fill", "red")
+        svg.append('text').attr("transform", "translate(-292,110)").text("reference check of IPs").style("font-size", "20px").style("fill", "red")
+        svg.append('text').attr("transform", "translate(-292,130)").text("across countries.").style("font-size", "20px").style("fill", "red")
+
+        svg.append('text').attr("transform", "translate(-292,170)").text("Hover over the below").style("font-size", "20px").style("fill", "red")
+        svg.append('text').attr("transform", "translate(-292,190)").text("IPs to see their path in").style("font-size", "20px").style("fill", "red")
+        svg.append('text').attr("transform", "translate(-292,210)").text("the linechart.").style("font-size", "20px").style("fill", "red")
+
+        svg.append('text').attr("transform", "translate(-292,250)").text("Hover over the above 2").style("font-size", "20px").style("fill", "red")
+        svg.append('text').attr("transform", "translate(-292,270)").text("buttons to know").style("font-size", "20px").style("fill", "red")
+        svg.append('text').attr("transform", "translate(-292,290)").text("their functions.").style("font-size", "20px").style("fill", "red")
+
+
+
+        
+
+    }
+
+    getFlagEmoji(cc){
+        const codePoints = cc
+            .toUpperCase()
+            .split('')
+            .map(char =>  127397 + char.charCodeAt());
+        let b = String.fromCodePoint(...codePoints);
+        return b
     }
 
     better(value){

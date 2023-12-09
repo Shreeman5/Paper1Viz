@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+    
 
 <head>
     <meta charset="UTF-8">
@@ -11,23 +12,23 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
     <script src="https://d3js.org/d3.v7.js"></script>
     <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
+    <script src="https://"></script>
 
     <!-- moment.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.2/d3.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-color/1.2.1/d3-color.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
 
     <!-- For datepicker -->
     <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/dubrox/Multiple-Dates-Picker-for-jQuery-UI@master/jquery-ui.multidatespicker.js"></script>
-    <!-- <script src="d3-symbol-extra.js"></script> -->
-
-    
-
-
 </head>
 
 <body>
+    <!-- date heatmap -->
     <div id="initialVariablesDiv">
         <select name="data" id="data" onchange="specifyTimePeriod();">
             <option selected="selected" disabled="true">Please Select A Cluster</option>
@@ -36,156 +37,123 @@
             <option value="wisc">wisc</option>
         </select>
 
-    
-        <select name="timePeriod" id="timePeriod" onchange="specifyTimePeriod();">
-            <option selected="selected" disabled="true">Please Select A Time Period</option>
-            <option value="month">month</option>
-            <option value="week">week</option>
-            <option value="day">day</option>
-        </select>
- 
-        <input type="text" id="datePick" placeholder="Please Click Me To Select Multiple Days"/>
-        
-        <select name="weekPick" id="weekPick" multiple>
-            <option selected="selected" disabled="true">Please Select Multiple Weeks</option>
-        </select>
+        <svg id="dateHeatMap"></svg>
 
-        <select name="monthPick" id="monthPick" multiple>
-            <option selected="selected" disabled="true">Please Select Multiple Months</option>
-        </select>
-
-        <button id="launchPad" onclick="finalCheck()">
-            Launch Tool
-        </button>
+        <button class="button-64" role="button" onclick="clearSelectedTimes()"><span class="text">Clear Selection</span></button>
     </div>
 
-    <svg id="textsForTP"></svg>
-
-    <div id="baseTPDiv">
-        <select id="baseTP" onchange="baseTPFunc(this.value);"></select>
+    <div id = "infoLegend">
+        <svg id = "textArea"></svg>
     </div>
 
-    <div id="filterDiv">
-        <div id="slidecontainer"> 
-            <div class="tooltipForSidebarButtonAndSliders" id="Text1">Percentage Change Distribution(Hover Me)
-                <span class="tooltiptext">
-                    The histogram below shows the distribution of percentage
-                    change numbers from base time period x to non-base time period(s).
-                    
-                    Use the slider to filter 
-                    countries in the table that had a 
-                    percentage increase of more than x(where x is the number on the 
-                    slider and input box) from base time period x
-                    to non base time period y.
+
+
+    <button id="resetButton" onclick="resetToInitial()">Reset to Inital State</button>
+
+
+    <div id="countryOptions">
+        <label for="countries-from-data" style="color:red;font-size:25px;" id="labelText">Filter 1 Country in Linechart and</label>
+        <label for="countries-from-data-2" style="color:red;font-size:25px;" id="labelText2">Table(or enter a blank to return</label>
+        <label for="countries-from-data-3" style="color:red;font-size:25px;" id="labelText3">to initial state).</label>
+        <input list="countries" name="countries-from-data" id="countries-from-data" onchange="countrySelect(this.value)">
+        <datalist id="countries"></datalist>
+    </div>
+
+
+
+    <div id="dependentDiv">
+
+        <div id="baseTPDiv">
+            <select id="baseTP" onchange="baseTPFunc(this.value);"></select>
+        </div>
+
+        <div id="slidecontainer1"> 
+            <div class="tooltipForSliders" id="Text1">Percentage Change Distribution(Hover Me)
+                <span id="spanText1" class="tooltiptext">
                 </span>
-            </div>
-            <input type="range" class="slider" id="myRange" step="1" onchange="threshold1()">
-            <div id="combobox1">
-                <div class="select-editable">
-                    <select id="PERCHOOSE" onchange="chooseBox1(this.value)">
-                        <option selected="selected" disabled="true">Please Select Or Type</option>
-                    </select>
-                    <input id="PERWRITE" type="text" name="format" value="" onchange="textBox1(this.value)"/>
-                </div>
             </div>
             <svg id="svg1"></svg>
-        </div>
-
-        <div id="slidecontainer2">
-            <div class="tooltipForSidebarButtonAndSliders" id="Text2">Absolute Change Distribution(Hover Me)
-                <span class="tooltiptext">
-                    The histogram below shows the distribution of absolute
-                    change numbers from base time period x to non-base time period(s).
-                    
-                    Use the slider to filter 
-                    countries in the table that had an 
-                    absolute increase of more than x(where x is the number on the 
-                    slider and input box) from base time period x
-                    to non base time period y.
-                </span>
-            </div>
-            <input type="range" class="slider" id="myRange2" step="1" onchange="threshold2()">
-            <div id="combobox2">
+            <input type="range" class="slider" id="myRange1" step="1" onchange="PCS()">
+            <div id="combobox1">
                 <div class="select-editable">
-                    <select id="ABSCHOOSE" onchange="chooseBox2(this.value)">
-                        <option selected="selected" disabled="true">Please Select Or Type</option>
+                    <select id="PERCHANGECHOOSE" onchange="PCC(this.value)">
+                        <option selected="selected" disabled="true">Please Select Or Type Number</option>
                     </select>
-                    <input id="ABSWRITE" type="text" name="format" value="" onchange="textBox2(this.value)"/>
-                </div>
-            </div>
-            <svg id="svg2"></svg>
-        </div>
-
-        <div id="countryOptions">
-            <label for="countries-from-data" style="color:red;font-size:25px;" id="labelText">Filter 1 Country(or enter a blank</label>
-            <label for="countries-from-data-2" style="color:red;font-size:25px;" id="labelText2">to return to previous state)</label>
-            <input list="countries" name="countries-from-data" id="countries-from-data" onchange="countrySelect(this.value)">
-            <datalist id="countries"></datalist>
-        </div>
-
-        <button id="resetButton" onclick="finalCheck()">
-            Reset
-        </button>
-    </div>
-
-    <div id="nonFilterDiv">
-        <div id="sortTPDiv">
-            <select id="sortTP" onchange="sortTPFunc(this.value);"></select>
-        </div>
-
-        <div id="slidecontainer3">
-            <svg id="svg3"></svg>
-            <input type="range" orient="vertical" class="slider" id="myRange3" step="1" onchange="threshold3()">
-            <div class="tooltipForSidebarButtonAndSliders" id="Text3">Anomaly Percentage(Hover Me)
-                <span class="tooltiptext">
-                    The histogram above shows the distribution of percentage
-                    change numbers from any time period x to any time period y.
-                    Unlike the percentage change distribution slider, the distribution
-                    shown in this slider does not depend on the current base time period.
-                    Use the slider to change the threshold for percentage anomalies.
-                </span>
-            </div>
-            <div id="combobox3">
-                <div class="select-editable-2">
-                    <select id="ANOMPERCHOOSE" onchange="chooseBox3(this.value)">
-                        <option selected="selected" disabled="true">Please Select Or Type</option>
-                    </select>
-                    <input id="ANOMPERWRITE" type="text" name="format" value="" onchange="textBox3(this.value)"/>
+                    <input id="PERCHANGEWRITE" type="text" name="format" value="" onchange="PCT(this.value)"/>
                 </div>
             </div>
         </div> 
 
-        <div id="slidecontainer4">
-            <svg id="svg4"></svg>
-            <input type="range" orient="vertical" class="slider" id="myRange4" step="1" onchange="threshold4()">
-            <div class="tooltipForSidebarButtonAndSliders" id="Text4">Anomaly Absolute(Hover Me)
-                <span class="tooltiptext">
-                    The histogram above shows the distribution of absolute
-                    numbers for all the time periods.
-                    Use the slider to change the threshold for absolute anomalies.
+
+        <div id="slidecontainer2">
+            <div class="tooltipForSliders" id="Text2">Absolute Change Distribution(Hover Me)
+                <span id="spanText2" class="tooltiptext">
                 </span>
             </div>
-            <div id="combobox4">
-                <div class="select-editable-2">
-                    <select id="ANOMABSCHOOSE" onchange="chooseBox4(this.value)">
-                        <option selected="selected" disabled="true">Please Select Or Type</option>
+            <svg id="svg2"></svg>
+            <input type="range" class="slider" id="myRange2" step="1" onchange="ACS()">
+            <div id="combobox2">
+                <div class="select-editable">
+                    <select id="ABSCHANGECHOOSE" onchange="ACC(this.value)">
+                        <option selected="selected" disabled="true">Please Select Or Type Number</option>
                     </select>
-                    <input id="ANOMABSWRITE" type="text" name="format" value="" onchange="textBox4(this.value)"/>
+                    <input id="ABSCHANGEWRITE" type="text" name="format" value="" onchange="ACT(this.value)"/>
+                </div>
+            </div>
+            
+        </div>
+
+        <span id="baseText">
+            BASE DEPENDENT FILTERS
+        </span>
+
+    </div>
+
+    <div id="independentDiv">
+        <div id="slidecontainer3">
+            <div class="tooltipForSliders" id="Text3">Absolute Attack(Hover Me)
+                <span id="spanText3" class="tooltiptext">
+                </span>
+            </div>
+            <svg id="svg3"></svg>
+            <input type="range" class="slider" id="myRange3" step="1" onchange="AS()">
+            <div id="combobox3">
+                <div class="select-editable">
+                    <select id="ABSCHOOSE" onchange="AC(this.value)">
+                        <option selected="selected" disabled="true">Please Select Or Type Number</option>
+                    </select>
+                    <input id="ABSWRITE" type="text" name="format" value="" onchange="AT(this.value)"/>
                 </div>
             </div>
         </div>
 
+        <span id="nonbaseText">
+            BASE INDEPENDENT FILTER
+        </span>
+
     </div>
 
-    <div id = "tableLegend">
-        <svg id = "legend">
-            <text x = "0" y = "20" style="font-size:20px; ">Absolute Attack Numbers for Countries</text>
-            <text x = "0" y = "45" style="font-size:20px; ">Given base TP, Percentage Change Attack Numbers for Countries</text>
-            <text x = "0" y = "70" style="font-size:20px; ">Percentage or Absolute Numbers which are outliers</text>     
+
+
+    <div id="sortTPDiv">
+        <select id="sortTP" onchange="sortTPFunc(this.value);"></select>
+    </div>
+
+
+    <!-- line chart -->
+    <div class="linechartView">
+        <svg id="line-chart-aa">
+            <g id="x-axis-aa"></g>
+            <g id="y-axis-aa"></g>
+            <g id="y-axis-aa-2"></g>
+            <g id="lines-aa"></g>
+            <g id="lines-aa-2"></g>
+            <g id="overlay-aa"><line></line></g>
         </svg>
-        <svg id = "colorForLegend"></svg>
     </div>
 
+
+    <!-- table -->
     <div id = "view">
         <table id="predictionTable">
             <thead id="predictionTableHead">
@@ -197,19 +165,26 @@
         </table>
     </div>
 
-    <button id="exportButton" onclick="exportData()">Export IP Data ⭷⭷</button>
-    <button id="goBackButton" onclick="goBack()">Go Back 🡠</button>
+
+    <div id = "tableLegend">
+        <svg id = "legend"></svg>
+    </div>
+
+
+    <button id="exportButton" title="Export the below IP attack data into a CSV file." onclick="exportData()">Export IP Data &#8599;</button>
+    <button id="goBackButton" title="Return to the bargraph visualization from before." onclick="goBack()">Go Back &#8598;</button>
     <div id="attacksAndAttackers"></div>
 
     
     <div id="crossReferenceTools">
-        
+        <svg id = "crTextArea"></svg>
+
         <select id="ipsClicked">
             <option value="" disabled selected>Selected IPs</option>
         </select>
         <button id="removeIPButton" onclick="removeIP()">Remove this IP</button>
 
-        <input type="text" id="startDatePick" placeholder="Start Date"/>
+        <input type="text" id="startDayPick" placeholder="Start Day"/>
         <select name="startWeekPick" id="startWeekPick">
             <option value="" disabled selected>Start Week</option>
         </select>
@@ -217,7 +192,7 @@
             <option value="" disabled selected>Start Month</option>
         </select>
 
-        <input type="text" id="endDatePick" placeholder="End Date">
+        <input type="text" id="endDayPick" placeholder="End Day">
         <select name="endWeekPick" id="endWeekPick">
             <option value="" disabled selected>End Week</option>
         </select>
@@ -227,38 +202,60 @@
         
         <button id="crButton" onclick="finalCRChecker()">Cross Reference!</button>
 
-        <button id="exportIPButton" onclick="exportCRData()">Export CR IP Data ⭷⭷</button>
+        <button id="exportIPButton" onclick="exportCRData()">Export CR IP Data &#8599;</button>
     </div>
 
     <div id="crossReferenceIPGraphs"></div>
 
     <div id="legendForIPGraph"></div>
 
+    <div id="crossReferencePointer"></div>
+
     <div id="legendForTreeMap"></div>
 
-    
+
     <div id="usernameFilterDiv">
-        <select id="usernameFilter" onchange="filterUsername()"></select>
+        <svg id = "usernameTextArea"></svg>
+
+        <select id="usernameFilter" onchange="filterUsername(1)">
+            <option value="" disabled selected>Filter Username</option>
+        </select>
+
+        <button id="allUsernames" onclick="filterUsername(2)">All Usernames</button>
+
+        <button id="noRoot" onclick="filterUsername(3)">W/OUT Root</button>
+
+        <button id="noAdmin" onclick="filterUsername(4)">W/OUT Admin</button>
+
+        <button id="noRootAndAdmin" onclick="filterUsername(5)">W/OUT Root & Admin</button>
     </div>
 
     <div id="parallelCoordinatesGraph"></div>
 
-    <div id="donutGraph"></div>    
+    <!-- <div id="donutGraph"></div>     -->
+
+    <div id="stackedHorizontalDiv">
+        <svg id = "shbgTextArea"></svg>
+    </div>
+
+    <div id="stackedHorizontalBarGraph"></div>    
 
 
     <script src="js/initialVariables.js"></script>
     <script src="js/vizscreen.js"></script>
+    <script src="js/linechartAA.js"></script>
     <script src="js/dynamicSliderValues.js"></script>
     <script src="js/table.js"></script>
     <script src="js/variablesForTable.js"></script>
     <script src="js/tableLogic.js"></script>
-    <script src="js/shapesInCell.js"></script>
+    <script src="js/shapesAroundTable.js"></script>
     <script src="js/attacksAndAttackersLineChart.js"></script>
     <script src="js/IPLineChart.js"></script>
     <script src="js/crossReferenceIPLineChart.js"></script>
     <script src="js/treemap.js"></script>
     <script src="js/parallelcoordinates.js"></script>
-    <script src="js/donut.js"></script>
+    <!--<script src="js/donut.js"></script> -->
+    <script src="js/stackedHorizontalBarGraph.js"></script>
 
    
 </body>

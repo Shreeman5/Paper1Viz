@@ -13,9 +13,6 @@ class CrossReferenceIPLineChart{
     }
 
     crossReferenceIPChart(){
-        // console.log(CrossReferenceIPLineChart.allTheIPs)
-        // console.log(CrossReferenceIPLineChart.allTheIPs)
-        // console.log(this.neededIPs)
 
         let starterNumber = 0
         let endingNumber = 10
@@ -37,6 +34,7 @@ class CrossReferenceIPLineChart{
                         let stdVal = 0
                         let minValInArray = 0
                         let maxValInArray = 0
+                        let totalLength = 0
                         for (let i = 0; i < myData.length; i++){
                             let rowData = myData[i]
                             if (rowData['ip'] === myIP){
@@ -61,6 +59,8 @@ class CrossReferenceIPLineChart{
                                     return [mean, stDev]
                                 };
 
+                                // console.log(allCountValues)
+
                                 if (allCountValues.length === 1){
                                     meanVal = allCountValues[0]
                                     stdVal = 0
@@ -72,17 +72,18 @@ class CrossReferenceIPLineChart{
                                 }
                                 minValInArray = Math.min(...allCountValues)
                                 maxValInArray = Math.max(...allCountValues)
+                                totalLength = allCountValues.length
                             }
                         }
                         if (myVal === 0){
-                            specificIPInfo.push([checkTime, 0, 0, 0, 0, 0, myIP])
+                            specificIPInfo.push([checkTime, 0, 0, 0, 0, 0, myIP, 0])
                         }
                         else{
-                            specificIPInfo.push([checkTime, myVal, meanVal, stdVal, minValInArray, maxValInArray, myIP])
+                            specificIPInfo.push([checkTime, myVal, meanVal, stdVal, minValInArray, maxValInArray, myIP, totalLength])
                         }
                     }
                     else{
-                        specificIPInfo.push([checkTime, 0, 0, 0, 0, 0, myIP])
+                        specificIPInfo.push([checkTime, 0, 0, 0, 0, 0, myIP, 0])
                     }
                 }
                 dataset.push(specificIPInfo)
@@ -106,8 +107,8 @@ class CrossReferenceIPLineChart{
     makeLineChart(dataset1, maxValue, colorMap){
         // console.log(dataset1)
         document.getElementById("crossReferenceIPGraphs").style.outline = "5px dashed black"
-        document.getElementById("crossReferenceIPGraphs").style.left = "2090px"
-        document.getElementById("crossReferenceIPGraphs").style.top = "200px"
+        document.getElementById("crossReferenceIPGraphs").style.left = "2030px"
+        document.getElementById("crossReferenceIPGraphs").style.top = "190px"
         document.getElementById("crossReferenceIPGraphs").style.width = "900px"
         document.getElementById("crossReferenceIPGraphs").style.height = "320px"
 
@@ -127,7 +128,7 @@ class CrossReferenceIPLineChart{
         let xScale = d3.scalePoint().domain(this.timeRangeList).range([0, width])
         let yScale = d3.scaleLinear().domain([0, maxValue]).range([height, 0])
 
-        let periodValue = document.getElementById("timePeriod").value
+        let periodValue = VizScreen.givenTimePeriod
 
         let that = this
         svg.append("g")
@@ -149,6 +150,7 @@ class CrossReferenceIPLineChart{
          .attr("transform", "rotate(-45)")
         
         function clickMe(e, d){
+            console.log(d)
             $(".node").remove()
             document.getElementById("legendForTreeMap").innerHTML = ""
             let treemap = new Treemap(d, "All")
@@ -158,6 +160,9 @@ class CrossReferenceIPLineChart{
         d3.select('#xaxis')
             .selectAll('.tick')
             .on('click',clickMe)
+            .on("mouseover", function() {
+                d3.select(this).style("cursor", "pointer")
+            })
 
 
         svg.append("g").style("font", "20px times")
@@ -189,16 +194,19 @@ class CrossReferenceIPLineChart{
             let that = this
             let tip2 = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 10).style("font-size", "30px")
             this.circles.on("mouseover", function(e, d) {
+                // console.log(d)
+                d3.select(this).style("cursor", "pointer")
                 d3.select(this).attr('stroke-width', 5).style("stroke", "red")
-                let tiptext = "Mean destination node val: " + that.better(d[2]) + '<br>' 
+                let tiptext =   "For the top " +d[7]+ " destination nodes hit by this IP <br>"
+                                + "Mean destination node val: " + that.better(d[2]) + '<br>' 
                                 + "StDev destination node val: " + that.better(d[3]) + '<br>'
-                                + "Min destination val: " + that.better(d[4]) + '<br>'
-                                + "Max destination val: " + that.better(d[5]) + '<br>'
+                                + "Min destination node val: " + that.better(d[4]) + '<br>'
+                                + "Max destination node val: " + that.better(d[5]) + '<br>'
                 tip2.style("opacity", 5)
                     .html(tiptext)
                     .style("left", (e.pageX  - 450) + "px")
                     .style("top", (e.pageY)  + "px")
-                    .style("width", "450px")
+                    .style("width", "610px")
                 // console.log(d)
             }).on("mouseout", function(d) {
                 d3.select(this).attr('stroke-width', 0)
@@ -206,6 +214,9 @@ class CrossReferenceIPLineChart{
             })
 
             this.circles.on("click", function(e, d) {
+                
+                // console.log(d[0])
+                // console.log(d[6])
                 $(".node").remove()
                 document.getElementById("legendForTreeMap").innerHTML = ""
                 let treemap = new Treemap(d[0], d[6])
@@ -257,47 +268,92 @@ class CrossReferenceIPLineChart{
 
         
         let periodText
+        let periodText2
         let xPos
         if (periodValue === "month"){
             periodText = "Months"
+            periodText2 = "months"
             xPos = 350
         }
         else if(periodValue === "week"){
             periodText = "Weeks"
+            periodText2 = "weeks"
             xPos = 330
         }
         else if (periodValue === "day"){
             periodText = "Days"
+            periodText2 = "days"
             xPos = 340
         }
         svg.append('text').attr("transform", "translate(250,-20)").text("Cross Referenced IPs").style("font-size", "25px")
         svg.append('text').attr("transform", "translate("+xPos+",265)").text(periodText).style("font-size", "25px")
-        svg.append('text').attr("transform", "translate(-70,135)rotate(270)").text("Frequency").style("font-size", "25px")
+        svg.append('text').attr("transform", "translate(-70,125)rotate(270)").text("Attacks").style("font-size", "25px")
 
         // legend for IP graph
 
         let upperBound = Math.ceil((this.IPsAndCountries.length/5)) * 220
-        document.getElementById("legendForIPGraph").style.outline = "5px dashed black"
+        // document.getElementById("legendForIPGraph").style.outline = "5px dashed black"
         let svg2 = d3.select("#legendForIPGraph")
         .append("svg")
             .attr("width", upperBound)
-            .attr("height", 150)
+            .attr("height", 110)
 
-        let starterY = 15
+        let starterY = 10
         let starterX = 10
         for (let i = 0; i < this.IPsAndCountries.length; i++){
             if (i % 5 === 0 && i !== 0){
                 starterX += 220
-                starterY = 15
+                starterY = 10
             }
+            let myVal = this.IPsAndCountries[i]
+            let myText = myVal.substring(0, myVal.length - 2) + this.getFlagEmoji(myVal.substring(myVal.length - 2, myVal.length)) 
             svg2.append('circle').style("fill", colors[i]).attr("r", 8).attr("cx", starterX).attr("cy", starterY)
             svg2.append('text').attr("transform", "translate("+(starterX+10)+","+(starterY+8)+")")
-                .text(this.IPsAndCountries[i]).style("font-size", "20px")
+                .text(myText).style("font-size", "20px")
                 .style("fill", colors[i]).style("stroke", "black")
-            starterY +=  31
+            starterY +=  21
         }
 
+
+        let svg3 = d3.select("#crossReferencePointer")
+        .append("svg")
+            .attr("width", 300)
+            .attr("height", 400)
+
         
+        svg3.append('text').attr("transform", "translate(0,15)").text("Hover on a circle to know the").style("fill", "red").style("font-size", "20px")
+        svg3.append('text').attr("transform", "translate(0,35)").text("destination node details of that IP").style("fill", "red").style("font-size", "20px")
+        svg3.append('text').attr("transform", "translate(0,55)").text("for that " + periodValue + ".").style("fill", "red").style("font-size", "20px")
+
+        svg3.append('text').attr("transform", "translate(0,85)").text("Hover on a line to see the attack").style("fill", "red").style("font-size", "20px")
+        svg3.append('text').attr("transform", "translate(0,105)").text("pattern of that IP.").style("fill", "red").style("font-size", "20px")
+
+        svg3.append('text').attr("transform", "translate(0,135)").text("Click on a circle to open a").style("fill", "red").style("font-size", "20px")
+        svg3.append('text').attr("transform", "translate(0,155)").text("treemap(on the right) that shows").style("fill", "red").style("font-size", "20px")
+        svg3.append('text').attr("transform", "translate(0,175)").text("the top 10 destination nodes hit").style("fill", "red").style("font-size", "20px")
+        svg3.append('text').attr("transform", "translate(0,195)").text("by that IP that " +periodValue+".").style("fill", "red").style("font-size", "20px")
+
+        svg3.append('text').attr("transform", "translate(0,225)").text("Click on a "+periodValue+" on the x-axis to").style("fill", "red").style("font-size", "20px")
+        svg3.append('text').attr("transform", "translate(0,245)").text("see a treemap(on the right) that").style("fill", "red").style("font-size", "20px")
+        svg3.append('text').attr("transform", "translate(0,265)").text("shows a maximum of n * 10,").style("fill", "red").style("font-size", "20px")
+        svg3.append('text').attr("transform", "translate(0,285)").text("where n is the number of IPs in").style("fill", "red").style("font-size", "20px")
+        svg3.append('text').attr("transform", "translate(0,305)").text("the graph, destination nodes hit").style("fill", "red").style("font-size", "20px")
+        svg3.append('text').attr("transform", "translate(0,325)").text("by the n IPs.").style("fill", "red").style("font-size", "20px")
+
+        svg3.append('text').attr("transform", "translate(0,355)").text("If all the selected IPs attack 0").style("fill", "red").style("font-size", "20px")
+        svg3.append('text').attr("transform", "translate(0,375)").text("times for all the "+periodText2+", y-axis").style("fill", "red").style("font-size", "20px")
+        svg3.append('text').attr("transform", "translate(0,395)").text("will show negative values.").style("fill", "red").style("font-size", "20px")
+
+        
+    }
+
+    getFlagEmoji(cc){
+        const codePoints = cc
+            .toUpperCase()
+            .split('')
+            .map(char =>  127397 + char.charCodeAt());
+        let b = String.fromCodePoint(...codePoints);
+        return b
     }
 
     better(value){
@@ -320,7 +376,7 @@ class CrossReferenceIPLineChart{
 
     fetchData(){
         let clusterValue = document.getElementById("data").value
-        let periodValue = document.getElementById("timePeriod").value
+        let periodValue = VizScreen.givenTimePeriod
         
         
 
@@ -333,14 +389,16 @@ class CrossReferenceIPLineChart{
             let requiredIPs = []
             let requiredCountries = []
             for (let j = (10*i)+1; j <= (10*i)+10 && j <= selectedIPslength; j++){
-                requiredIPs.push(myOpts[j].value)
-                this.neededIPs.push(myOpts[j].value)
-                let givenText = myOpts[j].text
-                this.IPsAndCountries.push(givenText)
-                if (!requiredCountries.includes(givenText.slice(-2))){
-                    requiredCountries.push(givenText.slice(-2))
+                let myStr = myOpts[j].value
+                requiredIPs.push(myStr.substring(0, myStr.length - 4))
+                this.neededIPs.push(myStr.substring(0, myStr.length - 4))
+                let givenValue = myOpts[j].value
+                this.IPsAndCountries.push(givenValue)
+                if (!requiredCountries.includes(givenValue.slice(-2))){
+                    requiredCountries.push(givenValue.slice(-2))
                 }
             }
+            // console.log(requiredCountries)
             let that = this
             getData6(clusterValue, requiredCountries, this.timeRangeList, periodValue, requiredIPs).then(function(loadedData){
                 CrossReferenceIPLineChart.allTheIPs.push(loadedData)
@@ -354,36 +412,37 @@ class CrossReferenceIPLineChart{
 }
 
 function exportCRData(){
-    console.log(CrossReferenceIPLineChart.dates)
-    let allRows = []
+    if (CrossReferenceIPLineChart.ipsForFunction.length !== 0){
+        let allRows = []
 
-    let headerRow = ['IP']
-    for (let i = 0; i < CrossReferenceIPLineChart.dates.length; i++) {
-        headerRow.push(CrossReferenceIPLineChart.dates[i])
-    }
-    allRows.push(headerRow)
-    
-
-    for (let i = 0; i < CrossReferenceIPLineChart.dataSetForFunction.length; i++){
-        let ipRow = [CrossReferenceIPLineChart.ipsForFunction[i]]
-        let dateRow = CrossReferenceIPLineChart.dataSetForFunction[i]
-        for (let j = 0; j < dateRow.length; j++){
-            let element = dateRow[j]
-            ipRow.push(better2(element[1]))
+        let headerRow = ['IP']
+        for (let i = 0; i < CrossReferenceIPLineChart.dates.length; i++) {
+            headerRow.push(CrossReferenceIPLineChart.dates[i])
         }
-        allRows.push(ipRow)
+        allRows.push(headerRow)
+        
+
+        for (let i = 0; i < CrossReferenceIPLineChart.dataSetForFunction.length; i++){
+            let ipRow = [CrossReferenceIPLineChart.ipsForFunction[i]]
+            let dateRow = CrossReferenceIPLineChart.dataSetForFunction[i]
+            for (let j = 0; j < dateRow.length; j++){
+                let element = dateRow[j]
+                ipRow.push(better2(element[1]))
+            }
+            allRows.push(ipRow)
+        }
+        // console.log(allRows)
+
+        let csvContent = "data:text/csv;charset=utf-8,";
+        
+        allRows.forEach(function(rowArray) {
+            let row = rowArray.join(",");
+            csvContent += row + "\r\n";
+        })
+
+        var encodedUri = encodeURI(csvContent);
+        window.open(encodedUri)
     }
-    // console.log(allRows)
-
-    let csvContent = "data:text/csv;charset=utf-8,";
-    
-    allRows.forEach(function(rowArray) {
-        let row = rowArray.join(",");
-        csvContent += row + "\r\n";
-    })
-
-    var encodedUri = encodeURI(csvContent);
-    window.open(encodedUri)
 }
 
 function better2(value){
@@ -405,9 +464,10 @@ function better2(value){
 }
 
 async function getData6(clusterValue, requiredCountries, timeRangeList, periodValue, requiredIPs){
-    let api_address = 'http://128.110.217.95/attacker_activity?cluster='+clusterValue+'&cc='+requiredCountries.join(',')+'&range='+timeRangeList.join(',')+'&period='+periodValue+'&ips='+requiredIPs
+    let api_address = 'https://kibana.emulab.net/attacker_activity?cluster='+clusterValue+'&cc='+requiredCountries.join(',')+'&range='+timeRangeList.join(',')+'&period='+periodValue+'&ips='+requiredIPs
+    // console.log(api_address)
     const data = await fetch(api_address)
     const jsonData = await data.json()
-    console.log(jsonData)
+    // console.log(jsonData)
     return jsonData
 }

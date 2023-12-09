@@ -3,9 +3,10 @@ class ParallelCoordinate{
     //static countriesAcquired = []
     static dataUsedInVizScreen
 
-    constructor(givenCountries, givenChoice){
+    constructor(givenCountries, givenChoice, givenNumber){
         this.givenCountries = givenCountries
         this.givenChoice = givenChoice
+        this.givenNumber = givenNumber
         //console.log(givenCountries)
     }
 
@@ -29,25 +30,27 @@ class ParallelCoordinate{
 
 
         if (workingLength <= 6){
-            widthNumber = 1000
+            widthNumber = 1150
             assignedWidth = widthNumber + 'px'
         }
         else{
-            widthNumber = 1000 + (100 * (workingLength - 6))
+            widthNumber = 1150 + (100 * (workingLength - 6))
             assignedWidth = widthNumber + 'px'
         }
+
+
 
         let margin = {top: 100, right: 30, bottom: 100, left: 50},
         width = widthNumber - margin.left - margin.right,
         height = 600 - margin.top - margin.bottom;
 
-        let starterValue = document.getElementById('predictionTable').offsetWidth + 680
+        let starterValue = document.getElementById('predictionTable').offsetWidth + 1500
         let parallelCoordinateStarter = starterValue + "px"
-        let parallelCoordinateStarter2 = (starterValue-15) + "px"
+        let parallelCoordinateStarter2 = (starterValue-10) + "px"
 
         document.getElementById("parallelCoordinatesGraph").style.outline = "5px dashed black"
         document.getElementById("parallelCoordinatesGraph").style.left = parallelCoordinateStarter
-        document.getElementById("parallelCoordinatesGraph").style.top = "1040px"
+        document.getElementById("parallelCoordinatesGraph").style.top = "1520px"
         document.getElementById("parallelCoordinatesGraph").style.width = assignedWidth
         document.getElementById("parallelCoordinatesGraph").style.height = "600px"
 
@@ -145,8 +148,25 @@ class ParallelCoordinate{
         }
 
 
+        let periodValue = VizScreen.givenTimePeriod
+        let periodText
+        let periodText2
+        if (periodValue === "month"){
+            periodText = "months"
+            periodText2 = "Months"
+        }
+        else if(periodValue === "week"){
+            periodText = "weeks"
+            periodText2 = "Weeks"
+        }
+        else if (periodValue === "day"){
+            periodText = "days"
+            periodText2 = "Days"
+        }
+
+
         //this.removeUserNameFilterOptions()
-        this.addUserNameFilterOptions(desiredData, parallelCoordinateStarter2)
+        this.addUserNameFilterOptions(desiredData, parallelCoordinateStarter2, periodValue, periodText, periodText2)
 
         
         
@@ -157,14 +177,14 @@ class ParallelCoordinate{
 
         // console.log(filteredUsername)
         if (this.givenChoice === "yes"){
-            if (filteredUsername !== '-- SEE ALL USERNAMES --'){
-                if (filteredUsername === '-- SEE W/OUT ROOT --'){
+            if (this.givenNumber !== 2){
+                if (this.givenNumber === 3){
                     desiredData = desiredData.filter(item => item.username !== 'root')
                 }
-                else if(filteredUsername === '-- SEE W/OUT ADMIN --'){
+                else if(this.givenNumber === 4){
                     desiredData = desiredData.filter(item => item.username !== 'admin')
                 }
-                else if(filteredUsername === '-- SEE W/OUT ROOT AND ADMIN --'){
+                else if(this.givenNumber === 5){
                     desiredData = desiredData.filter(item => item.username !== 'root')
                     desiredData = desiredData.filter(item => item.username !== 'admin')
                 }
@@ -175,14 +195,27 @@ class ParallelCoordinate{
             }
         }
         // console.log(desiredData)
-        this.vizPart(desiredData, height, width, svg, usernameCollection, datesOrCountries)
+        this.vizPart(desiredData, height, width, svg, usernameCollection, datesOrCountries, periodValue, periodText, periodText2, filteredUsername)
     }
 
-    addUserNameFilterOptions(desiredData, parallelCoordinateStarter){
-        document.getElementById("usernameFilter").style.width = "420px"
-        document.getElementById("usernameFilter").style.height = "50px"
-        document.getElementById("usernameFilter").style.top = "970px"
-        document.getElementById("usernameFilter").style.left = parallelCoordinateStarter
+    addUserNameFilterOptions(desiredData, parallelCoordinateStarter2, periodValue, periodText, periodText2){
+
+        document.getElementById("usernameFilterDiv").style.left = parallelCoordinateStarter2
+
+        document.getElementById('usernameTextArea').style.visibility = "visible"
+        let svg2 = d3.select("#usernameTextArea")
+        svg2.append('text').attr("transform", "translate(0, 20)").text("A maximum of n * 10 usernames are shown, where n is the number of "+periodText+". Usernames can overlap across " + periodText + ".").style("font-size", "20px").style("fill", "red")
+        svg2.append('text').attr("transform", "translate(0, 40)").text("Hover on the lines to see the path of a username. Use the below selector or buttons for filtering purposes.").style("font-size", "20px").style("fill", "red")
+
+
+        document.getElementById('usernameFilter').style.visibility = "visible"
+        document.getElementById('allUsernames').style.visibility = "visible"
+        document.getElementById('noRoot').style.visibility = "visible"
+        document.getElementById('noAdmin').style.visibility = "visible"
+        document.getElementById('noRootAndAdmin').style.visibility = "visible"
+
+
+
         let usernameSelect = document.getElementById("usernameFilter")
 
         let allUsernames = []
@@ -196,53 +229,9 @@ class ParallelCoordinate{
                 usernameSelect.add(option)
             }
         }
-
-        let exists2 = $("#usernameFilter option").filter(function (i, o) { return o.text === '-- SEE ALL USERNAMES --'; }).length > 0
-        if (exists2 == false){
-            let option2 = document.createElement("option")
-            option2.value = allUsernames
-            option2.text = '-- SEE ALL USERNAMES --'
-            usernameSelect.add(option2)
-        }
-
-        // console.log(allUsernames)
-        if (allUsernames.includes('root')){
-            let exceptRoot = allUsernames.filter(d => d !== 'root')
-            let exists3 = $("#usernameFilter option").filter(function (i, o) { return o.text === '-- SEE W/OUT ROOT --'; }).length > 0
-            if (exists3 == false){
-                let option3 = document.createElement("option")
-                option3.value = exceptRoot
-                option3.text = '-- SEE W/OUT ROOT --'
-                usernameSelect.add(option3)
-            }
-        }
-
-        if (allUsernames.includes('admin')){
-            let exceptAdmin = allUsernames.filter(d => d !== 'admin')
-            let exists4 = $("#usernameFilter option").filter(function (i, o) { return o.text === '-- SEE W/OUT ADMIN --'; }).length > 0
-            if (exists4 == false){
-                let option4 = document.createElement("option")
-                option4.value = exceptAdmin
-                option4.text = '-- SEE W/OUT ADMIN --'
-                usernameSelect.add(option4)
-            }
-        }
-
-        if (allUsernames.includes('admin') && allUsernames.includes('root')){
-            let exceptRootAndAdmin = allUsernames.filter(d => d !== 'admin')
-            exceptRootAndAdmin =  exceptRootAndAdmin.filter(d => d !== 'root')
-            let exists5 = $("#usernameFilter option").filter(function (i, o) { return o.text === '-- SEE W/OUT ROOT AND ADMIN --'; }).length > 0
-            if (exists5 == false){
-                let option5 = document.createElement("option")
-                option5.value = exceptRootAndAdmin
-                option5.text = '-- SEE W/OUT ROOT AND ADMIN --'
-                usernameSelect.add(option5)
-            }
-        }
-        
     }
 
-    vizPart(data, height, width, svg, usernameCollection, datesOrCountries){
+    vizPart(data, height, width, svg, usernameCollection, datesOrCountries, periodValue, periodText, periodText2, filteredUsername){
         // console.log(data)
         // console.log(datesOrCountries)
         //let lineColorScale = d3.scaleOrdinal(d3.schemeTableau10).domain(usernameCollection)
@@ -318,6 +307,9 @@ class ParallelCoordinate{
 
         let idSelector = function() { return this.id; }
         let checkedBoxes = $(":checkbox:checked").map(idSelector).get()
+
+        let idSelector2 = function() { return this.value; }
+        let checkedBoxes2 = $(":checkbox:checked").map(idSelector2).get()
         //console.log(checkedBoxes)
         let weekData = []
         for(let i = 0; i < checkedBoxes.length;i++){
@@ -389,10 +381,12 @@ class ParallelCoordinate{
                 // console.log(d)
                 //console.log(that.hardcodedKeys[d])
                 if(that.givenCountries.length === 1){
-                    return that.hardcodedKeys[d]; 
+                    // console.log(d)
+                    return d
+                    //return that.hardcodedKeys[d]; 
                 }
                 else{
-                    return d
+                    return that.getFlagEmoji(d)
                 }
             })
             .style("fill", "black")
@@ -421,10 +415,10 @@ class ParallelCoordinate{
         let xaxistextAtMiddlePoint = (firstLineCoord + lastLineCoord)/2 - 60
         //console.log('A:', xaxistextAtMiddlePoint)
 
-        svg.append('text').attr("transform", "translate("+xaxistextAtMiddlePoint+",460)")
+        svg.append('text').attr("transform", "translate("+(xaxistextAtMiddlePoint+40)+",460)").style("text-anchor", "middle")
         .text(function(){
             if (that.givenCountries.length === 1){
-                return "Time Periods"
+                return periodText2
             }
             else{
                 return "Countries"
@@ -432,16 +426,64 @@ class ParallelCoordinate{
         })
         .style("font-size", "25px")
 
-        svg.append('text').attr("transform", "translate("+(xaxistextAtMiddlePoint-160)+",-20)")
+        svg.append('text').attr("transform", "translate("+(xaxistextAtMiddlePoint+50)+",-20)").style("text-anchor", "middle")
         .text(function(){
             if (that.givenCountries.length === 1){
-                return that.givenCountries[0]+"[Username Frequency Over Time Periods]"
+                let text
+                if (that.givenNumber === 0){
+                    text = "All the usernames"
+                }
+                else if (that.givenNumber === 1){
+                    text = filteredUsername
+                }
+                else if (that.givenNumber === 2){
+                    text = "All the usernames"
+                }
+                else if (that.givenNumber === 3){
+                    text = "Usernames w/out root"
+                }
+                else if (that.givenNumber === 4){
+                    text = "Usernames w/out admin"
+                }
+                else if (that.givenNumber === 5){
+                    text = "Usernames w/out root and admin"
+                }
+                return that.getFlagEmoji(that.givenCountries[0])+"["+text+"]"
             }
             else{
-                return weekData[0]+"[Username Frequency For Countries]"
+                let text
+                if (that.givenNumber === 0){
+                    text = "All the usernames"
+                }
+                else if (that.givenNumber === 1){
+                    text = filteredUsername
+                }
+                else if (that.givenNumber === 2){
+                    text = "All the usernames"
+                }
+                else if (that.givenNumber === 3){
+                    text = "Usernames w/out root"
+                }
+                else if (that.givenNumber === 4){
+                    text = "Usernames w/out admin"
+                }
+                else if (that.givenNumber === 5){
+                    text = "Usernames w/out root and admin"
+                }
+                return checkedBoxes2[0]+"["+text+"]"
+                //return weekData[0]+"[Username Frequency For Countries]"
             }
         })
         .style("font-size", "25px")
+    }
+
+    getFlagEmoji(cc){
+        const codePoints = cc
+            .toUpperCase()
+            .split('')
+            .map(char =>  127397 + char.charCodeAt());
+        let b = String.fromCodePoint(...codePoints);
+        return b
     }
 
     fetchData2(){
@@ -473,16 +515,16 @@ class ParallelCoordinate{
 
 async function getData2(selected, countries){
     let givenValue = document.getElementById("data").value
-    let givenValue2 = document.getElementById("timePeriod").value
+    let givenValue2 = VizScreen.givenTimePeriod
 
 
 
-    let api_address = 'http://128.110.217.95/top/usernames?cluster='+givenValue+'&cc='+countries.join(',')+'&range='+selected.join(',')+'&period='+givenValue2
+    let api_address = 'https://kibana.emulab.net/top/usernames?cluster='+givenValue+'&cc='+countries.join(',')+'&range='+selected.join(',')+'&period='+givenValue2
     //console.log(api_address)
     const data = await fetch(api_address)
     const jsonData = await data.json()
     
-    //console.log('op:', jsonData)
+    // console.log('op:', jsonData)
     return jsonData
 
 }
